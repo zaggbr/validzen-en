@@ -80,6 +80,11 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
     }
   };
 
+  if (questions.length === 0) return null;
+
+  const q = questions[idx];
+  const pct = Math.round(((idx + 1) / questions.length) * 100);
+
   // ── CTA state ──
   if (phase === "cta") {
     return (
