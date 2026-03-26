@@ -1,15 +1,6 @@
 import CategoryCard from "./CategoryCard";
 import { categories } from "@/data/categories";
 
-// Use shared categories data — remove duplicate definition
-  { emoji: "💔", name: "Relações", slug: "relacoes", postCount: 15 },
-  { emoji: "🌊", name: "Sentido & Propósito", slug: "sentido", postCount: 10 },
-  { emoji: "🪞", name: "Identidade", slug: "identidade", postCount: 7 },
-  { emoji: "🧠", name: "Emoções", slug: "emocoes", postCount: 11 },
-  { emoji: "🤖", name: "Futuro & Tecnologia", slug: "futuro", postCount: 6 },
-  { emoji: "🌍", name: "Sociedade & Política", slug: "sociedade", postCount: 9 },
-];
-
 const ThemesSection = () => {
   return (
     <section className="bg-muted/30 py-16 md:py-20">
@@ -22,7 +13,7 @@ const ThemesSection = () => {
         </p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {categories.map((cat) => (
-            <CategoryCard key={cat.slug} {...cat} />
+            <CategoryCard key={cat.slug} emoji={cat.emoji} name={cat.name} slug={cat.slug} postCount={cat.postCount} />
           ))}
         </div>
       </div>
