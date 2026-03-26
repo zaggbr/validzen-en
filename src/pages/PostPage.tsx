@@ -99,7 +99,7 @@ const PostPage = () => {
               </div>
 
               {/* 5. Content sections */}
-              {post.sections.map((section) => (
+              {post.sections.map((section, i) => (
                 <div key={section.id}>
                   <section id={section.id} className="mb-8 scroll-mt-24">
                     <h2 className="mb-4 text-xl font-bold md:text-2xl">{section.heading}</h2>
@@ -109,12 +109,21 @@ const PostPage = () => {
                     />
                   </section>
 
-                  {/* 6. Quiz CTA inline */}
+                  {/* Quiz inline — show once on the first quizAfter section */}
                   {section.quizAfter && post.quizSlug && (
-                    <QuizCTA theme={post.category.toLowerCase()} quizSlug={post.quizSlug} />
+                    <QuizInline
+                      quizSlug={post.quizSlug}
+                      title={`Qual o seu nível de ${post.category.toLowerCase()}?`}
+                      subtitle={`Responda algumas perguntas rápidas sobre ${post.category.toLowerCase()}`}
+                    />
                   )}
                 </div>
               ))}
+
+              {/* Bottom quiz CTA banner */}
+              {post.quizSlug && (
+                <QuizCTA theme={post.category.toLowerCase()} quizSlug={post.quizSlug} />
+              )}
 
               {/* 7. Video embed */}
               {post.videoUrl && (
