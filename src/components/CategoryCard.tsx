@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useI18n } from "@/i18n/I18nContext";
 
 interface CategoryCardProps {
   emoji: string;
@@ -8,9 +9,11 @@ interface CategoryCardProps {
 }
 
 const CategoryCard = ({ emoji, name, slug, postCount }: CategoryCardProps) => {
+  const { localePath } = useI18n();
+
   return (
     <Link
-      to={`/categoria/${slug}`}
+      to={localePath(`/categoria/${slug}`)}
       className="group flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center shadow-sm transition-all duration-200 hover:border-secondary/40 hover:shadow-md"
     >
       <span className="text-3xl">{emoji}</span>

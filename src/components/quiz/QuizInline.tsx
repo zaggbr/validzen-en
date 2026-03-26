@@ -20,6 +20,7 @@ import {
 } from "@/lib/quizScoring";
 import { getTopDimensions } from "@/lib/quizInsights";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/i18n/I18nContext";
 
 interface QuizInlineProps {
   quizSlug: string;
@@ -43,6 +44,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const [resultId, setResultId] = useState<string | null>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [dir, setDir] = useState(1);
+  const { t, localePath } = useI18n();
 
   const handleSelect = useCallback(
     (value: number) => {
@@ -85,7 +87,6 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const q = questions[idx];
   const pct = Math.round(((idx + 1) / questions.length) * 100);
 
-  // ── CTA state ──
   if (phase === "cta") {
     return (
       <div
@@ -96,7 +97,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
           <span className="text-4xl">🧪</span>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-title">
-              {title ?? `Qual o seu nível de ${quizSlug}?`}
+              {title ?? t("quiz.what_level", { topic: quizSlug })}
             </h3>
             {subtitle && (
               <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
@@ -108,41 +109,32 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
               </span>
               <span className="flex items-center gap-1">
                 <BarChart3 className="h-3.5 w-3.5" />
-                Resultado instantâneo
+                {t("quiz.see_result")}
               </span>
             </div>
           </div>
-          <Button
-            onClick={() => setPhase("active")}
-            variant="hero"
-            size="lg"
-          >
-            Fazer o Quiz <ArrowRight className="ml-1 h-4 w-4" />
+          <Button onClick={() => setPhase("active")} variant="hero" size="lg">
+            {t("quiz.start")} <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
       </div>
     );
   }
 
-  // ── Active quiz ──
   if (phase === "active") {
     return (
       <div
         id={`quiz-inline-${quizSlug}`}
         className="my-10 overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/5 to-background p-6 md:p-8"
       >
-        {/* Progress */}
         <div className="mb-6">
           <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
-            <span>
-              Pergunta {idx + 1} de {questions.length}
-            </span>
+            <span>{t("quiz.question_of", { current: idx + 1, total: questions.length })}</span>
             <span>{pct}%</span>
           </div>
           <Progress value={pct} className="h-1.5" />
         </div>
 
-        {/* Question */}
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div
             key={q.id}
@@ -176,23 +168,12 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Nav */}
         <div className="mt-6 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleBack}
-            disabled={idx === 0}
-          >
-            <ArrowLeft className="mr-1 h-4 w-4" /> Voltar
+          <Button variant="ghost" size="sm" onClick={handleBack} disabled={idx === 0}>
+            <ArrowLeft className="mr-1 h-4 w-4" /> {t("quiz.back")}
           </Button>
-          <Button
-            onClick={handleNext}
-            disabled={answers[q.id] == null}
-            variant="hero"
-            size="default"
-          >
-            {idx === questions.length - 1 ? "Ver Resultado" : "Próxima"}
+          <Button onClick={handleNext} disabled={answers[q.id] == null} variant="hero" size="default">
+            {idx === questions.length - 1 ? t("quiz.see_result") : t("quiz.next")}
             <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
@@ -200,7 +181,6 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
     );
   }
 
-  // ── Done ──
   const top = getTopDimensions(scores, 3);
   const radarData = Object.entries(scores).map(([dim, score]) => ({
     dimension: DIMENSION_LABELS[dim as Dimension] ?? dim,
@@ -215,40 +195,26 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       className="my-10 overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/5 to-background p-6 md:p-8"
     >
       <h3 className="mb-4 text-center text-lg font-bold text-title">
-        🗺️ Seu resultado
+        🗺️ {t("result.title")}
       </h3>
 
-      {/* Mini radar */}
       <div className="mx-auto mb-6 max-w-xs">
         <ResponsiveContainer width="100%" height={220}>
           <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
             <PolarGrid stroke="hsl(var(--border))" />
-            <PolarAngleAxis
-              dataKey="dimension"
-              tick={{ fontSize: 8, fill: "hsl(var(--muted-foreground))" }}
-            />
-            <Radar
-              dataKey="score"
-              stroke="hsl(var(--primary))"
-              fill="hsl(var(--primary))"
-              fillOpacity={0.2}
-              strokeWidth={2}
-            />
+            <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 8, fill: "hsl(var(--muted-foreground))" }} />
+            <Radar dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} />
           </RadarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Top dims */}
       <div className="mb-6 flex flex-wrap justify-center gap-3">
-        {top.map((t) => (
-          <div
-            key={t.dimension}
-            className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium"
-          >
-            <span>{t.emoji}</span>
-            <span className="text-foreground">{t.label}</span>
-            <span className={cn("font-bold", t.score > 66 ? "text-destructive" : t.score > 33 ? "text-secondary" : "text-accent")}>
-              {t.score}%
+        {top.map((item) => (
+          <div key={item.dimension} className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium">
+            <span>{item.emoji}</span>
+            <span className="text-foreground">{item.label}</span>
+            <span className={cn("font-bold", item.score > 66 ? "text-destructive" : item.score > 33 ? "text-secondary" : "text-accent")}>
+              {item.score}%
             </span>
           </div>
         ))}
@@ -256,8 +222,8 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
 
       <div className="text-center">
         <Button asChild variant="hero" size="lg">
-          <Link to={`/resultado/${resultId}`}>
-            Ver resultado completo <ArrowRight className="ml-1 h-4 w-4" />
+          <Link to={localePath(`/resultado/${resultId}`)}>
+            {t("quiz.see_result")} <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
         </Button>
       </div>
