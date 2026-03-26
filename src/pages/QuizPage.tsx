@@ -53,8 +53,7 @@ const QuizPage = () => {
         scores,
       };
       saveResultToLocalStorage(newResult);
-      setResult(newResult);
-      setPhase("result");
+      navigate(`/resultado/${newResult.id}`);
     }
   }, [currentIdx, questions, answers, quiz, slug]);
 

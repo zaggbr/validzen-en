@@ -9,6 +9,8 @@ import CategoriesPage from "./pages/CategoriesPage";
 import CategoryPage from "./pages/CategoryPage";
 import Placeholder from "./pages/Placeholder";
 import QuizPage from "./pages/QuizPage";
+import ResultPage from "./pages/ResultPage";
+import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,8 +29,8 @@ const App = () => (
           <Route path="/categoria/:slug" element={<CategoryPage />} />
           <Route path="/quiz/geral" element={<QuizPage />} />
           <Route path="/quiz/:slug" element={<QuizPage />} />
-          <Route path="/resultado/:id" element={<Placeholder />} />
-          <Route path="/dashboard" element={<Placeholder />} />
+          <Route path="/resultado/:id" element={<ResultPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/videos" element={<Placeholder />} />
           <Route path="/pro" element={<Placeholder />} />
           <Route path="/sobre" element={<Placeholder />} />
