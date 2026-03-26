@@ -3,12 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Moon, Sun, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useI18n } from "@/i18n/I18nContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dark, setDark] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { t, localePath } = useI18n();
 
   const toggleDark = () => {
     setDark(!dark);
@@ -17,20 +20,20 @@ const Header = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/");
+    navigate(localePath("/"));
   };
 
   const navLinks = [
-    { label: "Temas", href: "/categorias" },
-    { label: "Quiz", href: "/quiz/geral" },
-    { label: "Dashboard", href: "/dashboard" },
-    { label: "Pro", href: "/pro" },
+    { label: t("nav.themes"), href: localePath("/categorias") },
+    { label: t("nav.quiz"), href: localePath("/quiz/geral") },
+    { label: t("nav.dashboard"), href: localePath("/dashboard") },
+    { label: t("nav.pro"), href: localePath("/pro") },
   ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-1">
+        <Link to={localePath("/")} className="flex items-center gap-1">
           <span className="text-xl font-bold tracking-tight text-title">
             valid<span className="text-secondary">zen</span>.
           </span>
@@ -56,19 +59,19 @@ const Header = () => {
           >
             {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <span className="text-xs font-medium text-muted-foreground">PT | EN</span>
+          <LanguageSwitcher />
           {user ? (
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground truncate max-w-[120px]">
                 {user.user_metadata?.full_name || user.email}
               </span>
               <Button size="sm" variant="outline" onClick={handleSignOut}>
-                <LogOut className="mr-1 h-3 w-3" /> Sair
+                <LogOut className="mr-1 h-3 w-3" /> {t("nav.logout")}
               </Button>
             </div>
           ) : (
             <Button size="sm" variant="outline" asChild>
-              <Link to="/login">Entrar</Link>
+              <Link to={localePath("/login")}>{t("nav.login")}</Link>
             </Button>
           )}
         </div>
@@ -99,14 +102,14 @@ const Header = () => {
               <button onClick={toggleDark} className="rounded-lg p-2 text-muted-foreground hover:bg-muted">
                 {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
-              <span className="text-xs font-medium text-muted-foreground">PT | EN</span>
+              <LanguageSwitcher />
               {user ? (
                 <Button size="sm" variant="outline" className="ml-auto" onClick={handleSignOut}>
-                  <LogOut className="mr-1 h-3 w-3" /> Sair
+                  <LogOut className="mr-1 h-3 w-3" /> {t("nav.logout")}
                 </Button>
               ) : (
                 <Button size="sm" variant="outline" className="ml-auto" asChild>
-                  <Link to="/login" onClick={() => setMobileOpen(false)}>Entrar</Link>
+                  <Link to={localePath("/login")} onClick={() => setMobileOpen(false)}>{t("nav.login")}</Link>
                 </Button>
               )}
             </div>

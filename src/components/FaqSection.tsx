@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { FaqItem } from "@/data/types";
+import { useI18n } from "@/i18n/I18nContext";
 
 interface FaqSectionProps {
   items: FaqItem[];
@@ -8,12 +9,13 @@ interface FaqSectionProps {
 
 const FaqSection = ({ items }: FaqSectionProps) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { t } = useI18n();
 
   if (items.length === 0) return null;
 
   return (
     <section className="my-10">
-      <h2 className="mb-6 text-xl font-bold md:text-2xl">Perguntas frequentes</h2>
+      <h2 className="mb-6 text-xl font-bold md:text-2xl">{t("post.faq_title")}</h2>
       <div className="space-y-3">
         {items.map((item, i) => (
           <div key={i} className="rounded-lg border border-border bg-card">

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Clock } from "lucide-react";
+import { useI18n } from "@/i18n/I18nContext";
 
 interface PostCardProps {
   title: string;
@@ -10,9 +11,11 @@ interface PostCardProps {
 }
 
 const PostCard = ({ title, excerpt, category, readTime, slug }: PostCardProps) => {
+  const { localePath } = useI18n();
+
   return (
     <Link
-      to={`/pt/conteudo/${slug}`}
+      to={localePath(`/conteudo/${slug}`)}
       className="group flex flex-col rounded-lg border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:border-secondary/30 hover:shadow-md"
     >
       <span className="mb-2 inline-block w-fit rounded-md bg-secondary/10 px-2 py-0.5 text-xs font-medium text-secondary">
