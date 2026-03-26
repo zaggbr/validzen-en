@@ -5,6 +5,7 @@ import { ArrowRight, RotateCcw } from "lucide-react";
 import { QuizResult, DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
 import { getScoreLevel } from "@/lib/quizScoring";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/i18n/I18nContext";
 
 interface Props {
   result: QuizResult;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const QuizResultView = ({ result, onRetry }: Props) => {
+  const { t, localePath } = useI18n();
   const sortedDimensions = Object.entries(result.scores).sort(
     ([, a], [, b]) => b - a
   );
@@ -25,11 +27,10 @@ const QuizResultView = ({ result, onRetry }: Props) => {
       <div className="mb-10 text-center">
         <span className="mb-3 inline-block text-5xl">🗺️</span>
         <h1 className="mb-2 text-3xl font-bold text-title">
-          Seu Mapa Emocional
+          {t("result.title")}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Veja como cada dimensão apareceu nas suas respostas. Quanto maior o
-          percentual, maior a intensidade percebida.
+          {t("result.top_dimensions")}
         </p>
       </div>
 
@@ -76,18 +77,17 @@ const QuizResultView = ({ result, onRetry }: Props) => {
 
       <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <Button variant="hero" size="lg" asChild>
-          <Link to="/dashboard">
-            Ver Dashboard Completo <ArrowRight className="ml-1 h-4 w-4" />
+          <Link to={localePath("/dashboard")}>
+            {t("dashboard.title")} <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
         </Button>
         <Button variant="outline" size="lg" onClick={onRetry} className="gap-1">
-          <RotateCcw className="h-4 w-4" /> Refazer Quiz
+          <RotateCcw className="h-4 w-4" /> {t("result.retry")}
         </Button>
       </div>
 
       <p className="mt-8 text-center text-xs text-muted-foreground">
-        ⚠️ Este resultado é educacional. Não substitui avaliação por
-        profissional de saúde mental qualificado.
+        ⚠️ {t("common.disclaimer_quiz")}
       </p>
     </motion.div>
   );

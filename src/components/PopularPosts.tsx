@@ -1,4 +1,5 @@
 import PostCard from "./PostCard";
+import { useI18n } from "@/i18n/I18nContext";
 
 const posts = [
   {
@@ -46,12 +47,14 @@ const posts = [
 ];
 
 const PopularPosts = () => {
+  const { t } = useI18n();
+
   return (
     <section className="py-16 md:py-20">
       <div className="container">
-        <h2 className="mb-2 text-2xl font-bold md:text-3xl">Mais lidos</h2>
+        <h2 className="mb-2 text-2xl font-bold md:text-3xl">{t("home.section_popular")}</h2>
         <p className="mb-10 text-sm text-muted-foreground">
-          Os conteúdos que mais ajudaram outros leitores.
+          {t("home.section_popular_sub")}
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (

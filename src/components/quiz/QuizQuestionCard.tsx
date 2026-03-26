@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { QuizQuestion } from "@/data/quizTypes";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/i18n/I18nContext";
 
 interface Props {
   question: QuizQuestion;
@@ -12,7 +13,7 @@ interface Props {
   onBack: () => void;
   isFirst: boolean;
   isLast: boolean;
-  direction: number; // 1 = forward, -1 = backward
+  direction: number;
 }
 
 const variants = {
@@ -31,6 +32,8 @@ const QuizQuestionCard = ({
   isLast,
   direction,
 }: Props) => {
+  const { t } = useI18n();
+
   const renderScale = () => (
     <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
       {question.options.map((opt) => (
@@ -116,7 +119,7 @@ const QuizQuestionCard = ({
             disabled={isFirst}
             className="gap-1"
           >
-            <ArrowLeft className="h-4 w-4" /> Voltar
+            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
           </Button>
 
           <Button
@@ -126,7 +129,7 @@ const QuizQuestionCard = ({
             size="lg"
             className="gap-1"
           >
-            {isLast ? "Ver Resultado" : "Próxima"}{" "}
+            {isLast ? t("quiz.see_result") : t("quiz.next")}{" "}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </div>

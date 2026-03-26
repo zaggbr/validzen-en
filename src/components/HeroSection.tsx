@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useI18n } from "@/i18n/I18nContext";
 
 const HeroSection = () => {
+  const { t, localePath } = useI18n();
+
   return (
     <section className="relative overflow-hidden">
-      {/* Subtle background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-muted/30" />
 
       <div className="container relative flex flex-col items-center py-20 text-center md:py-32">
@@ -14,27 +16,27 @@ const HeroSection = () => {
         </span>
 
         <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-secondary">
-          The Meaning Crisis Project
+          {t("home.hero_title")}
         </p>
 
         <h1 className="mx-auto mt-4 max-w-2xl text-2xl font-semibold leading-tight text-title md:text-4xl">
-          Name what you feel.{" "}
-          <span className="text-muted-foreground">Understand why.</span>{" "}
-          <span className="text-sage">Navigate forward.</span>
+          {t("home.hero_h1_1")}{" "}
+          <span className="text-muted-foreground">{t("home.hero_h1_2")}</span>{" "}
+          <span className="text-sage">{t("home.hero_h1_3")}</span>
         </h1>
 
         <p className="mx-auto mt-6 max-w-lg text-base text-muted-foreground md:text-lg">
-          Autoconhecimento guiado para quem sente que algo não faz sentido. Quizzes, conteúdo e um mapa emocional personalizado.
+          {t("home.hero_description")}
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
           <Button asChild variant="hero" size="xl">
-            <Link to="/quiz/geral">
-              Começar o Quiz <ArrowRight className="ml-1 h-5 w-5" />
+            <Link to={localePath("/quiz/geral")}>
+              {t("home.cta_quiz")} <ArrowRight className="ml-1 h-5 w-5" />
             </Link>
           </Button>
           <Button asChild variant="hero-outline" size="lg">
-            <Link to="/categorias">Explorar temas</Link>
+            <Link to={localePath("/categorias")}>{t("home.cta_explore")}</Link>
           </Button>
         </div>
       </div>
