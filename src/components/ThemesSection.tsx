@@ -1,8 +1,7 @@
 import CategoryCard from "./CategoryCard";
+import { categories } from "@/data/categories";
 
-const categories = [
-  { emoji: "😰", name: "Ansiedade", slug: "ansiedade", postCount: 12 },
-  { emoji: "🔥", name: "Burnout & Exaustão", slug: "burnout", postCount: 8 },
+// Use shared categories data — remove duplicate definition
   { emoji: "💔", name: "Relações", slug: "relacoes", postCount: 15 },
   { emoji: "🌊", name: "Sentido & Propósito", slug: "sentido", postCount: 10 },
   { emoji: "🪞", name: "Identidade", slug: "identidade", postCount: 7 },
