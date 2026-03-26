@@ -233,7 +233,16 @@ const DashboardPage = () => {
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 {recommendedPosts.map((post) =>
-                  post ? <PostCard key={post.slug} post={post} /> : null
+                  post ? (
+                    <PostCard
+                      key={post.slug}
+                      title={post.title}
+                      excerpt={post.excerpt}
+                      category={post.category}
+                      readTime={`${post.readingTime} min`}
+                      slug={post.slug}
+                    />
+                  ) : null
                 )}
               </div>
             </div>
