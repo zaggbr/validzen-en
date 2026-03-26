@@ -8,6 +8,7 @@ import PostPage from "./pages/PostPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import CategoryPage from "./pages/CategoryPage";
 import Placeholder from "./pages/Placeholder";
+import QuizPage from "./pages/QuizPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,8 +25,8 @@ const App = () => (
           <Route path="/en/content/:slug" element={<PostPage />} />
           <Route path="/categorias" element={<CategoriesPage />} />
           <Route path="/categoria/:slug" element={<CategoryPage />} />
-          <Route path="/quiz/geral" element={<Placeholder />} />
-          <Route path="/quiz/:slug" element={<Placeholder />} />
+          <Route path="/quiz/geral" element={<QuizPage />} />
+          <Route path="/quiz/:slug" element={<QuizPage />} />
           <Route path="/resultado/:id" element={<Placeholder />} />
           <Route path="/dashboard" element={<Placeholder />} />
           <Route path="/videos" element={<Placeholder />} />
