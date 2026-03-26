@@ -14,7 +14,278 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      posts: {
+        Row: {
+          alternate_slug: string | null
+          author_avatar: string
+          author_bio: string
+          author_credentials: string
+          author_name: string
+          category: string
+          category_slug: string
+          content: string
+          excerpt: string
+          faq: Json
+          featured_image: string
+          id: string
+          is_premium: boolean
+          layer: number
+          locale: string
+          meta_description: string
+          meta_title: string
+          published_at: string
+          quiz_slug: string | null
+          reading_time: number
+          related_post_slugs: string[]
+          slug: string
+          tags: string[]
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          alternate_slug?: string | null
+          author_avatar?: string
+          author_bio?: string
+          author_credentials?: string
+          author_name?: string
+          category?: string
+          category_slug?: string
+          content?: string
+          excerpt?: string
+          faq?: Json
+          featured_image?: string
+          id?: string
+          is_premium?: boolean
+          layer?: number
+          locale?: string
+          meta_description?: string
+          meta_title?: string
+          published_at?: string
+          quiz_slug?: string | null
+          reading_time?: number
+          related_post_slugs?: string[]
+          slug: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          alternate_slug?: string | null
+          author_avatar?: string
+          author_bio?: string
+          author_credentials?: string
+          author_name?: string
+          category?: string
+          category_slug?: string
+          content?: string
+          excerpt?: string
+          faq?: Json
+          featured_image?: string
+          id?: string
+          is_premium?: boolean
+          layer?: number
+          locale?: string
+          meta_description?: string
+          meta_title?: string
+          published_at?: string
+          quiz_slug?: string | null
+          reading_time?: number
+          related_post_slugs?: string[]
+          slug?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      quiz_questions: {
+        Row: {
+          dimension: string
+          id: string
+          options: Json
+          order_num: number
+          question_text: string
+          question_type: string
+          quiz_slug: string
+          weight: number
+        }
+        Insert: {
+          dimension: string
+          id?: string
+          options?: Json
+          order_num?: number
+          question_text: string
+          question_type?: string
+          quiz_slug: string
+          weight?: number
+        }
+        Update: {
+          dimension?: string
+          id?: string
+          options?: Json
+          order_num?: number
+          question_text?: string
+          question_type?: string
+          quiz_slug?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_slug_fkey"
+            columns: ["quiz_slug"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      quiz_results: {
+        Row: {
+          answers: Json
+          completed_at: string
+          id: string
+          overall_score: number | null
+          quiz_slug: string
+          recommended_post_slugs: string[]
+          scores: Json
+          session_id: string | null
+          severity: string | null
+          user_id: string | null
+        }
+        Insert: {
+          answers?: Json
+          completed_at?: string
+          id?: string
+          overall_score?: number | null
+          quiz_slug: string
+          recommended_post_slugs?: string[]
+          scores?: Json
+          session_id?: string | null
+          severity?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string
+          id?: string
+          overall_score?: number | null
+          quiz_slug?: string
+          recommended_post_slugs?: string[]
+          scores?: Json
+          session_id?: string | null
+          severity?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      quizzes: {
+        Row: {
+          description: string
+          dimensions: string[]
+          estimated_time: number
+          id: string
+          locale: string
+          post_slug: string | null
+          question_count: number
+          slug: string
+          title: string
+          type: string
+        }
+        Insert: {
+          description?: string
+          dimensions?: string[]
+          estimated_time?: number
+          id?: string
+          locale?: string
+          post_slug?: string | null
+          question_count?: number
+          slug: string
+          title: string
+          type?: string
+        }
+        Update: {
+          description?: string
+          dimensions?: string[]
+          estimated_time?: number
+          id?: string
+          locale?: string
+          post_slug?: string | null
+          question_count?: number
+          slug?: string
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          is_premium: boolean
+          preferred_locale: string
+          premium_until: string | null
+          stripe_customer_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          is_premium?: boolean
+          preferred_locale?: string
+          premium_until?: string | null
+          stripe_customer_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          is_premium?: boolean
+          preferred_locale?: string
+          premium_until?: string | null
+          stripe_customer_id?: string | null
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          bookmarked: boolean
+          id: string
+          post_slug: string
+          quiz_completed: boolean
+          read_percentage: number
+          updated_at: string
+          user_id: string
+          video_watched: boolean
+        }
+        Insert: {
+          bookmarked?: boolean
+          id?: string
+          post_slug: string
+          quiz_completed?: boolean
+          read_percentage?: number
+          updated_at?: string
+          user_id: string
+          video_watched?: boolean
+        }
+        Update: {
+          bookmarked?: boolean
+          id?: string
+          post_slug?: string
+          quiz_completed?: boolean
+          read_percentage?: number
+          updated_at?: string
+          user_id?: string
+          video_watched?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

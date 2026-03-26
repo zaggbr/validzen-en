@@ -11,14 +11,18 @@ import {
   calculateScores,
   generateResultId,
   saveResultToLocalStorage,
+  saveResultToSupabase,
+  saveResultAnonymous,
 } from "@/lib/quizScoring";
 import { QuizResult } from "@/data/quizTypes";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Phase = "intro" | "questions" | "result";
 
 const QuizPage = () => {
   const { slug = "geral" } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const quiz = getQuizBySlug(slug);
   const questions = getQuestionsForQuiz(slug);
@@ -38,12 +42,11 @@ const QuizPage = () => {
     [currentIdx, questions]
   );
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     if (currentIdx < questions.length - 1) {
       setDirection(1);
       setCurrentIdx((i) => i + 1);
     } else {
-      // finish
       const scores = calculateScores(questions, answers);
       const newResult: QuizResult = {
         id: generateResultId(),
@@ -52,10 +55,20 @@ const QuizPage = () => {
         answers,
         scores,
       };
+
+      // Save to localStorage as fallback
       saveResultToLocalStorage(newResult);
+
+      // Also save to DB
+      if (user) {
+        await saveResultToSupabase(newResult, user.id);
+      } else {
+        await saveResultAnonymous(newResult);
+      }
+
       navigate(`/resultado/${newResult.id}`);
     }
-  }, [currentIdx, questions, answers, quiz, slug]);
+  }, [currentIdx, questions, answers, quiz, slug, user]);
 
   const handleBack = useCallback(() => {
     if (currentIdx > 0) {
