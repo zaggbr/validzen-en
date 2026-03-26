@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { migrateLocalResultsToSupabase } from "@/lib/migrateLocalResults";
 
 interface AuthContextType {
   user: User | null;
@@ -23,12 +24,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const migrated = useRef(false);
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+
+        // Migrate localStorage results on sign-in
+        if (session?.user && !migrated.current) {
+          migrated.current = true;
+          migrateLocalResultsToSupabase(session.user.id);
+        }
       }
     );
 
