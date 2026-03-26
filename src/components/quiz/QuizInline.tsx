@@ -44,13 +44,9 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const [scores, setScores] = useState<Record<string, number>>({});
   const [dir, setDir] = useState(1);
 
-  if (questions.length === 0) return null;
-
-  const q = questions[idx];
-  const pct = Math.round(((idx + 1) / questions.length) * 100);
-
   const handleSelect = useCallback(
     (value: number) => {
+      if (questions.length === 0) return;
       setAnswers((prev) => ({ ...prev, [questions[idx].id]: value }));
     },
     [idx, questions]
