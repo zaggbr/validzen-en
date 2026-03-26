@@ -3,19 +3,21 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
 import { categories } from "@/data/categories";
+import { useI18n } from "@/i18n/I18nContext";
 
 const CategoriesPage = () => {
   const [activeLayer, setActiveLayer] = useState<number | null>(null);
+  const { t } = useI18n();
 
   const filtered = activeLayer
     ? categories.filter((c) => c.layers.includes(activeLayer))
     : categories;
 
   const layers = [
-    { value: null, label: "Todas" },
-    { value: 1, label: "Camada 1" },
-    { value: 2, label: "Camada 2" },
-    { value: 3, label: "Camada 3" },
+    { value: null, label: t("categories.all") },
+    { value: 1, label: `${t("categories.layer")} 1` },
+    { value: 2, label: `${t("categories.layer")} 2` },
+    { value: 3, label: `${t("categories.layer")} 3` },
   ];
 
   return (
@@ -23,12 +25,9 @@ const CategoriesPage = () => {
       <Header />
       <main className="flex-1">
         <div className="container py-10 md:py-16">
-          <h1 className="mb-2 text-2xl font-bold md:text-3xl">Explore por tema</h1>
-          <p className="mb-8 text-sm text-muted-foreground">
-            Cada tema é uma porta de entrada para se conhecer melhor.
-          </p>
+          <h1 className="mb-2 text-2xl font-bold md:text-3xl">{t("categories.title")}</h1>
+          <p className="mb-8 text-sm text-muted-foreground">{t("categories.subtitle")}</p>
 
-          {/* Layer filter */}
           <div className="mb-8 flex gap-2">
             {layers.map((l) => (
               <button
@@ -47,13 +46,7 @@ const CategoriesPage = () => {
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {filtered.map((cat) => (
-              <CategoryCard
-                key={cat.slug}
-                emoji={cat.emoji}
-                name={cat.name}
-                slug={cat.slug}
-                postCount={cat.postCount}
-              />
+              <CategoryCard key={cat.slug} emoji={cat.emoji} name={cat.name} slug={cat.slug} postCount={cat.postCount} />
             ))}
           </div>
         </div>

@@ -16,6 +16,7 @@ import {
 } from "@/lib/quizScoring";
 import { QuizResult } from "@/data/quizTypes";
 import { useAuth } from "@/contexts/AuthContext";
+import { useI18n } from "@/i18n/I18nContext";
 
 type Phase = "intro" | "questions" | "result";
 
@@ -23,6 +24,7 @@ const QuizPage = () => {
   const { slug = "geral" } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { localePath } = useI18n();
 
   const quiz = getQuizBySlug(slug);
   const questions = getQuestionsForQuiz(slug);
@@ -56,19 +58,17 @@ const QuizPage = () => {
         scores,
       };
 
-      // Save to localStorage as fallback
       saveResultToLocalStorage(newResult);
 
-      // Also save to DB
       if (user) {
         await saveResultToSupabase(newResult, user.id);
       } else {
         await saveResultAnonymous(newResult);
       }
 
-      navigate(`/resultado/${newResult.id}`);
+      navigate(localePath(`/resultado/${newResult.id}`));
     }
-  }, [currentIdx, questions, answers, quiz, slug, user]);
+  }, [currentIdx, questions, answers, quiz, slug, user, localePath, navigate]);
 
   const handleBack = useCallback(() => {
     if (currentIdx > 0) {
@@ -86,7 +86,7 @@ const QuizPage = () => {
   };
 
   if (!quiz) {
-    navigate("/", { replace: true });
+    navigate(localePath("/"), { replace: true });
     return null;
   }
 
