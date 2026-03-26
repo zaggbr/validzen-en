@@ -1,34 +1,34 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 interface QuizCTAProps {
   theme: string;
   quizSlug: string;
-  questionCount?: number;
-  minutes?: number;
 }
 
-const QuizCTA = ({ theme, quizSlug, questionCount = 10, minutes = 3 }: QuizCTAProps) => {
+const QuizCTA = ({ theme, quizSlug }: QuizCTAProps) => {
+  const inlineEl = document.getElementById(`quiz-inline-${quizSlug}`);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (inlineEl) {
+      e.preventDefault();
+      inlineEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
   return (
-    <div className="my-8 rounded-lg border border-primary/10 bg-primary/5 p-6 md:p-8">
-      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-        <span className="text-3xl">🧪</span>
-        <div className="flex-1">
-          <h3 className="text-base font-bold text-title">
-            Descubra seu nível de {theme}
-          </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Responda {questionCount} perguntas rápidas ({minutes} min)
-          </p>
-        </div>
-        <Button asChild variant="secondary" size="lg">
-          <Link to={`/quiz/${quizSlug}`}>
-            Fazer o Quiz <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
-        </Button>
-      </div>
-    </div>
+    <Link
+      to={`/quiz/${quizSlug}`}
+      onClick={handleClick}
+      className="my-6 flex items-center justify-between rounded-lg border border-secondary/20 bg-secondary/5 px-5 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary/10"
+    >
+      <span>
+        📊 Faça o quiz sobre{" "}
+        <span className="font-bold text-secondary">{theme}</span> e descubra
+        seu perfil
+      </span>
+      <ArrowRight className="h-4 w-4 shrink-0 text-secondary" />
+    </Link>
   );
 };
 
