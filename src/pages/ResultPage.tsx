@@ -14,6 +14,7 @@ import Footer from "@/components/Footer";
 import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
+import AdBanner from "@/components/AdBanner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Share2, ArrowRight, UserPlus } from "lucide-react";
 import { getResultById } from "@/lib/quizScoring";

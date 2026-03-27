@@ -9,6 +9,7 @@ import FaqSection from "@/components/FaqSection";
 import AuthorBox from "@/components/AuthorBox";
 import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
+import AdBanner from "@/components/AdBanner";
 import { getPostBySlug, getRelatedPosts } from "@/data/posts";
 import { ChevronRight, Clock, Calendar } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
@@ -38,6 +39,9 @@ const PostPage = () => {
 
   const related = getRelatedPosts(post.relatedPosts);
   const url = `https://validzen.app/${locale}/conteudo/${post.slug}`;
+
+  // Track which section index we're at for ad insertion
+  let sectionIndex = 0;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -96,22 +100,32 @@ const PostPage = () => {
                 <TableOfContents sections={post.sections} />
               </div>
 
-              {post.sections.map((section) => (
-                <div key={section.id}>
-                  <section id={section.id} className="mb-8 scroll-mt-24">
-                    <h2 className="mb-4 text-xl font-bold md:text-2xl">{section.heading}</h2>
-                    <div className="prose-validzen" dangerouslySetInnerHTML={{ __html: section.body }} />
-                  </section>
+              {post.sections.map((section) => {
+                sectionIndex++;
+                const showAdAfter = sectionIndex === 2 || sectionIndex === 4;
+                return (
+                  <div key={section.id}>
+                    <section id={section.id} className="mb-8 scroll-mt-24">
+                      <h2 className="mb-4 text-xl font-bold md:text-2xl">{section.heading}</h2>
+                      <div className="prose-validzen" dangerouslySetInnerHTML={{ __html: section.body }} />
+                    </section>
 
-                  {section.quizAfter && post.quizSlug && (
-                    <QuizInline
-                      quizSlug={post.quizSlug}
-                      title={t("quiz.what_level", { topic: post.category.toLowerCase() })}
-                      subtitle={t("quiz.answer_questions", { topic: post.category.toLowerCase() })}
-                    />
-                  )}
-                </div>
-              ))}
+                    {section.quizAfter && post.quizSlug && (
+                      <QuizInline
+                        quizSlug={post.quizSlug}
+                        title={t("quiz.what_level", { topic: post.category.toLowerCase() })}
+                        subtitle={t("quiz.answer_questions", { topic: post.category.toLowerCase() })}
+                      />
+                    )}
+
+                    {showAdAfter && (
+                      <div className="my-8">
+                        <AdBanner slot="post-in-article" format="in-article" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
 
               {post.quizSlug && (
                 <QuizCTA theme={post.category.toLowerCase()} quizSlug={post.quizSlug} />
@@ -133,6 +147,11 @@ const PostPage = () => {
               )}
 
               <FaqSection items={post.faq} />
+
+              {/* Ad after FAQ, before related posts */}
+              <div className="my-8">
+                <AdBanner slot="post-after-faq" format="horizontal" />
+              </div>
 
               {related.length > 0 && (
                 <section className="my-10">
@@ -162,7 +181,10 @@ const PostPage = () => {
             </div>
 
             <aside className="hidden w-64 shrink-0 lg:block">
-              <TableOfContents sections={post.sections} />
+              <div className="sticky top-24 space-y-8">
+                <TableOfContents sections={post.sections} />
+                <AdBanner slot="post-sidebar" format="vertical" />
+              </div>
             </aside>
           </div>
         </article>
