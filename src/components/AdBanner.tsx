@@ -49,7 +49,7 @@ const AdBanner = ({ slot, format, className = "" }: AdBannerProps) => {
       <div className={`mx-auto flex items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 text-xs text-muted-foreground ${className}`}
         style={{ ...formatToStyle[format], width: "100%" }}
       >
-        <span>{t("common.ad_label", "Publicidade")}</span>
+        <span>{t("common.ad_label")}</span>
       </div>
     );
   }
@@ -60,7 +60,7 @@ const AdBanner = ({ slot, format, className = "" }: AdBannerProps) => {
   return (
     <div className={`mx-auto ${className}`} style={{ width: "100%" }}>
       <span className="mb-1 block text-center text-[10px] uppercase tracking-widest text-muted-foreground/60">
-        {t("common.ad_label", "Publicidade")}
+        {t("common.ad_label")}
       </span>
       <ins
         ref={adRef}
