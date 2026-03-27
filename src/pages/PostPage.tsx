@@ -40,8 +40,6 @@ const PostPage = () => {
   const related = getRelatedPosts(post.relatedPosts);
   const url = `https://validzen.app/${locale}/conteudo/${post.slug}`;
 
-  // Track which section index we're at for ad insertion
-  let sectionIndex = 0;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -101,8 +99,6 @@ const PostPage = () => {
               </div>
 
               {post.sections.map((section) => {
-                sectionIndex++;
-                const showAdAfter = sectionIndex === 2 || sectionIndex === 4;
                 return (
                   <div key={section.id}>
                     <section id={section.id} className="mb-8 scroll-mt-24">
@@ -179,7 +175,7 @@ const PostPage = () => {
             <aside className="hidden w-64 shrink-0 lg:block">
               <div className="sticky top-24 space-y-8">
                 <TableOfContents sections={post.sections} />
-                <AdBanner slot="post-sidebar" format="vertical" />
+                <AdBanner slot="post-sidebar" format="vertical" className="hidden lg:block" />
               </div>
             </aside>
           </div>
