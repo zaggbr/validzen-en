@@ -14,6 +14,7 @@ import Footer from "@/components/Footer";
 import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
+import AdBanner from "@/components/AdBanner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Share2, ArrowRight, UserPlus } from "lucide-react";
 import { getResultById } from "@/lib/quizScoring";
@@ -137,6 +138,10 @@ const ResultPage = () => {
               </CardContent>
             </Card>
           </motion.div>
+
+          <div className="mx-auto mb-12 max-w-2xl">
+            <AdBanner slot="result-after-chart" format="rectangle" className="mx-auto" />
+          </div>
 
           <div className="mx-auto mb-12 max-w-3xl">
             <h2 className="mb-5 text-center text-xl font-bold text-title">{t("result.top_dimensions")}</h2>
