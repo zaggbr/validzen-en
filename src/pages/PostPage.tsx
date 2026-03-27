@@ -118,11 +118,7 @@ const PostPage = () => {
                       />
                     )}
 
-                    {showAdAfter && (
-                      <div className="my-8">
-                        <AdBanner slot="post-in-article" format="in-article" />
-                      </div>
-                    )}
+                    {/* Removed: in-article ads */}
                   </div>
                 );
               })}
@@ -148,9 +144,9 @@ const PostPage = () => {
 
               <FaqSection items={post.faq} />
 
-              {/* Ad after FAQ, before related posts */}
-              <div className="my-8">
-                <AdBanner slot="post-after-faq" format="horizontal" />
+              {/* Single ad per page — sidebar on desktop, here on mobile */}
+              <div className="my-8 lg:hidden">
+                <AdBanner slot="post-main" format="horizontal" />
               </div>
 
               {related.length > 0 && (
