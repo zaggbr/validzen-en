@@ -139,6 +139,10 @@ const ResultPage = () => {
             </Card>
           </motion.div>
 
+          <div className="mx-auto mb-12 max-w-2xl">
+            <AdBanner slot="result-after-chart" format="rectangle" className="mx-auto" />
+          </div>
+
           <div className="mx-auto mb-12 max-w-3xl">
             <h2 className="mb-5 text-center text-xl font-bold text-title">{t("result.top_dimensions")}</h2>
             <div className="grid gap-4 sm:grid-cols-3">
