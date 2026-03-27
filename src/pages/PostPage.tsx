@@ -40,8 +40,6 @@ const PostPage = () => {
   const related = getRelatedPosts(post.relatedPosts);
   const url = `https://validzen.app/${locale}/conteudo/${post.slug}`;
 
-  // Track which section index we're at for ad insertion
-  let sectionIndex = 0;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -101,8 +99,6 @@ const PostPage = () => {
               </div>
 
               {post.sections.map((section) => {
-                sectionIndex++;
-                const showAdAfter = sectionIndex === 2 || sectionIndex === 4;
                 return (
                   <div key={section.id}>
                     <section id={section.id} className="mb-8 scroll-mt-24">
@@ -118,11 +114,7 @@ const PostPage = () => {
                       />
                     )}
 
-                    {showAdAfter && (
-                      <div className="my-8">
-                        <AdBanner slot="post-in-article" format="in-article" />
-                      </div>
-                    )}
+                    {/* Removed: in-article ads */}
                   </div>
                 );
               })}
@@ -148,9 +140,9 @@ const PostPage = () => {
 
               <FaqSection items={post.faq} />
 
-              {/* Ad after FAQ, before related posts */}
-              <div className="my-8">
-                <AdBanner slot="post-after-faq" format="horizontal" />
+              {/* Single ad per page — sidebar on desktop, here on mobile */}
+              <div className="my-8 lg:hidden">
+                <AdBanner slot="post-main" format="horizontal" />
               </div>
 
               {related.length > 0 && (
@@ -183,7 +175,7 @@ const PostPage = () => {
             <aside className="hidden w-64 shrink-0 lg:block">
               <div className="sticky top-24 space-y-8">
                 <TableOfContents sections={post.sections} />
-                <AdBanner slot="post-sidebar" format="vertical" />
+                <AdBanner slot="post-sidebar" format="vertical" className="hidden lg:block" />
               </div>
             </aside>
           </div>
