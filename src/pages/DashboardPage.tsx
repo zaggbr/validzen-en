@@ -22,6 +22,7 @@ import PostCard from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, ArrowRight, Crown, Calendar, TrendingUp } from "lucide-react";
+import PremiumGate from "@/components/PremiumGate";
 import { getResultsFromLocalStorage } from "@/lib/quizScoring";
 import { DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
 import { getTopDimensions, generateInterpretation, getRecommendedPostSlugs } from "@/lib/quizInsights";
@@ -163,20 +164,9 @@ const DashboardPage = () => {
             </div>
           )}
 
-          {/* PRO Section (blurred) */}
-          <div className="relative mb-12">
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-background/70 backdrop-blur-md">
-              <Crown className="mb-3 h-10 w-10 text-secondary" />
-              <h3 className="mb-1 text-lg font-bold text-title">{t("dashboard.unlock_title")}</h3>
-              <p className="mb-4 max-w-sm text-center text-sm text-muted-foreground">{t("dashboard.unlock_desc")}</p>
-              <Button variant="hero" size="lg" asChild>
-                <Link to={localePath("/pro")}>
-                  <Lock className="mr-1.5 h-4 w-4" />{t("dashboard.unlock_pro")}
-                </Link>
-              </Button>
-            </div>
+          <PremiumGate>
 
-            <div className="pointer-events-none select-none space-y-8 rounded-xl border border-border p-6">
+            <div className="mb-12 space-y-8 rounded-xl border border-border p-6">
               <div>
                 <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-title">
                   <TrendingUp className="h-5 w-5" />{t("dashboard.evolution")}
@@ -228,7 +218,7 @@ const DashboardPage = () => {
                 </Card>
               </div>
             </div>
-          </div>
+          </PremiumGate>
 
           <div className="mx-auto max-w-xl">
             <Disclaimer />

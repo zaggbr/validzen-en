@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuizIntro from "@/components/quiz/QuizIntro";
@@ -17,14 +17,21 @@ import {
 import { QuizResult } from "@/data/quizTypes";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/I18nContext";
+import { getSpecificQuizCountToday, incrementSpecificQuizCount } from "@/lib/subscription";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Crown } from "lucide-react";
 
 type Phase = "intro" | "questions" | "result";
 
 const QuizPage = () => {
   const { slug = "geral" } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { localePath } = useI18n();
+  const { user, isPremium } = useAuth();
+  const { t, localePath } = useI18n();
+
+  const isSpecific = slug !== "geral" && slug !== "general";
+  const quizLimitReached = isSpecific && !isPremium && getSpecificQuizCountToday() >= 1;
 
   const quiz = getQuizBySlug(slug);
   const questions = getQuestionsForQuiz(slug);
@@ -35,7 +42,12 @@ const QuizPage = () => {
   const [result, setResult] = useState<QuizResult | null>(null);
   const [direction, setDirection] = useState(1);
 
-  const handleStart = () => setPhase("questions");
+  const handleStart = () => {
+    if (isSpecific && !isPremium) {
+      incrementSpecificQuizCount();
+    }
+    setPhase("questions");
+  };
 
   const handleSelect = useCallback(
     (value: number) => {
@@ -94,7 +106,20 @@ const QuizPage = () => {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex flex-1 flex-col items-center justify-center py-8">
-        {phase === "intro" && <QuizIntro quiz={quiz} onStart={handleStart} />}
+        {phase === "intro" && !quizLimitReached && <QuizIntro quiz={quiz} onStart={handleStart} />}
+
+        {phase === "intro" && quizLimitReached && (
+          <Card className="mx-4 max-w-md text-center">
+            <CardContent className="flex flex-col items-center p-8">
+              <Crown className="mb-4 h-12 w-12 text-secondary" />
+              <h2 className="mb-2 text-xl font-bold text-title">{t("pro.quiz_limit_title")}</h2>
+              <p className="mb-6 text-sm text-muted-foreground">{t("pro.quiz_limit_desc")}</p>
+              <Button variant="hero" size="lg" asChild>
+                <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {phase === "questions" && (
           <div className="w-full max-w-xl px-4">

@@ -12,6 +12,7 @@ import PostPage from "./pages/PostPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import CategoryPage from "./pages/CategoryPage";
 import Placeholder from "./pages/Placeholder";
+import ProPage from "./pages/ProPage";
 import QuizPage from "./pages/QuizPage";
 import ResultPage from "./pages/ResultPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -54,7 +55,7 @@ const App = () => (
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="videos" element={<Placeholder />} />
-                <Route path="pro" element={<Placeholder />} />
+                <Route path="pro" element={<ProPage />} />
                 <Route path="sobre" element={<Placeholder />} />
                 <Route path="about" element={<Placeholder />} />
                 <Route path="conta" element={<Placeholder />} />

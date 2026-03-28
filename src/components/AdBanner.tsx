@@ -22,13 +22,10 @@ const formatToStyle: Record<AdBannerProps["format"], { minHeight: string; maxWid
 };
 
 const AdBanner = ({ slot, format, className = "" }: AdBannerProps) => {
-  const { user } = useAuth();
+  const { isPremium } = useAuth();
   const { t } = useI18n();
   const adRef = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
-
-  // Check premium status — for now uses a simple flag; later will query user_profiles
-  const isPremium = false; // TODO: integrate with user_profiles.is_premium
 
   useEffect(() => {
     if (isPremium || pushed.current) return;
