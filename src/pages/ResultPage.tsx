@@ -13,6 +13,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import AdBanner from "@/components/AdBanner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -84,8 +85,8 @@ const ResultPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <SEOHead title={t("result.title") + " — ValidZen"} description="" noindex />
       <Header />
-      <main className="flex-1">
         <div className="container py-10 md:py-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
