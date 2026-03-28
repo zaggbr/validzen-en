@@ -136,3 +136,13 @@
 .prose-validzen code {
   @apply rounded bg-muted px-1.5 py-0.5 text-xs font-mono;
 }
+
+/* Print styles */
+@media print {
+  header, footer, .back-to-top, nav[aria-label="Breadcrumb"],
+  .ad-banner, button, aside { display: none !important; }
+  main { padding: 0 !important; }
+  .prose-validzen { max-width: 100% !important; font-size: 12pt; }
+  a { text-decoration: none !important; color: inherit !important; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; }
+}
