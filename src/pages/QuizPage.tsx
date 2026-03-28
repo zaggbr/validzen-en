@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuizIntro from "@/components/quiz/QuizIntro";
@@ -17,6 +17,10 @@ import {
 import { QuizResult } from "@/data/quizTypes";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/I18nContext";
+import { getSpecificQuizCountToday, incrementSpecificQuizCount } from "@/lib/subscription";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Crown } from "lucide-react";
 
 type Phase = "intro" | "questions" | "result";
 
