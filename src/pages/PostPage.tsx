@@ -61,6 +61,8 @@ const PostPage = () => {
         ]}
       />
       <Header />
+      <main className="flex-1">
+        <article className="container py-8 md:py-12">
           {/* Breadcrumb */}
           <nav className="mb-6 flex items-center gap-1 text-xs text-muted-foreground" aria-label="Breadcrumb">
             <Link to={localePath("/")} className="hover:text-foreground transition-colors">{t("nav.home")}</Link>

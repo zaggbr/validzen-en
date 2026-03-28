@@ -87,6 +87,7 @@ const ResultPage = () => {
     <div className="flex min-h-screen flex-col">
       <SEOHead title={t("result.title") + " — ValidZen"} description="" noindex />
       <Header />
+      <main className="flex-1">
         <div className="container py-10 md:py-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
