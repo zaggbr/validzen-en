@@ -27,8 +27,11 @@ type Phase = "intro" | "questions" | "result";
 const QuizPage = () => {
   const { slug = "geral" } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { localePath } = useI18n();
+  const { user, isPremium } = useAuth();
+  const { t, localePath } = useI18n();
+
+  const isSpecific = slug !== "geral" && slug !== "general";
+  const quizLimitReached = isSpecific && !isPremium && getSpecificQuizCountToday() >= 1;
 
   const quiz = getQuizBySlug(slug);
   const questions = getQuestionsForQuiz(slug);
