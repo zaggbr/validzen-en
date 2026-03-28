@@ -18,8 +18,15 @@ import ResultPage from "./pages/ResultPage";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
+import ScrollToTop from "@/components/ScrollToTop";
+import BackToTop from "@/components/BackToTop";
+import { initGA } from "@/lib/analytics";
 
 const queryClient = new QueryClient();
+
+// Initialize GA4 if measurement ID is set
+const gaId = import.meta.env.VITE_GA_ID;
+if (gaId) initGA(gaId);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -29,6 +36,8 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
+            <BackToTop />
             <Routes>
               {/* Root redirect to locale */}
               <Route path="/" element={<LocaleRedirect />} />

@@ -10,6 +10,7 @@ import AuthorBox from "@/components/AuthorBox";
 import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
 import AdBanner from "@/components/AdBanner";
+import SEOHead from "@/components/SEOHead";
 import { getPostBySlug, getRelatedPosts } from "@/data/posts";
 import { ChevronRight, Clock, Calendar } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
@@ -43,6 +44,22 @@ const PostPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <SEOHead
+        title={post.metaTitle || post.title}
+        description={post.metaDescription || post.excerpt}
+        canonical={url}
+        type="article"
+        image={post.featuredImage || undefined}
+        publishedAt={post.publishedAt}
+        updatedAt={post.updatedAt}
+        authorName={post.author.name}
+        faq={post.faq}
+        breadcrumbs={[
+          { name: t("nav.home"), url: `https://validzen.app/${locale}` },
+          { name: post.category, url: `https://validzen.app/${locale}/categoria/${post.categorySlug}` },
+          { name: post.title, url },
+        ]}
+      />
       <Header />
       <main className="flex-1">
         <article className="container py-8 md:py-12">
