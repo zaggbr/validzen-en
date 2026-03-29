@@ -2,13 +2,20 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, RotateCcw } from "lucide-react";
-import { QuizResult, DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
-import { getScoreLevel } from "@/lib/quizScoring";
+import { DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/I18nContext";
 
+function getScoreLevel(score: number): { label: string; color: string } {
+  if (score <= 30) return { label: "Baixo", color: "text-accent" };
+  if (score <= 60) return { label: "Moderado", color: "text-secondary" };
+  return { label: "Alto", color: "text-destructive" };
+}
+
 interface Props {
-  result: QuizResult;
+  result: {
+    scores: Record<string, number>;
+  };
   onRetry: () => void;
 }
 
