@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, List } from "lucide-react";
-import type { ContentSection } from "@/data/types";
+import type { ContentSection } from "@/types/database";
 import { useI18n } from "@/i18n/I18nContext";
 
 interface TableOfContentsProps {
