@@ -21,18 +21,40 @@ import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, ArrowRight, Crown, Calendar, TrendingUp } from "lucide-react";
+import { ArrowRight, Calendar, TrendingUp } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import PremiumGate from "@/components/PremiumGate";
-import { getResultsFromLocalStorage } from "@/lib/quizScoring";
+import { useLatestResult, useProgressOverTime } from "@/hooks/useDashboard";
+import { usePosts } from "@/hooks/usePosts";
 import { DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
 import { getTopDimensions, generateInterpretation, getRecommendedPostSlugs } from "@/lib/quizInsights";
-import { posts } from "@/data/posts";
 import { useI18n } from "@/i18n/I18nContext";
 
 const DashboardPage = () => {
-  const results = getResultsFromLocalStorage();
-  const latestResult = results.length > 0 ? results[results.length - 1] : null;
+  const { data: latestResult, results, isLoading } = useLatestResult();
+  const evolutionData = useProgressOverTime();
   const { t, locale, localePath } = useI18n();
+  const { data: allPosts = [] } = usePosts(locale);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <div className="container py-10 md:py-16 space-y-6">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-[360px] w-full" />
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Skeleton className="h-32" />
+              <Skeleton className="h-32" />
+              <Skeleton className="h-32" />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!latestResult) {
     return (
@@ -57,7 +79,7 @@ const DashboardPage = () => {
   const interpretation = generateInterpretation(top);
   const recommendedSlugs = getRecommendedPostSlugs(latestResult.scores);
   const recommendedPosts = recommendedSlugs
-    .map((s) => posts.find((p) => p.slug === s))
+    .map((s) => allPosts.find((p) => p.slug === s))
     .filter(Boolean);
 
   const radarData = Object.entries(latestResult.scores).map(([dim, score]) => ({
@@ -66,11 +88,10 @@ const DashboardPage = () => {
     fullMark: 100,
   }));
 
-  const mockEvolution = [
-    { date: "Jan", ansiedade: 72, burnout: 65, depressao: 45 },
-    { date: "Feb", ansiedade: 68, burnout: 60, depressao: 50 },
-    { date: "Mar", ansiedade: 60, burnout: 55, depressao: 42 },
-  ];
+  // Get unique dimension keys for evolution chart
+  const dimensionKeys = evolutionData.length > 0
+    ? Object.keys(evolutionData[0]).filter((k) => k !== "date")
+    : [];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -87,7 +108,7 @@ const DashboardPage = () => {
               <CardHeader>
                 <CardTitle className="text-lg">{t("dashboard.latest_result")}</CardTitle>
                 <p className="text-xs text-muted-foreground">
-                  {new Date(latestResult.completedAt).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US", { day: "2-digit", month: "long", year: "numeric" })}
+                  {new Date(latestResult.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US", { day: "2-digit", month: "long", year: "numeric" })}
                 </p>
               </CardHeader>
               <CardContent>
@@ -132,15 +153,17 @@ const DashboardPage = () => {
             </h2>
             <Card>
               <CardContent className="p-4">
-                {results.length === 0 ? (
+                {!results || results.length === 0 ? (
                   <p className="text-sm text-muted-foreground">{t("dashboard.no_history")}</p>
                 ) : (
                   <ul className="divide-y divide-border">
                     {results.map((r) => (
                       <li key={r.id} className="flex items-center justify-between py-3">
                         <div>
-                          <p className="text-sm font-medium text-foreground">Quiz {r.quizId === "generic" ? (locale === "pt" ? "Genérico" : "General") : r.quizId}</p>
-                          <p className="text-xs text-muted-foreground">{new Date(r.completedAt).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US")}</p>
+                          <p className="text-sm font-medium text-foreground">
+                            Quiz {r.quiz_slug === "geral" ? (locale === "pt" ? "Genérico" : "General") : r.quiz_slug}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{new Date(r.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US")}</p>
                         </div>
                         <Button asChild variant="ghost" size="sm">
                           <Link to={localePath(`/resultado/${r.id}`)}>{t("dashboard.view")}</Link>
@@ -158,31 +181,41 @@ const DashboardPage = () => {
               <h2 className="mb-4 text-xl font-bold text-title">📚 {t("dashboard.recommended_content")}</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 {recommendedPosts.map((post) =>
-                  post ? <PostCard key={post.slug} title={post.title} excerpt={post.excerpt} category={post.category} readTime={`${post.readingTime} min`} slug={post.slug} /> : null
+                  post ? <PostCard key={post.slug} title={post.title} excerpt={post.excerpt} category={post.category} readTime={`${post.reading_time} min`} slug={post.slug} /> : null
                 )}
               </div>
             </div>
           )}
 
           <PremiumGate>
-
             <div className="mb-12 space-y-8 rounded-xl border border-border p-6">
               <div>
                 <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-title">
                   <TrendingUp className="h-5 w-5" />{t("dashboard.evolution")}
                 </h2>
                 <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={mockEvolution}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                      <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
-                      <Legend />
-                      <Line type="monotone" dataKey="ansiedade" name="Ansiedade" stroke="hsl(var(--destructive))" strokeWidth={2} />
-                      <Line type="monotone" dataKey="burnout" name="Burnout" stroke="hsl(var(--secondary))" strokeWidth={2} />
-                      <Line type="monotone" dataKey="depressao" name="Depressão" stroke="hsl(var(--primary))" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  {evolutionData.length > 1 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={evolutionData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                        <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                        <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
+                        <Legend />
+                        {dimensionKeys.slice(0, 3).map((key, i) => (
+                          <Line
+                            key={key}
+                            type="monotone"
+                            dataKey={key}
+                            name={DIMENSION_LABELS[key as Dimension] || key}
+                            stroke={i === 0 ? "hsl(var(--destructive))" : i === 1 ? "hsl(var(--secondary))" : "hsl(var(--primary))"}
+                            strokeWidth={2}
+                          />
+                        ))}
+                      </LineChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">{t("dashboard.no_history")}</p>
+                  )}
                 </div>
               </div>
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import type { FaqItem } from "@/data/types";
+import type { FaqItem } from "@/types/database";
 import { useI18n } from "@/i18n/I18nContext";
 
 interface FaqSectionProps {

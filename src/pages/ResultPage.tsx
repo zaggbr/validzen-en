@@ -18,25 +18,42 @@ import { Button } from "@/components/ui/button";
 import AdBanner from "@/components/AdBanner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Share2, ArrowRight, UserPlus } from "lucide-react";
-import { getResultById } from "@/lib/quizScoring";
-import {
-  DIMENSION_LABELS,
-  DIMENSION_EMOJIS,
-  Dimension,
-} from "@/data/quizTypes";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useResultById } from "@/hooks/useDashboard";
+import { usePosts } from "@/hooks/usePosts";
+import { DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
 import {
   getTopDimensions,
   generateInterpretation,
   getRecommendedPostSlugs,
 } from "@/lib/quizInsights";
-import { posts } from "@/data/posts";
 import { useI18n } from "@/i18n/I18nContext";
 
 const ResultPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const result = id ? getResultById(id) : undefined;
+  const { data: result, isLoading } = useResultById(id);
   const { t, locale, localePath } = useI18n();
+  const { data: allPosts = [] } = usePosts(locale);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <div className="container py-10 md:py-16">
+            <div className="mb-10 text-center">
+              <Skeleton className="mx-auto mb-3 h-12 w-12 rounded-full" />
+              <Skeleton className="mx-auto mb-2 h-8 w-64" />
+              <Skeleton className="mx-auto h-4 w-48" />
+            </div>
+            <Skeleton className="mx-auto h-[400px] max-w-2xl" />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!result) {
     return (
@@ -59,7 +76,7 @@ const ResultPage = () => {
   const interpretation = generateInterpretation(top);
   const recommendedSlugs = getRecommendedPostSlugs(result.scores);
   const recommendedPosts = recommendedSlugs
-    .map((s) => posts.find((p) => p.slug === s))
+    .map((s) => allPosts.find((p) => p.slug === s))
     .filter(Boolean);
   const topDimension = top[0];
 
@@ -69,7 +86,7 @@ const ResultPage = () => {
     fullMark: 100,
   }));
 
-  const completedDate = new Date(result.completedAt).toLocaleDateString(
+  const completedDate = new Date(result.completed_at).toLocaleDateString(
     locale === "pt" ? "pt-BR" : "en-US",
     { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }
   );
@@ -177,7 +194,7 @@ const ResultPage = () => {
               <div className="grid gap-4 sm:grid-cols-2">
                 {recommendedPosts.map((post) =>
                   post ? (
-                    <PostCard key={post.slug} title={post.title} excerpt={post.excerpt} category={post.category} readTime={`${post.readingTime} min`} slug={post.slug} />
+                    <PostCard key={post.slug} title={post.title} excerpt={post.excerpt} category={post.category} readTime={`${post.reading_time} min`} slug={post.slug} />
                   ) : null
                 )}
               </div>
