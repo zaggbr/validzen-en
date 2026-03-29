@@ -6,20 +6,13 @@ import QuizIntro from "@/components/quiz/QuizIntro";
 import QuizProgress from "@/components/quiz/QuizProgress";
 import QuizQuestionCard from "@/components/quiz/QuizQuestionCard";
 import QuizResultView from "@/components/quiz/QuizResultView";
-import { getQuizBySlug, getQuestionsForQuiz } from "@/data/quizQuestions";
-import {
-  calculateScores,
-  generateResultId,
-  saveResultToLocalStorage,
-  saveResultToSupabase,
-  saveResultAnonymous,
-} from "@/lib/quizScoring";
-import { QuizResult } from "@/data/quizTypes";
+import { useQuizBySlug, useQuizQuestions, calculateScores, useSubmitQuizResult } from "@/hooks/useQuiz";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/I18nContext";
 import { getSpecificQuizCountToday, incrementSpecificQuizCount } from "@/lib/subscription";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Crown } from "lucide-react";
 
 type Phase = "intro" | "questions" | "result";
@@ -33,13 +26,13 @@ const QuizPage = () => {
   const isSpecific = slug !== "geral" && slug !== "general";
   const quizLimitReached = isSpecific && !isPremium && getSpecificQuizCountToday() >= 1;
 
-  const quiz = getQuizBySlug(slug);
-  const questions = getQuestionsForQuiz(slug);
+  const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug);
+  const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug);
+  const submitResult = useSubmitQuizResult();
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [result, setResult] = useState<QuizResult | null>(null);
   const [direction, setDirection] = useState(1);
 
   const handleStart = () => {
@@ -51,6 +44,7 @@ const QuizPage = () => {
 
   const handleSelect = useCallback(
     (value: number) => {
+      if (questions.length === 0) return;
       setAnswers((prev) => ({ ...prev, [questions[currentIdx].id]: value }));
     },
     [currentIdx, questions]
@@ -62,25 +56,20 @@ const QuizPage = () => {
       setCurrentIdx((i) => i + 1);
     } else {
       const scores = calculateScores(questions, answers);
-      const newResult: QuizResult = {
-        id: generateResultId(),
-        quizId: quiz?.id ?? slug,
-        completedAt: new Date().toISOString(),
-        answers,
-        scores,
-      };
+      const quizSlug = quiz?.slug ?? slug;
 
-      saveResultToLocalStorage(newResult);
-
-      if (user) {
-        await saveResultToSupabase(newResult, user.id);
-      } else {
-        await saveResultAnonymous(newResult);
+      try {
+        const resultId = await submitResult.mutateAsync({
+          quizSlug,
+          answers,
+          scores,
+        });
+        navigate(localePath(`/resultado/${resultId}`));
+      } catch {
+        // Error handled in hook via toast
       }
-
-      navigate(localePath(`/resultado/${newResult.id}`));
     }
-  }, [currentIdx, questions, answers, quiz, slug, user, localePath, navigate]);
+  }, [currentIdx, questions, answers, quiz, slug, localePath, navigate, submitResult]);
 
   const handleBack = useCallback(() => {
     if (currentIdx > 0) {
@@ -92,21 +81,77 @@ const QuizPage = () => {
   const handleRetry = () => {
     setAnswers({});
     setCurrentIdx(0);
-    setResult(null);
     setDirection(1);
     setPhase("intro");
   };
 
-  if (!quiz) {
-    navigate(localePath("/"), { replace: true });
-    return null;
+  if (quizLoading || questionsLoading) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex flex-1 flex-col items-center justify-center py-8">
+          <div className="w-full max-w-xl px-4 space-y-4">
+            <Skeleton className="mx-auto h-12 w-12 rounded-full" />
+            <Skeleton className="mx-auto h-8 w-64" />
+            <Skeleton className="mx-auto h-4 w-48" />
+            <Skeleton className="mx-auto h-12 w-40" />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
+
+  if (!quiz || questions.length === 0) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex flex-1 flex-col items-center justify-center py-8">
+          <div className="text-center">
+            <span className="text-5xl">🧭</span>
+            <h1 className="mt-4 text-2xl font-bold">{t("quiz.not_found") || "Quiz não encontrado"}</h1>
+            <Link to={localePath("/")} className="mt-4 inline-block text-sm text-secondary hover:underline">
+              {t("post.back_home")}
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Map quiz data to component props format
+  const quizIntroData = {
+    id: quiz.id,
+    slug: quiz.slug,
+    title: quiz.title,
+    subtitle: quiz.description,
+    questionCount: quiz.question_count || questions.length,
+    estimatedMinutes: quiz.estimated_time || Math.max(1, Math.round(questions.length * 0.25)),
+    dimensions: quiz.dimensions as any,
+  };
+
+  // Map question to component format
+  const currentQuestion = questions[currentIdx]
+    ? {
+        id: questions[currentIdx].id,
+        quizId: questions[currentIdx].quiz_slug,
+        orderNum: questions[currentIdx].order_num,
+        questionText: questions[currentIdx].question_text,
+        questionType: questions[currentIdx].question_type as any,
+        dimension: questions[currentIdx].dimension as any,
+        weight: questions[currentIdx].weight,
+        options: questions[currentIdx].options,
+      }
+    : null;
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex flex-1 flex-col items-center justify-center py-8">
-        {phase === "intro" && !quizLimitReached && <QuizIntro quiz={quiz} onStart={handleStart} />}
+        {phase === "intro" && !quizLimitReached && (
+          <QuizIntro quiz={quizIntroData} onStart={handleStart} />
+        )}
 
         {phase === "intro" && quizLimitReached && (
           <Card className="mx-4 max-w-md text-center">
@@ -121,12 +166,12 @@ const QuizPage = () => {
           </Card>
         )}
 
-        {phase === "questions" && (
+        {phase === "questions" && currentQuestion && (
           <div className="w-full max-w-xl px-4">
             <QuizProgress current={currentIdx + 1} total={questions.length} />
             <QuizQuestionCard
-              question={questions[currentIdx]}
-              selectedValue={answers[questions[currentIdx].id] ?? null}
+              question={currentQuestion}
+              selectedValue={answers[currentQuestion.id] ?? null}
               onSelect={handleSelect}
               onNext={handleNext}
               onBack={handleBack}
@@ -135,10 +180,6 @@ const QuizPage = () => {
               direction={direction}
             />
           </div>
-        )}
-
-        {phase === "result" && result && (
-          <QuizResultView result={result} onRetry={handleRetry} />
         )}
       </main>
       <Footer />

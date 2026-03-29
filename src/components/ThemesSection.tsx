@@ -1,9 +1,40 @@
 import CategoryCard from "./CategoryCard";
-import { categories } from "@/data/categories";
+import { useCategories } from "@/hooks/usePosts";
 import { useI18n } from "@/i18n/I18nContext";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const CATEGORY_EMOJIS: Record<string, string> = {
+  ansiedade: "😰",
+  burnout: "🔥",
+  relacoes: "💔",
+  sentido: "🌊",
+  identidade: "🪞",
+  emocoes: "🧠",
+  futuro: "🤖",
+  sociedade: "🌍",
+};
 
 const ThemesSection = () => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const { data: categories = [], isLoading } = useCategories(locale);
+
+  if (isLoading) {
+    return (
+      <section className="bg-muted/30 py-16 md:py-20">
+        <div className="container">
+          <Skeleton className="mx-auto mb-2 h-8 w-48" />
+          <Skeleton className="mx-auto mb-10 h-4 w-64" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-24" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (categories.length === 0) return null;
 
   return (
     <section className="bg-muted/30 py-16 md:py-20">
@@ -16,7 +47,13 @@ const ThemesSection = () => {
         </p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {categories.map((cat) => (
-            <CategoryCard key={cat.slug} emoji={cat.emoji} name={cat.name} slug={cat.slug} postCount={cat.postCount} />
+            <CategoryCard
+              key={cat.slug}
+              emoji={CATEGORY_EMOJIS[cat.slug] || "📂"}
+              name={cat.name}
+              slug={cat.slug}
+              postCount={cat.count}
+            />
           ))}
         </div>
       </div>

@@ -11,16 +11,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowLeft, Clock, BarChart3 } from "lucide-react";
-import { getQuestionsForQuiz } from "@/data/quizQuestions";
+import { useQuizQuestions, calculateScores, useSubmitQuizResult } from "@/hooks/useQuiz";
 import { DIMENSION_LABELS, Dimension } from "@/data/quizTypes";
-import {
-  calculateScores,
-  generateResultId,
-  saveResultToLocalStorage,
-} from "@/lib/quizScoring";
 import { getTopDimensions } from "@/lib/quizInsights";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/I18nContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface QuizInlineProps {
   quizSlug: string;
@@ -37,7 +33,8 @@ const slideVariants = {
 };
 
 const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
-  const questions = getQuestionsForQuiz(quizSlug);
+  const { data: questions = [], isLoading } = useQuizQuestions(quizSlug);
+  const submitResult = useSubmitQuizResult();
   const [phase, setPhase] = useState<Phase>("cta");
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -54,26 +51,27 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
     [idx, questions]
   );
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     if (idx < questions.length - 1) {
       setDir(1);
       setIdx((i) => i + 1);
     } else {
       const s = calculateScores(questions, answers);
-      const id = generateResultId();
-      const result = {
-        id,
-        quizId: quizSlug,
-        completedAt: new Date().toISOString(),
-        answers,
-        scores: s,
-      };
-      saveResultToLocalStorage(result);
       setScores(s);
-      setResultId(id);
+
+      try {
+        const id = await submitResult.mutateAsync({
+          quizSlug,
+          answers,
+          scores: s,
+        });
+        setResultId(id);
+      } catch {
+        setResultId(null);
+      }
       setPhase("done");
     }
-  }, [idx, questions, answers, quizSlug]);
+  }, [idx, questions, answers, quizSlug, submitResult]);
 
   const handleBack = () => {
     if (idx > 0) {
@@ -81,6 +79,14 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       setIdx((i) => i - 1);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="my-10 rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/5 to-background p-6">
+        <Skeleton className="h-20 w-full" />
+      </div>
+    );
+  }
 
   if (questions.length === 0) return null;
 
@@ -146,7 +152,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
             transition={{ duration: 0.2 }}
           >
             <p className="mb-6 text-center text-base font-semibold text-title md:text-lg">
-              {q.questionText}
+              {q.question_text}
             </p>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
