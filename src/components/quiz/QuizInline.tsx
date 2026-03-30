@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowLeft, Clock, BarChart3 } from "lucide-react";
 import { useQuizQuestions, calculateScores, useSubmitQuizResult } from "@/hooks/useQuiz";
-import { DIMENSION_LABELS, Dimension } from "@/data/quizTypes";
+import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions } from "@/lib/quizInsights";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/I18nContext";
@@ -33,7 +33,9 @@ const slideVariants = {
 };
 
 const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
-  const { data: questions = [], isLoading } = useQuizQuestions(quizSlug);
+  const { locale, t, localePath } = useI18n();
+  const { data: questions = [], isLoading } = useQuizQuestions(quizSlug, locale);
+  const { data: dimensions = [] } = useDimensions();
   const submitResult = useSubmitQuizResult();
   const [phase, setPhase] = useState<Phase>("cta");
   const [idx, setIdx] = useState(0);
@@ -41,7 +43,6 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const [resultId, setResultId] = useState<string | null>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [dir, setDir] = useState(1);
-  const { t, localePath } = useI18n();
 
   const handleSelect = useCallback(
     (value: number) => {
@@ -64,6 +65,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
           quizSlug,
           answers,
           scores: s,
+          locale,
         });
         setResultId(id);
       } catch {
@@ -71,7 +73,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       }
       setPhase("done");
     }
-  }, [idx, questions, answers, quizSlug, submitResult]);
+  }, [idx, questions, answers, quizSlug, locale, submitResult]);
 
   const handleBack = () => {
     if (idx > 0) {
@@ -105,9 +107,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
             <h3 className="text-lg font-bold text-title">
               {title ?? t("quiz.what_level", { topic: quizSlug })}
             </h3>
-            {subtitle && (
-              <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
-            )}
+            {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
             <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
@@ -142,19 +142,10 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
         </div>
 
         <AnimatePresence mode="wait" custom={dir}>
-          <motion.div
-            key={q.id}
-            custom={dir}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.2 }}
-          >
+          <motion.div key={q.id} custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.2 }}>
             <p className="mb-6 text-center text-base font-semibold text-title md:text-lg">
               {q.question_text}
             </p>
-
             <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
               {q.options.map((opt) => (
                 <button
@@ -187,11 +178,16 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
     );
   }
 
-  const top = getTopDimensions(scores, 3);
-  const radarData = Object.entries(scores).map(([dim, score]) => ({
-    dimension: DIMENSION_LABELS[dim as Dimension] ?? dim,
-    score,
-  }));
+  // Done phase
+  const top = getTopDimensions(scores, dimensions, locale, 3);
+  const dimMap = new Map(dimensions.map((d) => [d.slug, d]));
+  const radarData = Object.entries(scores).map(([dim, score]) => {
+    const d = dimMap.get(dim);
+    return {
+      dimension: d ? (locale === "en" ? d.name_en : d.name_pt) : dim,
+      score,
+    };
+  });
 
   return (
     <motion.div

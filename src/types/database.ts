@@ -1,11 +1,5 @@
 /**
  * Application-level types mapped from the Supabase database schema.
- * The actual DB column names use snake_case; these interfaces provide
- * a typed reference for hooks and components.
- *
- * NOTE: The auto-generated types in src/integrations/supabase/types.ts
- * are the source of truth for Supabase queries. These types are used
- * at the application level after data is fetched.
  */
 
 export interface Post {
@@ -26,6 +20,7 @@ export interface Post {
   alternate_slug: string | null;
   related_post_slugs: string[];
   is_premium: boolean;
+  is_sensitive: boolean;
   reading_time: number;
   tags: string[];
   faq: FaqItem[];
@@ -35,6 +30,7 @@ export interface Post {
   author_credentials: string;
   published_at: string;
   updated_at: string;
+  created_at: string;
 }
 
 export interface FaqItem {
@@ -49,17 +45,53 @@ export interface ContentSection {
   quizAfter?: boolean;
 }
 
+export interface Category {
+  id: string;
+  slug: string;
+  name_pt: string;
+  name_en: string;
+  description_pt: string;
+  description_en: string;
+  icon: string;
+  color: string;
+  sort_order: number;
+}
+
+export interface DimensionRow {
+  id: string;
+  slug: string;
+  name_pt: string;
+  name_en: string;
+  description_pt: string;
+  description_en: string;
+  icon: string;
+  color: string;
+  layer: number;
+  interpretation_low_pt: string;
+  interpretation_low_en: string;
+  interpretation_moderate_pt: string;
+  interpretation_moderate_en: string;
+  interpretation_high_pt: string;
+  interpretation_high_en: string;
+  recommended_post_slugs: string[];
+}
+
 export interface Quiz {
   id: string;
   slug: string;
   locale: string;
   title: string;
+  title_pt: string;
+  title_en: string;
   description: string;
+  description_pt: string;
+  description_en: string;
   type: string;
   post_slug: string | null;
   question_count: number;
   estimated_time: number;
   dimensions: string[];
+  is_active: boolean;
 }
 
 export interface QuizQuestion {
@@ -67,8 +99,12 @@ export interface QuizQuestion {
   quiz_slug: string;
   order_num: number;
   question_text: string;
+  question_text_pt: string;
+  question_text_en: string;
   question_type: string;
   options: QuizOption[];
+  options_pt: QuizOption[];
+  options_en: QuizOption[];
   dimension: string;
   weight: number;
 }
@@ -87,7 +123,9 @@ export interface QuizResult {
   scores: Record<string, number>;
   overall_score: number | null;
   severity: string | null;
+  top_dimensions: string[];
   recommended_post_slugs: string[];
+  locale: string;
   completed_at: string;
 }
 
@@ -99,6 +137,8 @@ export interface UserProfile {
   is_premium: boolean;
   premium_until: string | null;
   stripe_customer_id: string | null;
+  quiz_count: number;
+  last_quiz_at: string | null;
   created_at: string;
 }
 
@@ -113,21 +153,23 @@ export interface UserProgress {
   updated_at: string;
 }
 
+export interface DailyQuizUsage {
+  id: string;
+  user_id: string | null;
+  session_id: string | null;
+  quiz_date: string;
+  specific_quiz_count: number;
+}
+
 /** Helper to parse content HTML into sections for ToC */
 export function parseContentSections(html: string): ContentSection[] {
   const sections: ContentSection[] = [];
-  // Split by h2 tags
   const parts = html.split(/<h2[^>]*>/i);
 
   for (let i = 0; i < parts.length; i++) {
     if (i === 0 && !parts[i].includes("</h2>")) {
-      // Intro content before first h2
       if (parts[i].trim()) {
-        sections.push({
-          id: "intro",
-          heading: "",
-          body: parts[i].trim(),
-        });
+        sections.push({ id: "intro", heading: "", body: parts[i].trim() });
       }
       continue;
     }

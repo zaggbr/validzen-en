@@ -3,36 +3,28 @@ import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PostCard from "@/components/PostCard";
-import { usePosts } from "@/hooks/usePosts";
+import { usePosts, useCategories } from "@/hooks/usePosts";
 import { ArrowLeft } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 import { Skeleton } from "@/components/ui/skeleton";
-
-// Fallback emoji map
-const CATEGORY_EMOJIS: Record<string, string> = {
-  ansiedade: "😰",
-  burnout: "🔥",
-  relacoes: "💔",
-  sentido: "🌊",
-  identidade: "🪞",
-  emocoes: "🧠",
-  futuro: "🤖",
-  sociedade: "🌍",
-};
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { t, locale, localePath } = useI18n();
   const { data: allPosts = [], isLoading } = usePosts(locale, slug);
+  const { data: categories = [] } = useCategories();
   const [sort, setSort] = useState<"recent" | "popular">("recent");
+
+  const category = categories.find((c) => c.slug === slug);
+  const categoryName = category
+    ? (locale === "en" ? category.name_en : category.name_pt)
+    : allPosts[0]?.category || slug;
+  const categoryEmoji = category?.icon || "📂";
 
   const sorted = [...allPosts].sort((a, b) => {
     if (sort === "recent") return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
     return b.reading_time - a.reading_time;
   });
-
-  const categoryName = allPosts[0]?.category || slug;
-  const categoryEmoji = CATEGORY_EMOJIS[slug || ""] || "📂";
 
   if (isLoading) {
     return (
@@ -85,6 +77,11 @@ const CategoryPage = () => {
             <span className="text-4xl">{categoryEmoji}</span>
             <div>
               <h1 className="text-2xl font-bold md:text-3xl">{categoryName}</h1>
+              {category && (
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {locale === "en" ? category.description_en : category.description_pt}
+                </p>
+              )}
             </div>
           </div>
 

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, RotateCcw } from "lucide-react";
-import { DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
+import { useDimensions } from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/I18nContext";
 
@@ -20,7 +20,10 @@ interface Props {
 }
 
 const QuizResultView = ({ result, onRetry }: Props) => {
-  const { t, localePath } = useI18n();
+  const { t, locale, localePath } = useI18n();
+  const { data: dimensions = [] } = useDimensions();
+  const dimMap = new Map(dimensions.map((d) => [d.slug, d]));
+
   const sortedDimensions = Object.entries(result.scores).sort(
     ([, a], [, b]) => b - a
   );
@@ -44,7 +47,9 @@ const QuizResultView = ({ result, onRetry }: Props) => {
       <div className="space-y-4">
         {sortedDimensions.map(([dim, score], i) => {
           const { label, color } = getScoreLevel(score);
-          const dimension = dim as Dimension;
+          const d = dimMap.get(dim);
+          const name = d ? (locale === "en" ? d.name_en : d.name_pt) : dim;
+          const emoji = d?.icon || "🧠";
           return (
             <motion.div
               key={dim}
@@ -55,8 +60,8 @@ const QuizResultView = ({ result, onRetry }: Props) => {
             >
               <div className="mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <span>{DIMENSION_EMOJIS[dimension]}</span>
-                  {DIMENSION_LABELS[dimension]}
+                  <span>{emoji}</span>
+                  {name}
                 </span>
                 <span className={cn("text-sm font-bold", color)}>
                   {score}% — {label}
@@ -66,11 +71,7 @@ const QuizResultView = ({ result, onRetry }: Props) => {
                 <motion.div
                   className={cn(
                     "h-full rounded-full",
-                    score <= 30
-                      ? "bg-accent"
-                      : score <= 60
-                        ? "bg-secondary"
-                        : "bg-destructive"
+                    score <= 30 ? "bg-accent" : score <= 60 ? "bg-secondary" : "bg-destructive"
                   )}
                   initial={{ width: 0 }}
                   animate={{ width: `${score}%` }}

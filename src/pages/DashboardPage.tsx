@@ -26,8 +26,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import PremiumGate from "@/components/PremiumGate";
 import { useLatestResult, useProgressOverTime } from "@/hooks/useDashboard";
 import { usePosts } from "@/hooks/usePosts";
-import { DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
-import { getTopDimensions, generateInterpretation, getRecommendedPostSlugs } from "@/lib/quizInsights";
+import { useDimensions } from "@/hooks/useDimensions";
+import { getTopDimensions, generateInterpretation } from "@/lib/quizInsights";
 import { useI18n } from "@/i18n/I18nContext";
 
 const DashboardPage = () => {
@@ -35,6 +35,7 @@ const DashboardPage = () => {
   const evolutionData = useProgressOverTime();
   const { t, locale, localePath } = useI18n();
   const { data: allPosts = [] } = usePosts(locale);
+  const { data: dimensions = [] } = useDimensions();
 
   if (isLoading) {
     return (
@@ -75,20 +76,30 @@ const DashboardPage = () => {
     );
   }
 
-  const top = getTopDimensions(latestResult.scores);
-  const interpretation = generateInterpretation(top);
-  const recommendedSlugs = getRecommendedPostSlugs(latestResult.scores);
+  const top = getTopDimensions(latestResult.scores, dimensions, locale);
+  const interpretation = generateInterpretation(top, locale);
+
+  const recommendedSlugs = latestResult.recommended_post_slugs.length > 0
+    ? latestResult.recommended_post_slugs
+    : dimensions
+        .filter((d) => top.some((t) => t.dimension === d.slug))
+        .flatMap((d) => d.recommended_post_slugs)
+        .slice(0, 4);
+
   const recommendedPosts = recommendedSlugs
     .map((s) => allPosts.find((p) => p.slug === s))
     .filter(Boolean);
 
-  const radarData = Object.entries(latestResult.scores).map(([dim, score]) => ({
-    dimension: DIMENSION_LABELS[dim as Dimension] ?? dim,
-    score,
-    fullMark: 100,
-  }));
+  const dimMap = new Map(dimensions.map((d) => [d.slug, d]));
+  const radarData = Object.entries(latestResult.scores).map(([dim, score]) => {
+    const d = dimMap.get(dim);
+    return {
+      dimension: d ? (locale === "en" ? d.name_en : d.name_pt) : dim,
+      score,
+      fullMark: 100,
+    };
+  });
 
-  // Get unique dimension keys for evolution chart
   const dimensionKeys = evolutionData.length > 0
     ? Object.keys(evolutionData[0]).filter((k) => k !== "date")
     : [];
@@ -201,16 +212,20 @@ const DashboardPage = () => {
                         <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                         <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
                         <Legend />
-                        {dimensionKeys.slice(0, 3).map((key, i) => (
-                          <Line
-                            key={key}
-                            type="monotone"
-                            dataKey={key}
-                            name={DIMENSION_LABELS[key as Dimension] || key}
-                            stroke={i === 0 ? "hsl(var(--destructive))" : i === 1 ? "hsl(var(--secondary))" : "hsl(var(--primary))"}
-                            strokeWidth={2}
-                          />
-                        ))}
+                        {dimensionKeys.slice(0, 3).map((key, i) => {
+                          const d = dimMap.get(key);
+                          const name = d ? (locale === "en" ? d.name_en : d.name_pt) : key;
+                          return (
+                            <Line
+                              key={key}
+                              type="monotone"
+                              dataKey={key}
+                              name={name}
+                              stroke={i === 0 ? "hsl(var(--destructive))" : i === 1 ? "hsl(var(--secondary))" : "hsl(var(--primary))"}
+                              strokeWidth={2}
+                            />
+                          );
+                        })}
                       </LineChart>
                     </ResponsiveContainer>
                   ) : (
@@ -222,11 +237,11 @@ const DashboardPage = () => {
               <div>
                 <h2 className="mb-4 text-lg font-bold text-title">🔬 {t("dashboard.deep_dive")}</h2>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {Object.entries(DIMENSION_LABELS).slice(0, 6).map(([dim, label]) => (
-                    <Card key={dim}>
+                  {dimensions.slice(0, 6).map((dim) => (
+                    <Card key={dim.slug}>
                       <CardContent className="p-4">
-                        <span className="text-lg">{DIMENSION_EMOJIS[dim as Dimension]}</span>
-                        <h4 className="text-sm font-bold text-title">{label}</h4>
+                        <span className="text-lg">{dim.icon}</span>
+                        <h4 className="text-sm font-bold text-title">{locale === "en" ? dim.name_en : dim.name_pt}</h4>
                         <p className="text-xs text-muted-foreground">{t("dashboard.deep_dive_desc")}</p>
                       </CardContent>
                     </Card>
