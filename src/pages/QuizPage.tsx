@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import QuizIntro from "@/components/quiz/QuizIntro";
 import QuizProgress from "@/components/quiz/QuizProgress";
 import QuizQuestionCard from "@/components/quiz/QuizQuestionCard";
-import QuizResultView from "@/components/quiz/QuizResultView";
 import { useQuizBySlug, useQuizQuestions, calculateScores, useSubmitQuizResult } from "@/hooks/useQuiz";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/I18nContext";
@@ -21,13 +20,13 @@ const QuizPage = () => {
   const { slug = "geral" } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user, isPremium } = useAuth();
-  const { t, localePath } = useI18n();
+  const { t, locale, localePath } = useI18n();
 
   const isSpecific = slug !== "geral" && slug !== "general";
   const quizLimitReached = isSpecific && !isPremium && getSpecificQuizCountToday() >= 1;
 
-  const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug);
-  const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug);
+  const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug, locale);
+  const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug, locale);
   const submitResult = useSubmitQuizResult();
 
   const [phase, setPhase] = useState<Phase>("intro");
@@ -63,13 +62,14 @@ const QuizPage = () => {
           quizSlug,
           answers,
           scores,
+          locale,
         });
         navigate(localePath(`/resultado/${resultId}`));
       } catch {
         // Error handled in hook via toast
       }
     }
-  }, [currentIdx, questions, answers, quiz, slug, localePath, navigate, submitResult]);
+  }, [currentIdx, questions, answers, quiz, slug, locale, localePath, navigate, submitResult]);
 
   const handleBack = useCallback(() => {
     if (currentIdx > 0) {
@@ -77,13 +77,6 @@ const QuizPage = () => {
       setCurrentIdx((i) => i - 1);
     }
   }, [currentIdx]);
-
-  const handleRetry = () => {
-    setAnswers({});
-    setCurrentIdx(0);
-    setDirection(1);
-    setPhase("intro");
-  };
 
   if (quizLoading || questionsLoading) {
     return (
@@ -120,7 +113,6 @@ const QuizPage = () => {
     );
   }
 
-  // Map quiz data to component props format
   const quizIntroData = {
     id: quiz.id,
     slug: quiz.slug,
@@ -128,22 +120,9 @@ const QuizPage = () => {
     subtitle: quiz.description,
     questionCount: quiz.question_count || questions.length,
     estimatedMinutes: quiz.estimated_time || Math.max(1, Math.round(questions.length * 0.25)),
-    dimensions: quiz.dimensions as any,
   };
 
-  // Map question to component format
-  const currentQuestion = questions[currentIdx]
-    ? {
-        id: questions[currentIdx].id,
-        quizId: questions[currentIdx].quiz_slug,
-        orderNum: questions[currentIdx].order_num,
-        questionText: questions[currentIdx].question_text,
-        questionType: questions[currentIdx].question_type as any,
-        dimension: questions[currentIdx].dimension as any,
-        weight: questions[currentIdx].weight,
-        options: questions[currentIdx].options,
-      }
-    : null;
+  const currentQuestion = questions[currentIdx] || null;
 
   return (
     <div className="flex min-h-screen flex-col">

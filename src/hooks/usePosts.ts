@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Post } from "@/types/database";
+import type { Post, Category } from "@/types/database";
 import { useToast } from "@/hooks/use-toast";
 
 function mapRow(row: any): Post {
   return {
     ...row,
     faq: Array.isArray(row.faq) ? row.faq : [],
+    is_sensitive: row.is_sensitive ?? false,
+    created_at: row.created_at ?? row.published_at,
   } as Post;
 }
 
@@ -75,34 +77,37 @@ export function useRelatedPosts(slugs: string[]) {
   });
 }
 
-export function useCategories(locale?: string) {
+export function useCategories() {
   return useQuery({
-    queryKey: ["categories", locale],
-    queryFn: async () => {
-      let query = supabase
-        .from("posts")
-        .select("category, category_slug");
+    queryKey: ["categories"],
+    queryFn: async (): Promise<Category[]> => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("sort_order", { ascending: true });
 
+      if (error) throw error;
+      return (data || []) as Category[];
+    },
+  });
+}
+
+/** Count posts per category for a given locale */
+export function useCategoryPostCounts(locale?: string) {
+  return useQuery({
+    queryKey: ["category-post-counts", locale],
+    queryFn: async (): Promise<Record<string, number>> => {
+      let query = supabase.from("posts").select("category_slug");
       if (locale) query = query.eq("locale", locale);
 
       const { data, error } = await query;
       if (error) throw error;
 
-      // Aggregate categories from posts
-      const catMap = new Map<string, { slug: string; name: string; count: number }>();
+      const counts: Record<string, number> = {};
       for (const row of data || []) {
-        const existing = catMap.get(row.category_slug);
-        if (existing) {
-          existing.count++;
-        } else {
-          catMap.set(row.category_slug, {
-            slug: row.category_slug,
-            name: row.category,
-            count: 1,
-          });
-        }
+        counts[row.category_slug] = (counts[row.category_slug] || 0) + 1;
       }
-      return Array.from(catMap.values());
+      return counts;
     },
   });
 }

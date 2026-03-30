@@ -21,12 +21,8 @@ import { Share2, ArrowRight, UserPlus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResultById } from "@/hooks/useDashboard";
 import { usePosts } from "@/hooks/usePosts";
-import { DIMENSION_LABELS, DIMENSION_EMOJIS, Dimension } from "@/data/quizTypes";
-import {
-  getTopDimensions,
-  generateInterpretation,
-  getRecommendedPostSlugs,
-} from "@/lib/quizInsights";
+import { useDimensions } from "@/hooks/useDimensions";
+import { getTopDimensions, generateInterpretation } from "@/lib/quizInsights";
 import { useI18n } from "@/i18n/I18nContext";
 
 const ResultPage = () => {
@@ -35,6 +31,7 @@ const ResultPage = () => {
   const { data: result, isLoading } = useResultById(id);
   const { t, locale, localePath } = useI18n();
   const { data: allPosts = [] } = usePosts(locale);
+  const { data: dimensions = [] } = useDimensions();
 
   if (isLoading) {
     return (
@@ -72,19 +69,32 @@ const ResultPage = () => {
     );
   }
 
-  const top = getTopDimensions(result.scores);
-  const interpretation = generateInterpretation(top);
-  const recommendedSlugs = getRecommendedPostSlugs(result.scores);
+  const top = getTopDimensions(result.scores, dimensions, locale);
+  const interpretation = generateInterpretation(top, locale);
+
+  // Use recommended_post_slugs from result or from top dimensions
+  const recommendedSlugs = result.recommended_post_slugs.length > 0
+    ? result.recommended_post_slugs
+    : dimensions
+        .filter((d) => top.some((t) => t.dimension === d.slug))
+        .flatMap((d) => d.recommended_post_slugs)
+        .slice(0, 4);
+
   const recommendedPosts = recommendedSlugs
     .map((s) => allPosts.find((p) => p.slug === s))
     .filter(Boolean);
+
   const topDimension = top[0];
 
-  const radarData = Object.entries(result.scores).map(([dim, score]) => ({
-    dimension: DIMENSION_LABELS[dim as Dimension] ?? dim,
-    score,
-    fullMark: 100,
-  }));
+  const dimMap = new Map(dimensions.map((d) => [d.slug, d]));
+  const radarData = Object.entries(result.scores).map(([dim, score]) => {
+    const d = dimMap.get(dim);
+    return {
+      dimension: d ? (locale === "en" ? d.name_en : d.name_pt) : dim,
+      score,
+      fullMark: 100,
+    };
+  });
 
   const completedDate = new Date(result.completed_at).toLocaleDateString(
     locale === "pt" ? "pt-BR" : "en-US",
@@ -106,11 +116,7 @@ const ResultPage = () => {
       <Header />
       <main className="flex-1">
         <div className="container py-10 md:py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-10 text-center"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 text-center">
             <span className="mb-3 inline-block text-5xl">🗺️</span>
             <h1 className="mb-2 text-3xl font-bold text-title md:text-4xl">{t("result.title")}</h1>
             <p className="mb-4 text-sm text-muted-foreground">
@@ -121,12 +127,7 @@ const ResultPage = () => {
             </Button>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-            className="mx-auto mb-12 max-w-2xl"
-          >
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="mx-auto mb-12 max-w-2xl">
             <Card>
               <CardContent className="p-4 md:p-8">
                 <ResponsiveContainer width="100%" height={400}>
@@ -135,23 +136,10 @@ const ResultPage = () => {
                     <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
                     <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
                     <Tooltip
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.875rem",
-                      }}
+                      contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.5rem", fontSize: "0.875rem" }}
                       formatter={(value: number) => [`${value}%`, "Score"]}
                     />
-                    <Radar
-                      name="Score"
-                      dataKey="score"
-                      stroke="hsl(var(--primary))"
-                      fill="hsl(var(--primary))"
-                      fillOpacity={0.2}
-                      strokeWidth={2}
-                      dot={{ r: 4, fill: "hsl(var(--secondary))", stroke: "hsl(var(--secondary))" }}
-                    />
+                    <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} dot={{ r: 4, fill: "hsl(var(--secondary))", stroke: "hsl(var(--secondary))" }} />
                   </RadarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -175,7 +163,7 @@ const ResultPage = () => {
                       <span className={`mb-3 rounded-full px-3 py-0.5 text-xs font-semibold capitalize ${item.severityColor}`}>
                         {item.severity}
                       </span>
-                      <p className="text-xs text-muted-foreground">{item.insight.description}</p>
+                      <p className="text-xs text-muted-foreground">{item.interpretation}</p>
                     </CardContent>
                   </Card>
                 </motion.div>

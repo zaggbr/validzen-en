@@ -1,25 +1,14 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
-import { useCategories } from "@/hooks/usePosts";
+import { useCategories, useCategoryPostCounts } from "@/hooks/usePosts";
 import { useI18n } from "@/i18n/I18nContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Fallback emoji map for known categories
-const CATEGORY_EMOJIS: Record<string, string> = {
-  ansiedade: "😰",
-  burnout: "🔥",
-  relacoes: "💔",
-  sentido: "🌊",
-  identidade: "🪞",
-  emocoes: "🧠",
-  futuro: "🤖",
-  sociedade: "🌍",
-};
-
 const CategoriesPage = () => {
   const { t, locale } = useI18n();
-  const { data: categories = [], isLoading } = useCategories(locale);
+  const { data: categories = [], isLoading } = useCategories();
+  const { data: counts = {} } = useCategoryPostCounts(locale);
 
   if (isLoading) {
     return (
@@ -56,10 +45,10 @@ const CategoriesPage = () => {
               {categories.map((cat) => (
                 <CategoryCard
                   key={cat.slug}
-                  emoji={CATEGORY_EMOJIS[cat.slug] || "📂"}
-                  name={cat.name}
+                  emoji={cat.icon}
+                  name={locale === "en" ? cat.name_en : cat.name_pt}
                   slug={cat.slug}
-                  postCount={cat.count}
+                  postCount={counts[cat.slug] || 0}
                 />
               ))}
             </div>

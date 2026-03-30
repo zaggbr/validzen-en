@@ -9,6 +9,9 @@ function mapResult(row: any): QuizResult {
     ...row,
     answers: row.answers || {},
     scores: row.scores || {},
+    top_dimensions: row.top_dimensions || [],
+    recommended_post_slugs: row.recommended_post_slugs || [],
+    locale: row.locale || "pt",
   } as QuizResult;
 }
 
@@ -19,7 +22,6 @@ export function useUserResults() {
     queryKey: ["user-results", user?.id],
     queryFn: async (): Promise<QuizResult[]> => {
       if (!user) {
-        // Try anonymous session
         const sessionId = getSessionId();
         if (!sessionId) return [];
 
@@ -60,7 +62,6 @@ export function useResultById(id: string | undefined) {
     queryFn: async (): Promise<QuizResult | null> => {
       if (!id) return null;
 
-      // Try by ID directly — first as authenticated user
       if (user) {
         const { data, error } = await supabase
           .from("quiz_results")
@@ -72,7 +73,6 @@ export function useResultById(id: string | undefined) {
         if (!error && data) return mapResult(data);
       }
 
-      // Try as anonymous
       const sessionId = getSessionId();
       if (sessionId) {
         const { data, error } = await supabase
@@ -86,7 +86,7 @@ export function useResultById(id: string | undefined) {
         if (!error && data) return mapResult(data);
       }
 
-      // Fallback: check localStorage
+      // Fallback: localStorage
       try {
         const raw = localStorage.getItem("validzen_quiz_results");
         if (raw) {
@@ -102,14 +102,14 @@ export function useResultById(id: string | undefined) {
               scores: found.scores || {},
               overall_score: null,
               severity: null,
+              top_dimensions: [],
               recommended_post_slugs: [],
+              locale: "pt",
               completed_at: found.completedAt || new Date().toISOString(),
             } as QuizResult;
           }
         }
-      } catch {
-        // silently fail
-      }
+      } catch { /* silently fail */ }
 
       return null;
     },

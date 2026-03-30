@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { QuizQuestion } from "@/data/quizTypes";
+import type { QuizQuestion } from "@/types/database";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/I18nContext";
 
@@ -104,33 +104,19 @@ const QuizQuestionCard = ({
         className="mx-auto w-full max-w-xl"
       >
         <h2 className="mb-8 text-center text-lg font-semibold text-title md:text-xl">
-          {question.questionText}
+          {question.question_text}
         </h2>
 
-        {question.questionType === "scale" && renderScale()}
-        {question.questionType === "multiple_choice" && renderMultipleChoice()}
-        {question.questionType === "yes_no" && renderYesNo()}
+        {question.question_type === "scale" && renderScale()}
+        {question.question_type === "multiple_choice" && renderMultipleChoice()}
+        {question.question_type === "yes_no" && renderYesNo()}
 
         <div className="mt-10 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onBack}
-            disabled={isFirst}
-            className="gap-1"
-          >
+          <Button variant="ghost" size="sm" onClick={onBack} disabled={isFirst} className="gap-1">
             <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
           </Button>
-
-          <Button
-            onClick={onNext}
-            disabled={selectedValue === null}
-            variant="hero"
-            size="lg"
-            className="gap-1"
-          >
-            {isLast ? t("quiz.see_result") : t("quiz.next")}{" "}
-            <ArrowRight className="h-4 w-4" />
+          <Button onClick={onNext} disabled={selectedValue === null} variant="hero" size="lg" className="gap-1">
+            {isLast ? t("quiz.see_result") : t("quiz.next")} <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
       </motion.div>

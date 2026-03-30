@@ -1,22 +1,12 @@
 import CategoryCard from "./CategoryCard";
-import { useCategories } from "@/hooks/usePosts";
+import { useCategories, useCategoryPostCounts } from "@/hooks/usePosts";
 import { useI18n } from "@/i18n/I18nContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const CATEGORY_EMOJIS: Record<string, string> = {
-  ansiedade: "😰",
-  burnout: "🔥",
-  relacoes: "💔",
-  sentido: "🌊",
-  identidade: "🪞",
-  emocoes: "🧠",
-  futuro: "🤖",
-  sociedade: "🌍",
-};
-
 const ThemesSection = () => {
   const { t, locale } = useI18n();
-  const { data: categories = [], isLoading } = useCategories(locale);
+  const { data: categories = [], isLoading } = useCategories();
+  const { data: counts = {} } = useCategoryPostCounts(locale);
 
   if (isLoading) {
     return (
@@ -49,10 +39,10 @@ const ThemesSection = () => {
           {categories.map((cat) => (
             <CategoryCard
               key={cat.slug}
-              emoji={CATEGORY_EMOJIS[cat.slug] || "📂"}
-              name={cat.name}
+              emoji={cat.icon}
+              name={locale === "en" ? cat.name_en : cat.name_pt}
               slug={cat.slug}
-              postCount={cat.count}
+              postCount={counts[cat.slug] || 0}
             />
           ))}
         </div>

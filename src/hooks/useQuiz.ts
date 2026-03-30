@@ -5,22 +5,36 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { getOrCreateSessionId } from "@/lib/anonymousSession";
 
-function mapQuizRow(row: any): Quiz {
-  return row as Quiz;
-}
-
-function mapQuestionRow(row: any): QuizQuestion {
+function mapQuizRow(row: any, locale: string): Quiz {
   return {
     ...row,
-    options: Array.isArray(row.options) ? row.options as QuizOption[] : [],
+    title: locale === "en" ? (row.title_en || row.title) : (row.title_pt || row.title),
+    description: locale === "en" ? (row.description_en || row.description) : (row.description_pt || row.description),
+    is_active: row.is_active ?? true,
+  } as Quiz;
+}
+
+function mapQuestionRow(row: any, locale: string): QuizQuestion {
+  const options = locale === "en"
+    ? (Array.isArray(row.options_en) && row.options_en.length > 0 ? row.options_en : row.options)
+    : (Array.isArray(row.options_pt) && row.options_pt.length > 0 ? row.options_pt : row.options);
+
+  const questionText = locale === "en"
+    ? (row.question_text_en || row.question_text)
+    : (row.question_text_pt || row.question_text);
+
+  return {
+    ...row,
+    question_text: questionText,
+    options: Array.isArray(options) ? options as QuizOption[] : [],
   } as QuizQuestion;
 }
 
-export function useQuizBySlug(slug: string | undefined) {
+export function useQuizBySlug(slug: string | undefined, locale: string = "pt") {
   const { toast } = useToast();
 
   return useQuery({
-    queryKey: ["quiz", slug],
+    queryKey: ["quiz", slug, locale],
     queryFn: async (): Promise<Quiz | null> => {
       if (!slug) return null;
       const { data, error } = await supabase
@@ -33,17 +47,17 @@ export function useQuizBySlug(slug: string | undefined) {
         toast({ title: "Erro ao carregar quiz", description: error.message, variant: "destructive" });
         throw error;
       }
-      return data ? mapQuizRow(data) : null;
+      return data ? mapQuizRow(data, locale) : null;
     },
     enabled: !!slug,
   });
 }
 
-export function useQuizQuestions(quizSlug: string | undefined) {
+export function useQuizQuestions(quizSlug: string | undefined, locale: string = "pt") {
   const { toast } = useToast();
 
   return useQuery({
-    queryKey: ["quiz-questions", quizSlug],
+    queryKey: ["quiz-questions", quizSlug, locale],
     queryFn: async (): Promise<QuizQuestion[]> => {
       if (!quizSlug) return [];
       const { data, error } = await supabase
@@ -56,7 +70,7 @@ export function useQuizQuestions(quizSlug: string | undefined) {
         toast({ title: "Erro ao carregar perguntas", description: error.message, variant: "destructive" });
         throw error;
       }
-      return (data || []).map(mapQuestionRow);
+      return (data || []).map((r) => mapQuestionRow(r, locale));
     },
     enabled: !!quizSlug,
   });
@@ -97,15 +111,20 @@ export function useSubmitQuizResult() {
       quizSlug: string;
       answers: Record<string, number>;
       scores: Record<string, number>;
+      locale?: string;
     }) => {
-      const { quizSlug, answers, scores } = params;
+      const { quizSlug, answers, scores, locale = "pt" } = params;
       const values = Object.values(scores);
-      const overall =
-        values.length > 0
-          ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
-          : 0;
-      const severity =
-        overall <= 33 ? "leve" : overall <= 66 ? "moderado" : "severo";
+      const overall = values.length > 0
+        ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+        : 0;
+      const severity = overall <= 33 ? "leve" : overall <= 66 ? "moderado" : "severo";
+
+      // Get top 3 dimensions
+      const topDimensions = Object.entries(scores)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 3)
+        .map(([dim]) => dim);
 
       const insertData: any = {
         quiz_slug: quizSlug,
@@ -113,6 +132,8 @@ export function useSubmitQuizResult() {
         scores,
         overall_score: overall,
         severity,
+        top_dimensions: topDimensions,
+        locale,
         completed_at: new Date().toISOString(),
       };
 
@@ -133,22 +154,12 @@ export function useSubmitQuizResult() {
         throw error;
       }
 
-      // Also save to localStorage as backup
+      // Backup to localStorage
       try {
-        const existing = JSON.parse(
-          localStorage.getItem("validzen_quiz_results") || "[]"
-        );
-        existing.push({
-          id: data.id,
-          quizId: quizSlug,
-          completedAt: insertData.completed_at,
-          answers,
-          scores,
-        });
+        const existing = JSON.parse(localStorage.getItem("validzen_quiz_results") || "[]");
+        existing.push({ id: data.id, quizId: quizSlug, completedAt: insertData.completed_at, answers, scores });
         localStorage.setItem("validzen_quiz_results", JSON.stringify(existing));
-      } catch {
-        // silently fail
-      }
+      } catch { /* silently fail */ }
 
       return data.id as string;
     },

@@ -1,11 +1,17 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Clock, HelpCircle } from "lucide-react";
-import { Quiz } from "@/data/quizTypes";
 import { useI18n } from "@/i18n/I18nContext";
 
 interface QuizIntroProps {
-  quiz: Quiz;
+  quiz: {
+    id: string;
+    slug: string;
+    title: string;
+    subtitle: string;
+    questionCount: number;
+    estimatedMinutes: number;
+  };
   onStart: () => void;
 }
 
