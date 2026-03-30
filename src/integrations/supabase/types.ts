@@ -14,6 +14,123 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          color: string
+          description_en: string
+          description_pt: string
+          icon: string
+          id: string
+          name_en: string
+          name_pt: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          color?: string
+          description_en?: string
+          description_pt?: string
+          icon?: string
+          id?: string
+          name_en?: string
+          name_pt?: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          color?: string
+          description_en?: string
+          description_pt?: string
+          icon?: string
+          id?: string
+          name_en?: string
+          name_pt?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      daily_quiz_usage: {
+        Row: {
+          id: string
+          quiz_date: string
+          session_id: string | null
+          specific_quiz_count: number
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          quiz_date?: string
+          session_id?: string | null
+          specific_quiz_count?: number
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          quiz_date?: string
+          session_id?: string | null
+          specific_quiz_count?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      dimensions: {
+        Row: {
+          color: string
+          description_en: string
+          description_pt: string
+          icon: string
+          id: string
+          interpretation_high_en: string
+          interpretation_high_pt: string
+          interpretation_low_en: string
+          interpretation_low_pt: string
+          interpretation_moderate_en: string
+          interpretation_moderate_pt: string
+          layer: number
+          name_en: string
+          name_pt: string
+          recommended_post_slugs: string[]
+          slug: string
+        }
+        Insert: {
+          color?: string
+          description_en?: string
+          description_pt?: string
+          icon?: string
+          id?: string
+          interpretation_high_en?: string
+          interpretation_high_pt?: string
+          interpretation_low_en?: string
+          interpretation_low_pt?: string
+          interpretation_moderate_en?: string
+          interpretation_moderate_pt?: string
+          layer?: number
+          name_en?: string
+          name_pt?: string
+          recommended_post_slugs?: string[]
+          slug: string
+        }
+        Update: {
+          color?: string
+          description_en?: string
+          description_pt?: string
+          icon?: string
+          id?: string
+          interpretation_high_en?: string
+          interpretation_high_pt?: string
+          interpretation_low_en?: string
+          interpretation_low_pt?: string
+          interpretation_moderate_en?: string
+          interpretation_moderate_pt?: string
+          layer?: number
+          name_en?: string
+          name_pt?: string
+          recommended_post_slugs?: string[]
+          slug?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           alternate_slug: string | null
@@ -24,11 +141,13 @@ export type Database = {
           category: string
           category_slug: string
           content: string
+          created_at: string
           excerpt: string
           faq: Json
           featured_image: string
           id: string
           is_premium: boolean
+          is_sensitive: boolean
           layer: number
           locale: string
           meta_description: string
@@ -52,11 +171,13 @@ export type Database = {
           category?: string
           category_slug?: string
           content?: string
+          created_at?: string
           excerpt?: string
           faq?: Json
           featured_image?: string
           id?: string
           is_premium?: boolean
+          is_sensitive?: boolean
           layer?: number
           locale?: string
           meta_description?: string
@@ -80,11 +201,13 @@ export type Database = {
           category?: string
           category_slug?: string
           content?: string
+          created_at?: string
           excerpt?: string
           faq?: Json
           featured_image?: string
           id?: string
           is_premium?: boolean
+          is_sensitive?: boolean
           layer?: number
           locale?: string
           meta_description?: string
@@ -106,8 +229,12 @@ export type Database = {
           dimension: string
           id: string
           options: Json
+          options_en: Json
+          options_pt: Json
           order_num: number
           question_text: string
+          question_text_en: string
+          question_text_pt: string
           question_type: string
           quiz_slug: string
           weight: number
@@ -116,8 +243,12 @@ export type Database = {
           dimension: string
           id?: string
           options?: Json
+          options_en?: Json
+          options_pt?: Json
           order_num?: number
           question_text: string
+          question_text_en?: string
+          question_text_pt?: string
           question_type?: string
           quiz_slug: string
           weight?: number
@@ -126,8 +257,12 @@ export type Database = {
           dimension?: string
           id?: string
           options?: Json
+          options_en?: Json
+          options_pt?: Json
           order_num?: number
           question_text?: string
+          question_text_en?: string
+          question_text_pt?: string
           question_type?: string
           quiz_slug?: string
           weight?: number
@@ -147,36 +282,42 @@ export type Database = {
           answers: Json
           completed_at: string
           id: string
+          locale: string
           overall_score: number | null
           quiz_slug: string
           recommended_post_slugs: string[]
           scores: Json
           session_id: string | null
           severity: string | null
+          top_dimensions: string[]
           user_id: string | null
         }
         Insert: {
           answers?: Json
           completed_at?: string
           id?: string
+          locale?: string
           overall_score?: number | null
           quiz_slug: string
           recommended_post_slugs?: string[]
           scores?: Json
           session_id?: string | null
           severity?: string | null
+          top_dimensions?: string[]
           user_id?: string | null
         }
         Update: {
           answers?: Json
           completed_at?: string
           id?: string
+          locale?: string
           overall_score?: number | null
           quiz_slug?: string
           recommended_post_slugs?: string[]
           scores?: Json
           session_id?: string | null
           severity?: string | null
+          top_dimensions?: string[]
           user_id?: string | null
         }
         Relationships: []
@@ -184,38 +325,53 @@ export type Database = {
       quizzes: {
         Row: {
           description: string
+          description_en: string
+          description_pt: string
           dimensions: string[]
           estimated_time: number
           id: string
+          is_active: boolean
           locale: string
           post_slug: string | null
           question_count: number
           slug: string
           title: string
+          title_en: string
+          title_pt: string
           type: string
         }
         Insert: {
           description?: string
+          description_en?: string
+          description_pt?: string
           dimensions?: string[]
           estimated_time?: number
           id?: string
+          is_active?: boolean
           locale?: string
           post_slug?: string | null
           question_count?: number
           slug: string
           title: string
+          title_en?: string
+          title_pt?: string
           type?: string
         }
         Update: {
           description?: string
+          description_en?: string
+          description_pt?: string
           dimensions?: string[]
           estimated_time?: number
           id?: string
+          is_active?: boolean
           locale?: string
           post_slug?: string | null
           question_count?: number
           slug?: string
           title?: string
+          title_en?: string
+          title_pt?: string
           type?: string
         }
         Relationships: []
@@ -227,8 +383,10 @@ export type Database = {
           display_name: string | null
           id: string
           is_premium: boolean
+          last_quiz_at: string | null
           preferred_locale: string
           premium_until: string | null
+          quiz_count: number
           stripe_customer_id: string | null
         }
         Insert: {
@@ -237,8 +395,10 @@ export type Database = {
           display_name?: string | null
           id: string
           is_premium?: boolean
+          last_quiz_at?: string | null
           preferred_locale?: string
           premium_until?: string | null
+          quiz_count?: number
           stripe_customer_id?: string | null
         }
         Update: {
@@ -247,8 +407,10 @@ export type Database = {
           display_name?: string | null
           id?: string
           is_premium?: boolean
+          last_quiz_at?: string | null
           preferred_locale?: string
           premium_until?: string | null
+          quiz_count?: number
           stripe_customer_id?: string | null
         }
         Relationships: []
