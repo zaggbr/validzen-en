@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 function mapRow(row: any): Post {
   return {
     ...row,
+    category_slug: row.category_slug || row.category,
     faq: Array.isArray(row.faq) ? row.faq : [],
     is_sensitive: row.is_sensitive ?? false,
     created_at: row.created_at ?? row.published_at,
