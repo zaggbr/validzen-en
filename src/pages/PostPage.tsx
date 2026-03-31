@@ -151,7 +151,13 @@ const PostPage = () => {
                       {section.heading && (
                         <h2 className="mb-4 text-xl font-bold md:text-2xl">{section.heading}</h2>
                       )}
-                      <div className="prose-validzen" dangerouslySetInnerHTML={{ __html: section.body }} />
+                      {isMarkdown ? (
+                        <div className="prose-validzen">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.body}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <div className="prose-validzen" dangerouslySetInnerHTML={{ __html: section.body }} />
+                      )}
                     </section>
 
                     {i === 1 && post.quiz_slug && (
@@ -164,7 +170,13 @@ const PostPage = () => {
                   </div>
                 ))
               ) : (
-                <div className="prose-validzen mb-8" dangerouslySetInnerHTML={{ __html: post.content }} />
+                isMarkdown ? (
+                  <div className="prose-validzen mb-8">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+                  </div>
+                ) : (
+                  <div className="prose-validzen mb-8" dangerouslySetInnerHTML={{ __html: post.content }} />
+                )
               )}
 
               {post.quiz_slug && (
