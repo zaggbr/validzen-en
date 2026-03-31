@@ -11,7 +11,7 @@ export interface Post {
   meta_description: string;
   layer: number;
   category: string;
-  category_slug: string;
+  category_slug: string; // derived: same as category (maps to categories.slug)
   content: string;
   excerpt: string;
   featured_image: string;

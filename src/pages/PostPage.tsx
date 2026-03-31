@@ -97,7 +97,7 @@ const PostPage = () => {
           <nav className="mb-6 flex items-center gap-1 text-xs text-muted-foreground" aria-label="Breadcrumb">
             <Link to={localePath("/")} className="hover:text-foreground transition-colors">{t("nav.home")}</Link>
             <ChevronRight className="h-3 w-3" />
-            <Link to={localePath(`/categoria/${post.category_slug}`)} className="hover:text-foreground transition-colors">
+            <Link to={localePath(`/categoria/${post.category}`)} className="hover:text-foreground transition-colors">
               {post.category}
             </Link>
             <ChevronRight className="h-3 w-3" />
