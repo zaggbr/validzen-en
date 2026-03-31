@@ -161,8 +161,58 @@ export interface DailyQuizUsage {
   specific_quiz_count: number;
 }
 
-/** Helper to parse content HTML into sections for ToC */
-export function parseContentSections(html: string): ContentSection[] {
+/** Helper to parse content into sections for ToC — supports both HTML and Markdown */
+export function parseContentSections(content: string): ContentSection[] {
+  if (!content) return [];
+
+  // Detect if content is Markdown (contains ## headings) or HTML (contains <h2>)
+  const isMarkdown = /^##\s+/m.test(content) && !/<h2[\s>]/i.test(content);
+
+  if (isMarkdown) {
+    return parseMarkdownSections(content);
+  }
+  return parseHtmlSections(content);
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function parseMarkdownSections(md: string): ContentSection[] {
+  const sections: ContentSection[] = [];
+  const lines = md.split("\n");
+  let currentHeading = "";
+  let currentId = "intro";
+  let bodyLines: string[] = [];
+
+  const flush = () => {
+    const body = bodyLines.join("\n").trim();
+    if (body || currentHeading) {
+      sections.push({ id: currentId, heading: currentHeading, body });
+    }
+  };
+
+  for (const line of lines) {
+    const match = line.match(/^##\s+(.+)/);
+    if (match) {
+      flush();
+      currentHeading = match[1].trim();
+      currentId = slugify(currentHeading) || `section-${sections.length + 1}`;
+      bodyLines = [];
+    } else {
+      bodyLines.push(line);
+    }
+  }
+  flush();
+  return sections;
+}
+
+function parseHtmlSections(html: string): ContentSection[] {
   const sections: ContentSection[] = [];
   const parts = html.split(/<h2[^>]*>/i);
 
@@ -179,14 +229,9 @@ export function parseContentSections(html: string): ContentSection[] {
 
     const heading = parts[i].substring(0, closingIdx).replace(/<[^>]*>/g, "").trim();
     const body = parts[i].substring(closingIdx + 5).trim();
-    const id = heading
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
+    const id = slugify(heading) || `section-${i}`;
 
-    sections.push({ id: id || `section-${i}`, heading, body });
+    sections.push({ id, heading, body });
   }
 
   return sections;
