@@ -64,6 +64,7 @@ const PostPage = () => {
   }
 
   const sections = parseContentSections(post.content);
+  const isMarkdown = /^##\s+/m.test(post.content) && !/<h2[\s>]/i.test(post.content);
   const url = `https://validzen.app/${locale}/conteudo/${post.slug}`;
   const author = {
     name: post.author_name,
