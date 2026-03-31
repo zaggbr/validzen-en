@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 function mapRow(row: any): Post {
   return {
     ...row,
+    category_slug: row.category_slug || row.category,
     faq: Array.isArray(row.faq) ? row.faq : [],
     is_sensitive: row.is_sensitive ?? false,
     created_at: row.created_at ?? row.published_at,
@@ -24,7 +25,7 @@ export function usePosts(locale?: string, categorySlug?: string, layer?: number)
         .order("published_at", { ascending: false });
 
       if (locale) query = query.eq("locale", locale);
-      if (categorySlug) query = query.eq("category_slug", categorySlug);
+      if (categorySlug) query = query.eq("category", categorySlug);
       if (layer) query = query.eq("layer", layer);
 
       const { data, error } = await query;
@@ -97,7 +98,7 @@ export function useCategoryPostCounts(locale?: string) {
   return useQuery({
     queryKey: ["category-post-counts", locale],
     queryFn: async (): Promise<Record<string, number>> => {
-      let query = supabase.from("posts").select("category_slug");
+      let query = supabase.from("posts").select("category");
       if (locale) query = query.eq("locale", locale);
 
       const { data, error } = await query;
@@ -105,7 +106,7 @@ export function useCategoryPostCounts(locale?: string) {
 
       const counts: Record<string, number> = {};
       for (const row of data || []) {
-        counts[row.category_slug] = (counts[row.category_slug] || 0) + 1;
+        counts[row.category] = (counts[row.category] || 0) + 1;
       }
       return counts;
     },
