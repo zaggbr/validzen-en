@@ -24,7 +24,7 @@ export function usePosts(locale?: string, categorySlug?: string, layer?: number)
         .order("published_at", { ascending: false });
 
       if (locale) query = query.eq("locale", locale);
-      if (categorySlug) query = query.eq("category_slug", categorySlug);
+      if (categorySlug) query = query.eq("category", categorySlug);
       if (layer) query = query.eq("layer", layer);
 
       const { data, error } = await query;
