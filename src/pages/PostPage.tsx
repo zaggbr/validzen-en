@@ -87,7 +87,7 @@ const PostPage = () => {
         faq={post.faq}
         breadcrumbs={[
           { name: t("nav.home"), url: `https://validzen.app/${locale}` },
-          { name: post.category, url: `https://validzen.app/${locale}/categoria/${post.category_slug}` },
+          { name: post.category, url: `https://validzen.app/${locale}/categoria/${post.category}` },
           { name: post.title, url },
         ]}
       />
