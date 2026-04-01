@@ -11,6 +11,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { t, locale, localePath } = useI18n();
+
+  console.log("[CategoryPage] locale:", locale, "slug:", slug);
+
   const { data: allPosts = [], isLoading } = usePosts(locale, slug);
   const { data: categories = [] } = useCategories();
   const [sort, setSort] = useState<"recent" | "popular">("recent");
