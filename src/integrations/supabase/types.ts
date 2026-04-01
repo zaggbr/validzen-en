@@ -224,6 +224,147 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_assessment_posts: {
+        Row: {
+          assessment_slug: string
+          id: string
+          post_slug: string
+        }
+        Insert: {
+          assessment_slug: string
+          id?: string
+          post_slug: string
+        }
+        Update: {
+          assessment_slug?: string
+          id?: string
+          post_slug?: string
+        }
+        Relationships: []
+      }
+      premium_assessment_questions: {
+        Row: {
+          assessment_slug: string
+          dimension: string
+          id: string
+          options_en: Json
+          options_pt: Json
+          order_num: number
+          question_text_en: string
+          question_text_pt: string
+          section: string
+          weight: number
+        }
+        Insert: {
+          assessment_slug: string
+          dimension?: string
+          id?: string
+          options_en?: Json
+          options_pt?: Json
+          order_num?: number
+          question_text_en?: string
+          question_text_pt?: string
+          section?: string
+          weight?: number
+        }
+        Update: {
+          assessment_slug?: string
+          dimension?: string
+          id?: string
+          options_en?: Json
+          options_pt?: Json
+          order_num?: number
+          question_text_en?: string
+          question_text_pt?: string
+          section?: string
+          weight?: number
+        }
+        Relationships: []
+      }
+      premium_assessment_results: {
+        Row: {
+          answers: Json
+          assessment_slug: string
+          completed_at: string
+          id: string
+          interpretation: Json
+          overall_score: number | null
+          scores: Json
+          session_id: string | null
+          top_dimensions: Json
+          user_id: string | null
+        }
+        Insert: {
+          answers?: Json
+          assessment_slug: string
+          completed_at?: string
+          id?: string
+          interpretation?: Json
+          overall_score?: number | null
+          scores?: Json
+          session_id?: string | null
+          top_dimensions?: Json
+          user_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          assessment_slug?: string
+          completed_at?: string
+          id?: string
+          interpretation?: Json
+          overall_score?: number | null
+          scores?: Json
+          session_id?: string | null
+          top_dimensions?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      premium_assessments: {
+        Row: {
+          created_at: string
+          description_en: string
+          description_pt: string
+          estimated_time: number
+          id: string
+          is_active: boolean
+          is_premium: boolean
+          question_count: number
+          slug: string
+          theme: string
+          title_en: string
+          title_pt: string
+        }
+        Insert: {
+          created_at?: string
+          description_en?: string
+          description_pt?: string
+          estimated_time?: number
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          question_count?: number
+          slug: string
+          theme?: string
+          title_en?: string
+          title_pt?: string
+        }
+        Update: {
+          created_at?: string
+          description_en?: string
+          description_pt?: string
+          estimated_time?: number
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          question_count?: number
+          slug?: string
+          theme?: string
+          title_en?: string
+          title_pt?: string
+        }
+        Relationships: []
+      }
       quiz_questions: {
         Row: {
           dimension: string
