@@ -7,6 +7,7 @@ import TableOfContents from "@/components/TableOfContents";
 import ShareButtons from "@/components/ShareButtons";
 import QuizCTA from "@/components/QuizCTA";
 import QuizInline from "@/components/quiz/QuizInline";
+import PremiumAssessmentCTA from "@/components/PremiumAssessmentCTA";
 import FaqSection from "@/components/FaqSection";
 import AuthorBox from "@/components/AuthorBox";
 import Disclaimer from "@/components/Disclaimer";
