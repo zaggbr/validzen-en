@@ -184,6 +184,8 @@ const PostPage = () => {
                 <QuizCTA theme={post.category.toLowerCase()} quizSlug={post.quiz_slug} />
               )}
 
+              <PremiumAssessmentCTA postSlug={post.slug} />
+
               {post.video_url && (
                 <section className="my-10">
                   <h2 className="mb-4 text-xl font-bold">{t("post.related_video")}</h2>
