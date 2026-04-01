@@ -13,10 +13,7 @@ const Index = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <SEOHead
-        title="ValidZen — The Meaning Crisis Project"
-        description={t("home.hero_description")}
-      />
+      <SEOHead title="ValidZen — The Meaning Crisis Project" description={t("home.hero_description")} />
       <Header />
       <main className="flex-1">
         <HeroSection />
