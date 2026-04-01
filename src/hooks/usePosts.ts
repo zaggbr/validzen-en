@@ -16,19 +16,28 @@ function mapRow(row: any): Post {
 export function usePosts(locale?: string, categorySlug?: string, layer?: number) {
   const { toast } = useToast();
 
+  // Fallback: if locale is empty/undefined, default to "pt"
+  const effectiveLocale = locale || "pt";
+
   return useQuery({
-    queryKey: ["posts", locale, categorySlug, layer],
+    queryKey: ["posts", effectiveLocale, categorySlug, layer],
     queryFn: async (): Promise<Post[]> => {
+      console.log("[usePosts] query params:", { locale: effectiveLocale, categorySlug, layer });
+      console.log("[usePosts] supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+
       let query = supabase
         .from("posts")
         .select("*")
         .order("published_at", { ascending: false });
 
-      if (locale) query = query.eq("locale", locale);
+      if (effectiveLocale) query = query.eq("locale", effectiveLocale);
       if (categorySlug) query = query.eq("category", categorySlug);
       if (layer) query = query.eq("layer", layer);
 
       const { data, error } = await query;
+
+      console.log("[usePosts] result:", { count: data?.length ?? 0, error: error?.message });
+
       if (error) {
         toast({ title: "Erro ao carregar posts", description: error.message, variant: "destructive" });
         throw error;
