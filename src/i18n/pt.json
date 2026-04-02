@@ -205,6 +205,7 @@
     "faq_data_q": "Meus dados de quiz são mantidos se eu cancelar?",
     "faq_data_a": "Sim! Todos os seus resultados e histórico ficam salvos. Você volta a ter acesso FREE, mas seus dados permanecem.",
     "quiz_limit_title": "Limite diário atingido",
-    "quiz_limit_desc": "Usuários free podem fazer 1 quiz específico por dia. Desbloqueie quizzes ilimitados com PRO!"
+    "quiz_limit_desc": "Usuários free podem fazer 1 quiz específico por dia. Desbloqueie quizzes ilimitados com PRO!",
+    "global_quiz_locked": "O Quiz Completo é uma ferramenta exclusiva para assinantes PRO."
   }
 }

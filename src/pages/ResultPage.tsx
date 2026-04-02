@@ -151,16 +151,30 @@ const ResultPage = () => {
               </Card>
             </motion.div>
           ) : (
-            <div className="mx-auto mb-12 max-w-lg text-center">
-              <div className="rounded-2xl bg-muted/30 p-8">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mx-auto mb-12 max-w-lg text-center"
+            >
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-card to-muted/50 p-10 shadow-sm border border-border/50">
                 {radarData.map((d, i) => (
-                  <div key={i} className="mb-4 last:mb-0">
-                    <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{d.dimension}</span>
-                    <div className="mt-2 text-5xl font-bold text-title">{d.score}%</div>
+                  <div key={i} className="relative z-10">
+                    <span className="text-xs font-bold text-secondary uppercase tracking-[0.2em]">
+                      {d.dimension}
+                    </span>
+                    <div className="mt-4 text-7xl font-black tracking-tighter text-title md:text-8xl">
+                      {d.score}<span className="text-3xl md:text-4xl text-muted-foreground/50 ml-1">%</span>
+                    </div>
+                    <div className="mt-6 mx-auto h-2 w-32 rounded-full bg-muted overflow-hidden">
+                       <div 
+                         className="h-full bg-secondary transition-all duration-1000" 
+                         style={{ width: `${d.score}%` }} 
+                       />
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           )}
 
           <div className="mx-auto mb-12 max-w-2xl">

@@ -205,6 +205,7 @@
     "faq_data_q": "Is my quiz data kept if I cancel?",
     "faq_data_a": "Yes! All your results and history are saved. You go back to FREE access, but your data remains.",
     "quiz_limit_title": "Daily limit reached",
-    "quiz_limit_desc": "Free users can take 1 specific quiz per day. Unlock unlimited quizzes with PRO!"
+    "quiz_limit_desc": "Free users can take 1 specific quiz per day. Unlock unlimited quizzes with PRO!",
+    "global_quiz_locked": "The Complete Quiz is an exclusive tool for PRO subscribers."
   }
 }

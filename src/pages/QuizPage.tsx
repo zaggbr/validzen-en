@@ -22,8 +22,9 @@ const QuizPage = () => {
   const { user, isPremium } = useAuth();
   const { t, locale, localePath } = useI18n();
 
-  const isSpecific = slug !== "geral" && slug !== "general";
-  const quizLimitReached = isSpecific && !isPremium && getSpecificQuizCountToday() >= 1;
+  const isGlobal = slug === "geral" || slug === "general";
+  const globalLocked = isGlobal && !isPremium;
+  const specificLimitReached = !isGlobal && !isPremium && getSpecificQuizCountToday() >= 1;
 
   const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug, locale);
   const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug, locale);
@@ -35,7 +36,7 @@ const QuizPage = () => {
   const [direction, setDirection] = useState(1);
 
   const handleStart = () => {
-    if (isSpecific && !isPremium) {
+    if (!isGlobal && !isPremium) {
       incrementSpecificQuizCount();
     }
     setPhase("questions");
@@ -136,16 +137,20 @@ const QuizPage = () => {
             <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
           </Link>
         )}
-        {phase === "intro" && !quizLimitReached && (
+        {phase === "intro" && !globalLocked && !specificLimitReached && (
           <QuizIntro quiz={quizIntroData} onStart={handleStart} />
         )}
 
-        {phase === "intro" && quizLimitReached && (
+        {phase === "intro" && (globalLocked || specificLimitReached) && (
           <Card className="mx-4 max-w-md text-center">
             <CardContent className="flex flex-col items-center p-8">
               <Crown className="mb-4 h-12 w-12 text-secondary" />
-              <h2 className="mb-2 text-xl font-bold text-title">{t("pro.quiz_limit_title")}</h2>
-              <p className="mb-6 text-sm text-muted-foreground">{t("pro.quiz_limit_desc")}</p>
+              <h2 className="mb-2 text-xl font-bold text-title">
+                {globalLocked ? t("pro.unlock_title") : t("pro.quiz_limit_title")}
+              </h2>
+              <p className="mb-6 text-sm text-muted-foreground">
+                {globalLocked ? t("pro.global_quiz_locked") : t("pro.quiz_limit_desc")}
+              </p>
               <Button variant="hero" size="lg" asChild>
                 <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
               </Button>

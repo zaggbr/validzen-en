@@ -25,8 +25,10 @@ const Header = () => {
 
   const navLinks = [
     { label: t("nav.themes"), href: localePath("/categorias") },
-    { label: t("nav.quiz"), href: localePath("/quiz/geral") },
-    { label: t("nav.dashboard"), href: localePath("/dashboard") },
+    ...(user ? [
+      { label: t("nav.quiz"), href: localePath("/quiz/geral") },
+      { label: t("nav.dashboard"), href: localePath("/dashboard") },
+    ] : []),
     { label: t("nav.pro"), href: localePath("/pro") },
   ];
 
