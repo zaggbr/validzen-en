@@ -45,7 +45,6 @@ const CategoriesPage = () => {
               {categories.map((cat) => (
                 <CategoryCard
                   key={cat.slug}
-                  emoji={cat.icon}
                   name={locale === "en" ? cat.name_en : cat.name_pt}
                   slug={cat.slug}
                   postCount={counts[cat.slug] || 0}

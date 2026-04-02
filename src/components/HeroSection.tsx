@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+
 import { useI18n } from "@/i18n/I18nContext";
 
 const HeroSection = () => {
@@ -25,16 +25,14 @@ const HeroSection = () => {
           <span className="text-sage">{t("home.hero_h1_3")}</span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-lg text-base text-muted-foreground md:text-lg">
+        <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
           {t("home.hero_description")}
         </p>
+        <p className="mx-auto mt-2 max-w-xl text-base text-muted-foreground md:text-lg">
+          {t("home.hero_description_2")}
+        </p>
 
-        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-          <Button asChild variant="hero" size="xl">
-            <Link to={localePath("/quiz/geral")}>
-              {t("home.cta_quiz")} <ArrowRight className="ml-1 h-5 w-5" />
-            </Link>
-          </Button>
+        <div className="mt-10">
           <Button asChild variant="hero-outline" size="lg">
             <Link to={localePath("/categorias")}>{t("home.cta_explore")}</Link>
           </Button>

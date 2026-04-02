@@ -22,8 +22,6 @@ const CategoryPage = () => {
   const categoryName = category
     ? (locale === "en" ? category.name_en : category.name_pt)
     : allPosts[0]?.category || slug;
-  const categoryEmoji = category?.icon || "📂";
-
   const sorted = [...allPosts].sort((a, b) => {
     if (sort === "recent") return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
     return b.reading_time - a.reading_time;
@@ -76,16 +74,13 @@ const CategoryPage = () => {
             <ArrowLeft className="h-3.5 w-3.5" /> {t("categories.all_categories")}
           </Link>
 
-          <div className="mb-8 flex items-start gap-4">
-            <span className="text-4xl">{categoryEmoji}</span>
-            <div>
+          <div className="mb-8">
               <h1 className="text-2xl font-bold md:text-3xl">{categoryName}</h1>
               {category && (
                 <p className="mt-1 text-sm text-muted-foreground">
                   {locale === "en" ? category.description_en : category.description_pt}
                 </p>
               )}
-            </div>
           </div>
 
           <div className="mb-6 flex gap-2">
