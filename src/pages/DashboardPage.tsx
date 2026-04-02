@@ -29,6 +29,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions, generateInterpretation } from "@/lib/quizInsights";
 import { useI18n } from "@/i18n/I18nContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const DashboardPage = () => {
   const { data: latestResult, results, isLoading } = useLatestResult();
@@ -36,6 +37,10 @@ const DashboardPage = () => {
   const { t, locale, localePath } = useI18n();
   const { data: allPosts = [] } = usePosts(locale);
   const { data: dimensions = [] } = useDimensions();
+  const { isPremium } = useAuth();
+
+  const simpleQuizCount = results?.filter(r => r.quiz_slug !== 'geral' && r.quiz_slug !== 'general').length || 0;
+  const showHolisticView = isPremium && simpleQuizCount > 3;
 
   if (isLoading) {
     return (
@@ -117,33 +122,11 @@ const DashboardPage = () => {
             <p className="text-sm text-muted-foreground">{t("dashboard.subtitle")}</p>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="mb-10">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t("dashboard.latest_result")}</CardTitle>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(latestResult.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US", { day: "2-digit", month: "long", year: "numeric" })}
-                </p>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={360}>
-                  <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-                    <PolarGrid stroke="hsl(var(--border))" />
-                    <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9 }} />
-                    <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.5rem", fontSize: "0.8rem" }} formatter={(v: number) => [`${v}%`, "Score"]} />
-                    <Radar dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} dot={{ r: 3, fill: "hsl(var(--secondary))", stroke: "hsl(var(--secondary))" }} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </motion.div>
-
           <div className="mb-10">
-            <h2 className="mb-4 text-xl font-bold text-title">{t("dashboard.top_3")}</h2>
-            <div className="grid gap-4 sm:grid-cols-3">
+            <h2 className="mb-4 text-xl font-bold text-title">{t("dashboard.seus_afetos")}</h2>
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
               {top.map((item, i) => (
-                <motion.div key={item.dimension} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.08 }}>
+                <motion.div key={item.dimension} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.08 }}>
                   <Card className="h-full">
                     <CardContent className="flex flex-col items-center p-5 text-center">
                       <span className="mb-1 text-2xl">{item.emoji}</span>
@@ -156,6 +139,30 @@ const DashboardPage = () => {
               ))}
             </div>
           </div>
+
+          {showHolisticView && (
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="mb-10">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">{t("dashboard.olhar_holistico")}</CardTitle>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(latestResult.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US", { day: "2-digit", month: "long", year: "numeric" })}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={360}>
+                    <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
+                      <PolarGrid stroke="hsl(var(--border))" />
+                      <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+                      <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9 }} />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.5rem", fontSize: "0.8rem" }} formatter={(v: number) => [`${v}%`, "Score"]} />
+                      <Radar dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} dot={{ r: 3, fill: "hsl(var(--secondary))", stroke: "hsl(var(--secondary))" }} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
 
           <div className="mb-10 rounded-lg border-l-4 border-secondary bg-muted/40 px-6 py-5">
             <p className="text-sm leading-relaxed text-muted-foreground">{interpretation}</p>
@@ -180,7 +187,7 @@ const DashboardPage = () => {
                           <p className="text-xs text-muted-foreground">{new Date(r.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US")}</p>
                         </div>
                         <Button asChild variant="ghost" size="sm">
-                          <Link to={localePath(`/resultado/${r.id}`)}>{t("dashboard.view")}</Link>
+                          <Link to={localePath(`/quiz/${r.quiz_slug}`)}>{t("dashboard.retry")}</Link>
                         </Button>
                       </li>
                     ))}
