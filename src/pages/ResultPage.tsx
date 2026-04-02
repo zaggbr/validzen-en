@@ -17,7 +17,7 @@ import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import AdBanner from "@/components/AdBanner";
 import { Card, CardContent } from "@/components/ui/card";
-import { Share2, ArrowRight, UserPlus } from "lucide-react";
+import { Share2, ArrowRight, UserPlus, ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResultById } from "@/hooks/useDashboard";
 import { usePosts } from "@/hooks/usePosts";
@@ -117,6 +117,10 @@ const ResultPage = () => {
       <main className="flex-1">
         <div className="container py-10 md:py-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 text-center">
+            <Link to={localePath("/")} className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors">
+              <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+            </Link>
+            <br />
             <span className="mb-3 inline-block text-5xl">🗺️</span>
             <h1 className="mb-2 text-3xl font-bold text-title md:text-4xl">{t("result.title")}</h1>
             <p className="mb-4 text-sm text-muted-foreground">
@@ -127,24 +131,37 @@ const ResultPage = () => {
             </Button>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="mx-auto mb-12 max-w-2xl">
-            <Card>
-              <CardContent className="p-4 md:p-8">
-                <ResponsiveContainer width="100%" height={400}>
-                  <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-                    <PolarGrid stroke="hsl(var(--border))" />
-                    <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.5rem", fontSize: "0.875rem" }}
-                      formatter={(value: number) => [`${value}%`, "Score"]}
-                    />
-                    <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} dot={{ r: 4, fill: "hsl(var(--secondary))", stroke: "hsl(var(--secondary))" }} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </motion.div>
+          {radarData.length >= 3 ? (
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="mx-auto mb-12 max-w-2xl">
+              <Card>
+                <CardContent className="p-4 md:p-8">
+                  <ResponsiveContainer width="100%" height={400}>
+                    <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
+                      <PolarGrid stroke="hsl(var(--border))" />
+                      <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
+                      <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.5rem", fontSize: "0.875rem" }}
+                        formatter={(value: number) => [`${value}%`, "Score"]}
+                      />
+                      <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} dot={{ r: 4, fill: "hsl(var(--secondary))", stroke: "hsl(var(--secondary))" }} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : (
+            <div className="mx-auto mb-12 max-w-lg text-center">
+              <div className="rounded-2xl bg-muted/30 p-8">
+                {radarData.map((d, i) => (
+                  <div key={i} className="mb-4 last:mb-0">
+                    <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{d.dimension}</span>
+                    <div className="mt-2 text-5xl font-bold text-title">{d.score}%</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="mx-auto mb-12 max-w-2xl">
             <AdBanner slot="result-after-chart" format="rectangle" className="mx-auto" />

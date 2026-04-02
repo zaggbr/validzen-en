@@ -12,7 +12,7 @@ import { getSpecificQuizCountToday, incrementSpecificQuizCount } from "@/lib/sub
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Crown } from "lucide-react";
+import { Crown, ArrowLeft } from "lucide-react";
 
 type Phase = "intro" | "questions" | "result";
 
@@ -128,6 +128,14 @@ const QuizPage = () => {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex flex-1 flex-col items-center justify-center py-8">
+        {phase === "intro" && (
+          <Link
+            to={localePath("/")}
+            className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+          </Link>
+        )}
         {phase === "intro" && !quizLimitReached && (
           <QuizIntro quiz={quizIntroData} onStart={handleStart} />
         )}

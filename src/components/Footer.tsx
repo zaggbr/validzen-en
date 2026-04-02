@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useI18n } from "@/i18n/I18nContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { Instagram } from "lucide-react";
 
 const Footer = () => {
   const { t, localePath } = useI18n();
@@ -15,6 +16,11 @@ const Footer = () => {
             </span>
             <p className="mt-2 text-sm text-muted-foreground">{t("common.tagline")}</p>
             <p className="mt-1 text-xs text-muted-foreground">{t("common.tagline_sub")}</p>
+            <div className="mt-4 flex gap-3">
+              <a href="https://instagram.com/validzen" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-secondary transition-colors">
+                <Instagram className="h-5 w-5" />
+              </a>
+            </div>
           </div>
 
           <div className="flex flex-col gap-2">

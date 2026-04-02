@@ -1,9 +1,12 @@
 import { useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/contexts/AuthContext";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   usePremiumAssessmentQuestions,
   calculatePatternScores,
@@ -25,7 +28,8 @@ const slideVariants = {
 };
 
 const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessmentFlowProps) => {
-  const { locale } = useI18n();
+  const { t, locale, localePath } = useI18n();
+  const { user, isPremium } = useAuth();
   const { data: questions = [], isLoading } = usePremiumAssessmentQuestions(assessmentSlug, locale);
   const submitResult = useSubmitPremiumResult();
 
@@ -86,6 +90,30 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
         <Skeleton className="h-20 w-full" />
         <Skeleton className="h-20 w-full" />
       </div>
+    );
+  }
+
+  if (!isPremium) {
+    return (
+      <Card className="border-secondary/20 bg-secondary/5">
+        <CardContent className="p-8 text-center">
+          <Lock className="mx-auto mb-4 h-10 w-10 text-secondary" />
+          <h3 className="mb-2 text-xl font-bold text-title">{t("pro.unlock_title")}</h3>
+          <p className="mb-6 text-sm text-muted-foreground text-balance">
+            {t("pro.unlock_desc")}
+          </p>
+          <div className="flex flex-col gap-3">
+            <Button asChild variant="hero">
+              <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
+            </Button>
+            {!user && (
+              <Button asChild variant="outline">
+                <Link to={localePath("/login")}>{t("nav.login")}</Link>
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 

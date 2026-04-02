@@ -11,7 +11,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Check, X, Crown, Zap, ArrowRight } from "lucide-react";
+import { Check, X, Crown, Zap, ArrowRight, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/I18nContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -89,6 +89,10 @@ const ProPage = () => {
       <Header />
       <main className="flex-1">
         <div className="container py-12 md:py-20">
+          <Link to={localePath("/")} className="mb-10 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors">
+            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+          </Link>
+
           {/* Hero */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -153,8 +157,8 @@ const ProPage = () => {
                       R$14,90<span className="text-sm font-normal text-muted-foreground">/{t("pro.month")}</span>
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {t("pro.or")} R$149,90/{t("pro.year")}{" "}
-                      <span className="font-semibold text-accent">({t("pro.save_16")})</span>
+                      {t("pro.or")} R$14,90/{t("pro.year")}{" "}
+                      <span className="font-semibold text-accent">(PROMOÇÃO)</span>
                     </p>
                   </div>
 

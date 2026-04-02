@@ -16,15 +16,35 @@ import AdBanner from "@/components/AdBanner";
 import SEOHead from "@/components/SEOHead";
 import { usePostBySlug, useRelatedPosts } from "@/hooks/usePosts";
 import { parseContentSections } from "@/types/database";
-import { ChevronRight, Clock, Calendar } from "lucide-react";
+import { ChevronRight, Clock, Calendar, ArrowLeft, Lock } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 const PostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isLoading } = usePostBySlug(slug);
   const { t, locale, localePath } = useI18n();
+  const { user, isPremium } = useAuth();
   const { data: related = [] } = useRelatedPosts(post?.related_post_slugs || []);
+  const [showGate, setShowGate] = useState(false);
+
+  useEffect(() => {
+    if (isLoading || !post || user || isPremium) return;
+
+    const viewedPosts = JSON.parse(localStorage.getItem("validzen_viewed_posts") || "[]") as string[];
+    
+    if (!viewedPosts.includes(post.slug)) {
+      if (viewedPosts.length >= 3) {
+        setShowGate(true);
+      } else {
+        const newViewed = [...viewedPosts, post.slug];
+        localStorage.setItem("validzen_viewed_posts", JSON.stringify(newViewed));
+      }
+    }
+  }, [post, isLoading, user, isPremium]);
 
   if (isLoading) {
     return (
@@ -93,8 +113,12 @@ const PostPage = () => {
         ]}
       />
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 relative">
         <article className="container py-8 md:py-12">
+          <Link to={localePath("/")} className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors">
+            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+          </Link>
+
           <nav className="mb-6 flex items-center gap-1 text-xs text-muted-foreground" aria-label="Breadcrumb">
             <Link to={localePath("/")} className="hover:text-foreground transition-colors">{t("nav.home")}</Link>
             <ChevronRight className="h-3 w-3" />
@@ -242,6 +266,26 @@ const PostPage = () => {
             </aside>
           </div>
         </article>
+
+        {showGate && (
+          <div className="absolute inset-0 z-50 flex items-start justify-center bg-gradient-to-b from-transparent via-background/90 to-background pt-32">
+            <div className="sticky top-40 max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center shadow-2xl mx-4">
+              <Lock className="mx-auto mb-4 h-10 w-10 text-secondary" />
+              <h2 className="text-2xl font-bold mb-3">{t("pro.unlock_title")}</h2>
+              <p className="text-muted-foreground mb-6 text-sm">
+                Aproveite ao máximo o ValidZen. Crie sua conta gratuita ou assine o PRO para acessar conteúdos ilimitados, seu mapa emocional completo e muito mais.
+              </p>
+              <div className="flex flex-col gap-3">
+                <Button asChild size="lg" variant="hero">
+                  <Link to={localePath("/login")}>{t("result.create_account")}</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
       <Footer />
     </div>

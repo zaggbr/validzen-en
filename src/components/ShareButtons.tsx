@@ -23,7 +23,7 @@ const ShareButtons = ({ title, url }: ShareButtonsProps) => {
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+      href: `https://web.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
     },
   ];
 

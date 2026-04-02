@@ -21,7 +21,7 @@ import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Calendar, TrendingUp } from "lucide-react";
+import { ArrowRight, Calendar, TrendingUp, ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import PremiumGate from "@/components/PremiumGate";
 import { useLatestResult, useProgressOverTime } from "@/hooks/useDashboard";
@@ -110,7 +110,10 @@ const DashboardPage = () => {
       <main className="flex-1">
         <div className="container py-10 md:py-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-            <h1 className="mb-1 text-3xl font-bold text-title md:text-4xl">🧭 {t("dashboard.title")}</h1>
+            <Link to={localePath("/")} className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors">
+              <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+            </Link>
+            <h1 className="mt-4 mb-1 text-3xl font-bold text-title md:text-4xl">🧭 {t("dashboard.title")}</h1>
             <p className="text-sm text-muted-foreground">{t("dashboard.subtitle")}</p>
           </motion.div>
 
@@ -236,7 +239,7 @@ const DashboardPage = () => {
 
               <div>
                 <h2 className="mb-4 text-lg font-bold text-title">🔬 {t("dashboard.deep_dive")}</h2>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {dimensions.slice(0, 6).map((dim) => (
                     <Card key={dim.slug}>
                       <CardContent className="p-4">

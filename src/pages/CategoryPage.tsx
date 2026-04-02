@@ -7,6 +7,7 @@ import { usePosts, useCategories } from "@/hooks/usePosts";
 import { ArrowLeft } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { stripEmojis } from "@/lib/utils";
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -75,10 +76,10 @@ const CategoryPage = () => {
           </Link>
 
           <div className="mb-8">
-              <h1 className="text-2xl font-bold md:text-3xl">{categoryName}</h1>
+              <h1 className="text-2xl font-bold md:text-3xl">{stripEmojis(categoryName)}</h1>
               {category && (
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {locale === "en" ? category.description_en : category.description_pt}
+                  {stripEmojis(locale === "en" ? category.description_en : category.description_pt)}
                 </p>
               )}
           </div>
