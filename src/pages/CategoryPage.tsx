@@ -22,8 +22,6 @@ const CategoryPage = () => {
   const categoryName = category
     ? (locale === "en" ? category.name_en : category.name_pt)
     : allPosts[0]?.category || slug;
-  const categoryEmoji = category?.icon || "📂";
-
   const sorted = [...allPosts].sort((a, b) => {
     if (sort === "recent") return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
     return b.reading_time - a.reading_time;
