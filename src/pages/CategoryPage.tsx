@@ -74,9 +74,7 @@ const CategoryPage = () => {
             <ArrowLeft className="h-3.5 w-3.5" /> {t("categories.all_categories")}
           </Link>
 
-          <div className="mb-8 flex items-start gap-4">
-            <span className="text-4xl">{categoryEmoji}</span>
-            <div>
+          <div className="mb-8">
               <h1 className="text-2xl font-bold md:text-3xl">{categoryName}</h1>
               {category && (
                 <p className="mt-1 text-sm text-muted-foreground">
