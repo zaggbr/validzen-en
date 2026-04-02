@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowLeft } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 
 const LoginPage = () => {
@@ -47,7 +46,7 @@ const LoginPage = () => {
       password,
       options: {
         data: { full_name: name },
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}${localePath("/dashboard")}`,
       },
     });
     setLoading(false);
@@ -59,11 +58,14 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}${localePath("/dashboard")}`,
+      },
     });
     if (error) {
-      toast({ title: t("login.error_google"), description: String(error), variant: "destructive" });
+      toast({ title: t("login.error_google"), description: error.message, variant: "destructive" });
     }
   };
 

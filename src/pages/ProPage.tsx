@@ -20,7 +20,7 @@ import { toast } from "sonner";
 
 const ProPage = () => {
   const { user, isPremium } = useAuth();
-  const { t, localePath } = useI18n();
+  const { t, locale, localePath } = useI18n();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleCheckout = async (plan: "monthly" | "yearly") => {
@@ -30,9 +30,14 @@ const ProPage = () => {
     }
     setLoading(plan);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: STRIPE_PRICES[plan] },
-      });
+      // Route to Asaas (PT) or Stripe (EN) based on locale
+      const isPt = locale === "pt";
+      const functionName = isPt ? "create-asaas-checkout" : "create-checkout";
+      const body = isPt
+        ? { plan }
+        : { priceId: STRIPE_PRICES[plan] };
+
+      const { data, error } = await supabase.functions.invoke(functionName, { body });
       if (error) throw error;
       if (data?.url) {
         window.open(data.url, "_blank");
