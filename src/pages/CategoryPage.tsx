@@ -81,7 +81,6 @@ const CategoryPage = () => {
                   {locale === "en" ? category.description_en : category.description_pt}
                 </p>
               )}
-            </div>
           </div>
 
           <div className="mb-6 flex gap-2">
