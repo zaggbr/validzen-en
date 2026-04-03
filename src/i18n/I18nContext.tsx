@@ -43,16 +43,12 @@ function detectBrowserLocale(): Locale {
 }
 
 function getInitialLocale(): Locale {
-  // 1. URL takes priority
+  // 1. URL prefix still takes priority if explicitly requested
   const urlLocale = detectLocaleFromURL();
   if (urlLocale) return urlLocale;
 
-  // 2. Saved preference
-  const saved = localStorage.getItem("validzen_locale") as Locale | null;
-  if (saved === "pt" || saved === "en") return saved;
-
-  // 3. Browser detection
-  return detectBrowserLocale();
+  // 2. Otherwise, always default to Portuguese for now
+  return "pt";
 }
 
 export const I18nProvider = ({ children }: { children: ReactNode }) => {
