@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -21,11 +21,12 @@ import { toast } from "sonner";
 const ProPage = () => {
   const { user, isPremium } = useAuth();
   const { t, locale, localePath } = useI18n();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleCheckout = async (plan: "monthly" | "yearly") => {
     if (!user) {
-      toast.error(t("pro.login_required"));
+      navigate(localePath("/login"));
       return;
     }
     setLoading(plan);
@@ -40,7 +41,7 @@ const ProPage = () => {
       const { data, error } = await supabase.functions.invoke(functionName, { body });
       if (error) throw error;
       if (data?.url) {
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
       }
     } catch (err: any) {
       toast.error(err.message || "Erro ao iniciar checkout");
@@ -54,7 +55,7 @@ const ProPage = () => {
       const { data, error } = await supabase.functions.invoke("customer-portal");
       if (error) throw error;
       if (data?.url) {
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
       }
     } catch (err: any) {
       toast.error(err.message || "Erro ao abrir portal");
@@ -138,7 +139,7 @@ const ProPage = () => {
                     ))}
                   </ul>
                   <Button variant="outline" className="w-full" asChild>
-                    <Link to={localePath("/quiz/geral")}>
+                    <Link to={localePath("/")}>
                       {t("pro.start_free")} <ArrowRight className="ml-1 h-4 w-4" />
                     </Link>
                   </Button>
