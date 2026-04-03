@@ -1,11 +1,11 @@
 export const STRIPE_PRICES = {
-  monthly: "price_1TFvvXEar8K5EnzJWZf4VIh2",
-  yearly: "price_1TFvw7Ear8K5EnzJ4PpIeCQM",
+  monthly: "price_1TIGtiEjsgJYYHf3rdkRCz7I",
+  promo6: "price_1TIAEAEjsgJYYHf3xEorHS2I",
 } as const;
 
 export const STRIPE_PRODUCTS = {
-  monthly: "prod_UEOiSqnAadBRcA",
-  yearly: "prod_UEOjiB09xmLBtF",
+  monthly: "prod_UIGf_monthly", // Standard monthly
+  promo6: "prod_UIAE_promo6",   // 6-month promo
 } as const;
 
 /** Check how many specific quizzes a free user took today */

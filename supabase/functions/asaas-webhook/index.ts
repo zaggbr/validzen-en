@@ -12,6 +12,16 @@ serve(async (req) => {
   }
 
   try {
+    // Validate security token
+    const webhookToken = Deno.env.get("ASAAS_WEBHOOK_TOKEN");
+    const asaasHeader = req.headers.get("asaas-access-token");
+    if (webhookToken && asaasHeader !== webhookToken) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { 
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
     const payload = await req.json();
     const event = payload.event;
 
@@ -47,12 +57,12 @@ serve(async (req) => {
 
     const { error } = await supabaseAdmin
       .from("user_profiles")
-      .update({
+      .upsert({
+        id: userId,
         is_premium: true,
         premium_until: premiumUntil.toISOString(),
         payment_platform: "asaas",
-      })
-      .eq("id", userId);
+      }, { onConflict: 'id' });
 
     if (error) throw error;
 

@@ -25,20 +25,16 @@ const ProPage = () => {
   const location = useLocation();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleCheckout = async (plan: "monthly" | "yearly") => {
+  const handleCheckout = async (plan: "monthly" | "promo6") => {
     if (!user) {
       navigate(localePath("/login"), { state: { from: location.pathname } });
       return;
     }
     setLoading(plan);
     try {
-      // Route to Asaas (PT) or Stripe (EN) based on locale
-      const isPt = locale === "pt";
-      const functionName = isPt ? "create-asaas-checkout" : "create-checkout";
-      const body = isPt
-        ? { plan }
-        : { priceId: STRIPE_PRICES[plan] };
-
+      // Route to Stripe exclusively
+      const functionName = "create-checkout";
+      const body = { priceId: STRIPE_PRICES[plan] };
       const { data, error } = await supabase.functions.invoke(functionName, { body });
       if (error) throw error;
       if (data?.url) {
@@ -164,7 +160,7 @@ const ProPage = () => {
                       R$14,90<span className="text-sm font-normal text-muted-foreground">/{t("pro.month")}</span>
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {t("pro.or")} R$14,90/{t("pro.year")}{" "}
+                      {t("pro.or")} R$14,90/6 {t("pro.months")}{" "}
                       <span className="font-semibold text-accent">(PROMOÇÃO)</span>
                     </p>
                   </div>
@@ -185,12 +181,12 @@ const ProPage = () => {
                   ) : (
                     <div className="space-y-2">
                       <Button
-                        onClick={() => handleCheckout("yearly")}
+                        onClick={() => handleCheckout("promo6")}
                         variant="hero"
                         className="w-full"
                         disabled={!!loading}
                       >
-                        {loading === "yearly" ? "..." : t("pro.subscribe_yearly")}
+                        {loading === "promo6" ? "..." : t("pro.subscribe_promo6") || "Assinar Promoção (6 Meses)"}
                       </Button>
                       <Button
                         onClick={() => handleCheckout("monthly")}

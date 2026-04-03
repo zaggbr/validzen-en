@@ -1,54 +1,70 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 const ASAAS_API_URL = "https://api.asaas.com/v3";
 
 serve(async (req) => {
+  console.log(`--- Request Start: ${req.method} ---`);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-  );
-
   try {
-    const authHeader = req.headers.get("Authorization")!;
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user } } = await supabaseClient.auth.getUser(token);
-    if (!user?.email) throw new Error("Usuário não autenticado");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const asaasKey = Deno.env.get("ASAAS_API_KEY");
 
-    const { plan } = await req.json();
-    if (!plan || !["monthly", "yearly"].includes(plan)) {
-      throw new Error("Plano inválido. Use 'monthly' ou 'yearly'");
+    if (!supabaseUrl || !supabaseServiceKey || !asaasKey) {
+      throw new Error("Missing environment variables (SUPABASE_URL, SERVICE_KEY or ASAAS_KEY)");
     }
 
-    const asaasKey = Deno.env.get("ASAAS_API_KEY");
-    if (!asaasKey) throw new Error("ASAAS_API_KEY não configurada");
+    // 1. Get User from Token (Manual Fetch to be lightweight)
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("Missing Authorization header");
 
-    // Check if customer already exists
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
+    console.log("Verifying user token...");
+    const userRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      headers: {
+        "Authorization": authHeader,
+        "apikey": supabaseServiceKey,
+      },
+    });
 
-    const { data: profile } = await supabaseAdmin
-      .from("user_profiles")
-      .select("asaas_customer_id, display_name")
-      .eq("id", user.id)
-      .maybeSingle();
+    if (!userRes.ok) {
+      const errorData = await userRes.json();
+      console.error("Auth verification failed:", errorData);
+      throw new Error("Usuário não autenticado ou token expirado");
+    }
 
+    const user = await userRes.json();
+    console.log(`User verified: ${user.email} (${user.id})`);
+
+    // 2. Parse Body
+    const { plan } = await req.json().catch(() => ({}));
+    if (!plan) throw new Error("Plano não informado");
+
+    // 3. Get/Create Profile (Manual Fetch to PostgREST)
+    console.log("Checking user profile in DB...");
+    const profileRes = await fetch(`${supabaseUrl}/rest/v1/user_profiles?id=eq.${user.id}&select=asaas_customer_id,display_name`, {
+      headers: {
+        "apikey": supabaseServiceKey,
+        "Authorization": `Bearer ${supabaseServiceKey}`,
+      },
+    });
+
+    const profiles = await profileRes.json();
+    const profile = profiles[0];
     let asaasCustomerId = profile?.asaas_customer_id;
 
-    // Create customer if not exists
     if (!asaasCustomerId) {
-      const customerRes = await fetch(`${ASAAS_API_URL}/customers`, {
+      console.log("Customer not found. Creating in Asaas...");
+      const customerCreateRes = await fetch(`${ASAAS_API_URL}/customers`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,27 +77,39 @@ serve(async (req) => {
         }),
       });
 
-      if (!customerRes.ok) {
-        const err = await customerRes.json();
-        throw new Error(`Erro ao criar cliente Asaas: ${JSON.stringify(err)}`);
+      const customerData = await customerCreateRes.json();
+      if (!customerCreateRes.ok) {
+        console.error("Asaas Error (Customer):", customerData);
+        throw new Error(`Asaas: ${customerData.errors?.[0]?.description || "Erro ao criar cliente"}`);
       }
 
-      const customer = await customerRes.json();
-      asaasCustomerId = customer.id;
+      asaasCustomerId = customerData.id;
+      console.log(`Customer created: ${asaasCustomerId}. Updating DB...`);
 
-      // Save customer ID
-      await supabaseAdmin
-        .from("user_profiles")
-        .update({ asaas_customer_id: asaasCustomerId, payment_platform: "asaas" })
-        .eq("id", user.id);
+      // Upsert profile in DB
+      await fetch(`${supabaseUrl}/rest/v1/user_profiles`, {
+        method: "POST",
+        headers: {
+          "apikey": supabaseServiceKey,
+          "Authorization": `Bearer ${supabaseServiceKey}`,
+          "Content-Type": "application/json",
+          "Prefer": "resolution=merge-duplicates",
+        },
+        body: JSON.stringify({
+          id: user.id,
+          asaas_customer_id: asaasCustomerId,
+          payment_platform: "asaas"
+        }),
+      });
     }
 
+    // 4. Create Payment Link
+    console.log(`Creating payment link for plan: ${plan}...`);
     const origin = req.headers.get("origin") || "https://validzen.pages.dev";
-    const planValue = plan === "monthly" ? 14.9 : 14.9;
-    const planLabel = plan === "monthly" ? "ValidZen PRO — Mensal" : "ValidZen PRO — Anual (Promoção)";
+    const planValue = 14.9;
+    const planLabel = plan === "monthly" ? "ValidZen PRO — Mensal" : "ValidZen PRO — Anual";
     const billingType = plan === "monthly" ? "MONTHLY" : "YEARLY";
 
-    // Create payment link
     const linkRes = await fetch(`${ASAAS_API_URL}/paymentLinks`, {
       method: "POST",
       headers: {
@@ -90,36 +118,35 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         name: planLabel,
-        description: "Acesso PRO ao ValidZen — The Meaning Crisis Project",
-        endDate: null,
+        description: "Acesso PRO ao ValidZen",
         value: planValue,
-        billingType: "UNDEFINED", // Allows PIX, card, boleto
+        billingType: "UNDEFINED",
         chargeType: "RECURRENT",
         subscriptionCycle: billingType,
+        dueDateLimitDays: 3, // Adicionado para resolver o erro de vencimento
         redirectLink: `${origin}/pt/dashboard?checkout=success`,
         customer: asaasCustomerId,
         externalReference: `${user.id}::${plan}`,
-        fine: { value: 2 },
-        interest: { value: 1 },
       }),
     });
 
+    const linkData = await linkRes.json();
     if (!linkRes.ok) {
-      const err = await linkRes.json();
-      throw new Error(`Erro ao criar link Asaas: ${JSON.stringify(err)}`);
+      console.error("Asaas Error (Link):", linkData);
+      throw new Error(`Asaas: ${linkData.errors?.[0]?.description || "Erro ao criar link"}`);
     }
 
-    const link = await linkRes.json();
-
-    return new Response(JSON.stringify({ url: link.url }), {
+    console.log("Success! Link created.");
+    return new Response(JSON.stringify({ url: linkData.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
+
   } catch (error) {
-    console.error("Asaas checkout error:", error);
+    console.error("Function Error:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: 400,
     });
   }
 });
