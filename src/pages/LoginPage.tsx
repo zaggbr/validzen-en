@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +12,10 @@ import { useI18n } from "@/i18n/I18nContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const { t, localePath } = useI18n();
+  const from = location.state?.from || localePath("/");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -34,7 +36,7 @@ const LoginPage = () => {
     if (error) {
       toast({ title: t("login.error_login"), description: error.message, variant: "destructive" });
     } else {
-      navigate(localePath("/dashboard"));
+      navigate(from, { replace: true });
     }
   };
 
@@ -46,7 +48,7 @@ const LoginPage = () => {
       password,
       options: {
         data: { full_name: name },
-        emailRedirectTo: `${window.location.origin}${localePath("/dashboard")}`,
+        emailRedirectTo: `${window.location.origin}${from}`,
       },
     });
     setLoading(false);
@@ -61,7 +63,7 @@ const LoginPage = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}${localePath("/dashboard")}`,
+        redirectTo: `${window.location.origin}${from}`,
       },
     });
     if (error) {

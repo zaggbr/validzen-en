@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -22,11 +22,12 @@ const ProPage = () => {
   const { user, isPremium } = useAuth();
   const { t, locale, localePath } = useI18n();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleCheckout = async (plan: "monthly" | "yearly") => {
     if (!user) {
-      navigate(localePath("/login"));
+      navigate(localePath("/login"), { state: { from: location.pathname } });
       return;
     }
     setLoading(plan);
