@@ -10,6 +10,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   isPremium: boolean;
+  isAdmin: boolean;
   signOut: () => Promise<void>;
   refreshSubscription: () => Promise<void>;
 }
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   isPremium: false,
+  isAdmin: false,
   signOut: async () => {},
   refreshSubscription: async () => {},
 });
@@ -32,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const migrated = useRef(false);
 
@@ -67,6 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
 
         if (session?.user) {
+          setIsAdmin(session.user.email === "continentemedia@gmail.com");
           // Fetch profile
           setTimeout(() => fetchProfile(session.user.id), 0);
 
@@ -79,6 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } else {
           setProfile(null);
           setIsPremium(false);
+          setIsAdmin(false);
         }
       }
     );
@@ -102,10 +107,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
     setProfile(null);
     setIsPremium(false);
+    setIsAdmin(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, isPremium, signOut, refreshSubscription }}>
+    <AuthContext.Provider value={{ user, session, profile, loading, isPremium, isAdmin, signOut, refreshSubscription }}>
       {children}
     </AuthContext.Provider>
   );
