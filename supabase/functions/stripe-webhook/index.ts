@@ -6,7 +6,17 @@ const stripeKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
 const endpointSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET") || "";
 const stripe = new Stripe(stripeKey, { apiVersion: "2024-04-10" });
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders, status: 204 });
+  }
+
   const signature = req.headers.get("stripe-signature");
   if (!signature) {
     return new Response("Missing signature", { status: 400 });
@@ -26,21 +36,40 @@ serve(async (req) => {
       const session = event.data.object;
       const userId = session.metadata?.userId;
       const customerId = session.customer as string;
+      const userEmail = session.customer_details?.email || session.metadata?.userEmail;
+
+      console.log(`Checkout completed for user ${userId} / email ${userEmail}`);
 
       if (userId) {
-        // Activate PRO
+        // Activate PRO: Default to 31 days if no direct subscription end is found.
+        // invoice.paid will handle subsequent updates more precisely.
+        const defaultPremiumUntil = new Date();
+        defaultPremiumUntil.setDate(defaultPremiumUntil.getDate() + 31);
+        
         const { error } = await supabaseAdmin
           .from("user_profiles")
-          .upsert({
-            id: userId,
+          .update({
             is_premium: true,
             stripe_customer_id: customerId,
-            payment_platform: "stripe",
-            premium_until: session.expires_at ? new Date(session.expires_at * 1000).toISOString() : null,
-          }, { onConflict: 'id' });
+            premium_until: defaultPremiumUntil.toISOString(),
+          })
+          .eq("id", userId);
 
-        if (error) console.error("Error updating profile (checkout):", error);
-        else console.log(`PRO activated for user ${userId}`);
+        if (error) {
+          console.error(`Error activating PRO for ${userId}:`, error);
+        } else {
+          console.log(`PRO successfully activated for user ${userId}`);
+        }
+      } else {
+        console.warn("No userId found in session metadata. Searching by email...");
+        if (userEmail) {
+          const { error } = await supabaseAdmin
+            .from("user_profiles")
+            .update({ is_premium: true, stripe_customer_id: customerId })
+            .eq("email", userEmail.toLowerCase());
+          
+          if (error) console.error("Email-based update failed:", error);
+        }
       }
     }
 
