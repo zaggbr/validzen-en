@@ -67,7 +67,7 @@ serve(async (req) => {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       allow_promotion_codes: true,
-      success_url: `${origin}/pt/dashboard?checkout=success`,
+      success_url: `${origin}/pt?checkout=success`,
       cancel_url: `${origin}/pt/pro?checkout=canceled`,
       metadata: {
         userId: user.id,
