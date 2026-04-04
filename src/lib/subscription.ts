@@ -4,8 +4,8 @@ export const STRIPE_PRICES = {
 } as const;
 
 export const STRIPE_PRODUCTS = {
-  monthly: "prod_UIGf_monthly", // Standard monthly
-  promo6: "prod_UIAE_promo6",   // 6-month promo
+  monthly: "prod_UGhdnrnIAUF9g8", // General Product ID for Validzen Content
+  promo6: "prod_UGhdnrnIAUF9g8",   // Same product, different prices
 } as const;
 
 /** Check how many specific quizzes a free user took today */
