@@ -31,7 +31,7 @@ serve(async (req) => {
     if (!callerUid) throw new Error("User not authenticated");
 
     // Check if caller is admin (by email)
-    const ADMIN_EMAILS = ["continentemedia@gmail.com"];
+    const ADMIN_EMAILS = ["continentemedia@gmail.com", "zagg@uol.com.br"];
     if (!ADMIN_EMAILS.includes(userData.user?.email ?? "")) {
       return new Response(JSON.stringify({ error: "Forbidden" }), {
         status: 403,
@@ -47,7 +47,7 @@ serve(async (req) => {
     // Fetch all user profiles
     const { data: profiles, error: profilesError } = await supabaseClient
       .from("user_profiles")
-      .select("id, display_name, is_premium, premium_until, created_at")
+      .select("id, display_name, is_premium, premium_until, subscribed_at, created_at, payment_platform")
       .order("created_at", { ascending: false });
     if (profilesError) throw new Error(`Profiles error: ${profilesError.message}`);
 
@@ -63,7 +63,9 @@ serve(async (req) => {
       display_name: p.display_name,
       email: emailMap[p.id] ?? "",
       is_premium: p.is_premium,
+      subscribed_at: p.subscribed_at,
       premium_until: p.premium_until,
+      payment_platform: p.payment_platform,
       created_at: p.created_at,
     }));
 

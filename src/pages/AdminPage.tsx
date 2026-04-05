@@ -20,7 +20,9 @@ interface UserAdminData {
   display_name: string | null;
   email: string;
   is_premium: boolean;
+  subscribed_at: string | null;
   premium_until: string | null;
+  payment_platform: string | null;
   created_at: string;
 }
 
@@ -118,6 +120,7 @@ const AdminPage = () => {
                 <TableHead>Nome</TableHead>
                 <TableHead>E-mail</TableHead>
                 <TableHead>Assinatura</TableHead>
+                <TableHead>Data Assinatura</TableHead>
                 <TableHead>Vencimento</TableHead>
                 <TableHead>Data de Cadastro</TableHead>
               </TableRow>
@@ -125,19 +128,19 @@ const AdminPage = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     Carregando dados...
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center text-destructive">
+                  <TableCell colSpan={6} className="h-24 text-center text-destructive">
                     {error}
                   </TableCell>
                 </TableRow>
               ) : filteredUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     Nenhum usuário encontrado.
                   </TableCell>
                 </TableRow>
@@ -149,11 +152,21 @@ const AdminPage = () => {
                     </TableCell>
                     <TableCell>{user.email || "-"}</TableCell>
                     <TableCell>
-                      {user.is_premium ? (
-                        <Badge variant="secondary" className="bg-secondary text-white border-none">PRO</Badge>
-                      ) : (
-                        <Badge variant="outline">Free</Badge>
-                      )}
+                      <div className="flex items-center gap-1.5">
+                        {user.is_premium ? (
+                          <Badge variant="secondary" className="bg-secondary text-white border-none">PRO</Badge>
+                        ) : (
+                          <Badge variant="outline">Free</Badge>
+                        )}
+                        {user.payment_platform && user.is_premium && (
+                          <span className="text-xs text-muted-foreground capitalize">{user.payment_platform}</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {user.subscribed_at
+                        ? new Date(user.subscribed_at).toLocaleDateString("pt-BR")
+                        : "-"}
                     </TableCell>
                     <TableCell>
                       {user.premium_until

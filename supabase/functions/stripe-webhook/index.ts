@@ -52,6 +52,7 @@ serve(async (req) => {
             is_premium: true,
             stripe_customer_id: customerId,
             premium_until: defaultPremiumUntil.toISOString(),
+            subscribed_at: new Date().toISOString(),
           })
           .eq("id", userId);
 
