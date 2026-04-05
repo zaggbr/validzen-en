@@ -51,16 +51,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const refreshSubscription = useCallback(async () => {
+  const refreshSubscription = useCallback(async (userId?: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke("check-subscription");
-      if (!error && data) {
-        setIsPremium(data.subscribed === true);
-      }
+      await supabase.functions.invoke("check-subscription");
+      // Re-read profile from DB after sync — DB is source of truth for is_premium
+      if (userId) await fetchProfile(userId);
     } catch {
       // silently fail
     }
-  }, []);
+  }, [fetchProfile]);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -70,7 +69,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
 
         if (session?.user) {
-          setIsAdmin(session.user.email === "continentemedia@gmail.com");
+          const ADMIN_EMAILS = ["continentemedia@gmail.com", "zagg@uol.com.br"];
+          setIsAdmin(ADMIN_EMAILS.includes(session.user.email ?? ""));
           // Fetch profile
           setTimeout(() => fetchProfile(session.user.id), 0);
 
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             migrateAnonymousResults(session.user.id);
           }
 
-          setTimeout(() => refreshSubscription(), 0);
+          setTimeout(() => refreshSubscription(session.user.id), 0);
         } else {
           setProfile(null);
           setIsPremium(false);
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!user) return;
-    const interval = setInterval(refreshSubscription, 60_000);
+    const interval = setInterval(() => refreshSubscription(user.id), 60_000);
     return () => clearInterval(interval);
   }, [user, refreshSubscription]);
 

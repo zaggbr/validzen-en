@@ -37,7 +37,7 @@ const PostPage = () => {
     const viewedPosts = JSON.parse(localStorage.getItem("validzen_viewed_posts") || "[]") as string[];
     
     if (!viewedPosts.includes(post.slug)) {
-      if (viewedPosts.length >= 3) {
+      if (viewedPosts.length >= 5) {
         setShowGate(true);
       } else {
         const newViewed = [...viewedPosts, post.slug];
@@ -84,14 +84,14 @@ const PostPage = () => {
     );
   }
 
-  const sections = parseContentSections(post.content);
-  const isMarkdown = /^##\s+/m.test(post.content) && !/<h2[\s>]/i.test(post.content);
-  const url = `https://validzen.app/${locale}/conteudo/${post.slug}`;
+  const sections = post?.content ? parseContentSections(post.content) : [];
+  const isMarkdown = post?.content ? (/^##\s+/m.test(post.content) && !/<h2[\s>]/i.test(post.content)) : true;
+  const url = `https://validzen.app/${locale}/conteudo/${post?.slug}`;
   const author = {
-    name: post.author_name,
-    avatar: post.author_avatar,
-    bio: post.author_bio,
-    credentials: post.author_credentials,
+    name: post?.author_name || "ValidZen Team",
+    avatar: post?.author_avatar || "",
+    bio: post?.author_bio || "",
+    credentials: post?.author_credentials || "",
   };
 
   return (
@@ -139,14 +139,14 @@ const PostPage = () => {
             </div>
             <h1 className="text-2xl font-bold leading-tight md:text-4xl">{post.title}</h1>
             <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-              <span>{t("post.by")} {post.author_name}</span>
+              <span>{t("post.by")} {post.author_name || "ValidZen"}</span>
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                {t("post.updated_at")} {new Date(post.updated_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US")}
+                {t("post.updated_at")} {post.updated_at ? new Date(post.updated_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US") : ""}
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                {post.reading_time} {t("post.min_read")}
+                {(post.reading_time || 5)} {t("post.min_read")}
               </span>
               {post.is_premium && (
                 <span className="rounded bg-accent/20 px-2 py-0.5 text-xs font-bold text-accent">PRO</span>
@@ -273,14 +273,11 @@ const PostPage = () => {
               <Lock className="mx-auto mb-4 h-10 w-10 text-secondary" />
               <h2 className="text-2xl font-bold mb-3">{t("pro.unlock_title")}</h2>
               <p className="text-muted-foreground mb-6 text-sm">
-                Aproveite ao máximo o ValidZen. Crie sua conta gratuita ou assine o PRO para acessar conteúdos ilimitados, seu mapa emocional completo e muito mais.
+                {t("pro.unlock_desc_full")}
               </p>
               <div className="flex flex-col gap-3">
                 <Button asChild size="lg" variant="hero">
                   <Link to={localePath("/login")}>{t("result.create_account")}</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg">
-                  <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
                 </Button>
               </div>
             </div>

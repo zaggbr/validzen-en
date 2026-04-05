@@ -23,8 +23,16 @@ const QuizPage = () => {
   const { t, locale, localePath } = useI18n();
 
   const isGlobal = slug === "geral" || slug === "general";
-  const globalLocked = isGlobal && !isPremium;
-  const specificLimitReached = !isGlobal && !isPremium && getSpecificQuizCountToday() >= 1;
+
+  // Logged-in user without PRO → upgrade gate (all quizzes blocked)
+  const showUpgradeGate = !!user && !isPremium;
+
+  // Anonymous user → 2 specific quizzes free, 3rd requires login
+  const showLoginGate = !user && !isGlobal && getSpecificQuizCountToday() >= 2;
+
+  // Global quiz always requires PRO (handled by showUpgradeGate for logged users,
+  // and shown as upgrade prompt for anonymous)
+  const globalLockedAnonymous = isGlobal && !user;
 
   const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug, locale);
   const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug, locale);
@@ -36,7 +44,7 @@ const QuizPage = () => {
   const [direction, setDirection] = useState(1);
 
   const handleStart = () => {
-    if (!isGlobal && !isPremium) {
+    if (!isGlobal && !user) {
       incrementSpecificQuizCount();
     }
     setPhase("questions");
@@ -137,23 +145,54 @@ const QuizPage = () => {
             <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
           </Link>
         )}
-        {phase === "intro" && !globalLocked && !specificLimitReached && (
+        {phase === "intro" && !showUpgradeGate && !showLoginGate && !globalLockedAnonymous && (
           <QuizIntro quiz={quizIntroData} onStart={handleStart} />
         )}
 
-        {phase === "intro" && (globalLocked || specificLimitReached) && (
+        {/* Logged-in user without PRO, or anonymous trying the global quiz → upgrade */}
+        {phase === "intro" && (showUpgradeGate || globalLockedAnonymous) && (
           <Card className="mx-4 max-w-md text-center">
             <CardContent className="flex flex-col items-center p-8">
               <Crown className="mb-4 h-12 w-12 text-secondary" />
               <h2 className="mb-2 text-xl font-bold text-title">
-                {globalLocked ? t("pro.unlock_title") : t("pro.quiz_limit_title")}
+                {t("pro.unlock_title")}
               </h2>
               <p className="mb-6 text-sm text-muted-foreground">
-                {globalLocked ? t("pro.global_quiz_locked") : t("pro.quiz_limit_desc")}
+                {isGlobal ? t("pro.global_quiz_locked") : t("pro.quiz_limit_desc")}
               </p>
-              <Button variant="hero" size="lg" asChild>
-                <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
-              </Button>
+              <div className="flex flex-col gap-3 w-full">
+                <Button variant="hero" size="lg" asChild>
+                  <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
+                </Button>
+                {!user && (
+                  <Button variant="outline" size="lg" asChild>
+                    <Link to={localePath("/login")}>{t("nav.login")}</Link>
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Anonymous user hit their free quiz limit → invite to login */}
+        {phase === "intro" && showLoginGate && (
+          <Card className="mx-4 max-w-md text-center">
+            <CardContent className="flex flex-col items-center p-8">
+              <Crown className="mb-4 h-12 w-12 text-secondary" />
+              <h2 className="mb-2 text-xl font-bold text-title">
+                {t("pro.quiz_limit_title")}
+              </h2>
+              <p className="mb-6 text-sm text-muted-foreground">
+                {t("pro.quiz_limit_desc")}
+              </p>
+              <div className="flex flex-col gap-3 w-full">
+                <Button variant="hero" size="lg" asChild>
+                  <Link to={localePath("/login")}>{t("result.create_account")}</Link>
+                </Button>
+                <Button variant="outline" size="lg" asChild>
+                  <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
