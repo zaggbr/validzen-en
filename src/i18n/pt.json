@@ -2,7 +2,7 @@
   "nav": {
     "home": "Início",
     "themes": "Temas",
-    "quiz": "Quiz",
+    "quiz": "Quizzes",
     "dashboard": "Dashboard",
     "pro": "Pro",
     "login": "Entrar",
@@ -72,7 +72,7 @@
     "deep_dive_cta": "Quiz de {{dimension}}",
     "save_cta_title": "Salve seu mapa e acompanhe sua evolução",
     "save_cta_desc": "Crie sua conta gratuita para salvar resultados e ver seu progresso ao longo do tempo.",
-    "create_account": "Criar conta gratuita",
+    "create_account": "Entrar ou Criar Conta Gratuita",
     "retry": "Refazer Quiz"
   },
   "dashboard": {
@@ -184,6 +184,7 @@
     "login_required": "Faça login para assinar",
     "unlock_title": "Conteúdo PRO",
     "unlock_desc": "Desbloqueie com uma assinatura PRO para acessar este conteúdo.",
+    "unlock_desc_full": "Aproveite ao máximo o ValidZen. Crie sua conta gratuita ou assine o PRO para acessar conteúdos ilimitados, seu mapa emocional completo e muito mais.",
     "upgrade_cta": "Assinar PRO",
     "free_content": "Todo o conteúdo (posts)",
     "free_quiz_generic": "Quiz genérico",
@@ -210,6 +211,13 @@
     "faq_data_a": "Sim! Todos os seus resultados e histórico ficam salvos. Você volta a ter acesso FREE, mas seus dados permanecem.",
     "quiz_limit_title": "Limite diário atingido",
     "quiz_limit_desc": "Usuários free podem fazer 1 quiz específico por dia. Desbloqueie quizzes ilimitados com PRO!",
-    "global_quiz_locked": "O Quiz Completo é uma ferramenta exclusiva para assinantes PRO."
+    "global_quiz_locked": "O Quiz Completo é uma ferramenta exclusiva para assinantes PRO.",
+    "quizzes_title": "Quizzes & Assessments",
+    "quizzes_subtitle": "Explore nosso catálogo completo de ferramentas de autoconhecimento.",
+    "simple_quizzes": "Testes de 1 minuto",
+    "premium_assessments": "Assessments Profundos",
+    "start_quiz": "Começar Teste",
+    "start_deep": "Iniciar Assessment",
+    "pro_badge": "PRO"
   }
 }

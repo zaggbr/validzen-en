@@ -2,7 +2,7 @@
   "nav": {
     "home": "Home",
     "themes": "Themes",
-    "quiz": "Quiz",
+    "quiz": "Quizzes",
     "dashboard": "Dashboard",
     "pro": "Pro",
     "login": "Sign in",
@@ -72,7 +72,7 @@
     "deep_dive_cta": "{{dimension}} Quiz",
     "save_cta_title": "Save your map and track your evolution",
     "save_cta_desc": "Create a free account to save results and see your progress over time.",
-    "create_account": "Create free account",
+    "create_account": "Login or Create Free Account",
     "retry": "Retake Quiz"
   },
   "dashboard": {
@@ -184,6 +184,7 @@
     "login_required": "Sign in to subscribe",
     "unlock_title": "PRO Content",
     "unlock_desc": "Unlock with a PRO subscription to access this content.",
+    "unlock_desc_full": "Get the most out of ValidZen. Create your free account or subscribe to PRO for unlimited content, your full emotional map, and much more.",
     "upgrade_cta": "Subscribe PRO",
     "free_content": "All content (posts)",
     "free_quiz_generic": "General quiz",
@@ -210,6 +211,13 @@
     "faq_data_a": "Yes! All your results and history are saved. You go back to FREE access, but your data remains.",
     "quiz_limit_title": "Daily limit reached",
     "quiz_limit_desc": "Free users can take 1 specific quiz per day. Unlock unlimited quizzes with PRO!",
-    "global_quiz_locked": "The Complete Quiz is an exclusive tool for PRO subscribers."
+    "global_quiz_locked": "The Complete Quiz is an exclusive tool for PRO subscribers.",
+    "quizzes_title": "Quizzes & Assessments",
+    "quizzes_subtitle": "Explore our full catalog of self-knowledge tools.",
+    "simple_quizzes": "1-minute tests",
+    "premium_assessments": "Deep Assessments",
+    "start_quiz": "Start Test",
+    "start_deep": "Start Assessment",
+    "pro_badge": "PRO"
   }
 }

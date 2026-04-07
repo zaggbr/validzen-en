@@ -9,7 +9,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dark, setDark] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, isAdmin, isPremium, signOut } = useAuth();
   const navigate = useNavigate();
   const { t, localePath } = useI18n();
 
@@ -25,11 +25,12 @@ const Header = () => {
 
   const navLinks = [
     { label: t("nav.themes"), href: localePath("/categorias") },
+    { label: t("nav.quiz"), href: localePath("/quizzes") },
     ...(user ? [
-      { label: t("nav.quiz"), href: localePath("/quiz/geral") },
       { label: t("nav.dashboard"), href: localePath("/dashboard") },
     ] : []),
-    { label: t("nav.pro"), href: localePath("/pro") },
+    ...(isAdmin ? [{ label: "Admin", href: localePath("/paineladmin") }] : []),
+    ...(!isPremium ? [{ label: t("nav.pro"), href: localePath("/pro") }] : []),
   ];
 
   return (

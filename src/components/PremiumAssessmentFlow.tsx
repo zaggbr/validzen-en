@@ -225,7 +225,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
                     : "border-border bg-card text-foreground hover:border-accent/40"
                 )}
               >
-                {opt.text}
+                {typeof opt === "string" ? opt : (opt as any).text}
               </button>
             ))}
           </div>

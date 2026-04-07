@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useSearchParams } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,13 +14,18 @@ import CategoryPage from "./pages/CategoryPage";
 import Placeholder from "./pages/Placeholder";
 import ProPage from "./pages/ProPage";
 import QuizPage from "./pages/QuizPage";
+import QuizzesPage from "./pages/QuizzesPage";
 import ResultPage from "./pages/ResultPage";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
+import AdminPage from "./pages/AdminPage";
+import AdminRoute from "./components/AdminRoute";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "@/components/ScrollToTop";
 import BackToTop from "@/components/BackToTop";
 import { initGA } from "@/lib/analytics";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 const queryClient = new QueryClient();
 
@@ -28,14 +33,33 @@ const queryClient = new QueryClient();
 const gaId = import.meta.env.VITE_GA_ID;
 if (gaId) initGA(gaId);
 
+const CheckoutSuccessHandler = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  useEffect(() => {
+    if (searchParams.get("checkout") === "success") {
+      toast.success("Assinatura confirmada! Bem-vindo ao ValidZen PRO.", {
+        duration: 5000,
+      });
+      // Clean up URL
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("checkout");
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <I18nProvider>
         <TooltipProvider>
           <Toaster />
-          <Sonner />
+          <Sonner position="top-center" richColors />
           <BrowserRouter>
+            <CheckoutSuccessHandler />
             <ScrollToTop />
             <BackToTop />
             <Routes>
@@ -44,9 +68,12 @@ const App = () => (
 
               {/* Legacy routes redirect */}
               <Route path="/quiz/:slug" element={<LocaleRedirect />} />
+              <Route path="/quizzes" element={<LocaleRedirect />} />
               <Route path="/categorias" element={<LocaleRedirect />} />
               <Route path="/dashboard" element={<LocaleRedirect />} />
               <Route path="/login" element={<LocaleRedirect />} />
+              <Route path="/paineladmin" element={<LocaleRedirect />} />
+              <Route path="/admin" element={<Navigate to="/pt/paineladmin" replace />} />
 
               {/* Locale-prefixed routes */}
               <Route path="/:lang" element={<LocaleLayout />}>
@@ -59,6 +86,7 @@ const App = () => (
                 <Route path="category/:slug" element={<CategoryPage />} />
                 <Route path="quiz/:slug" element={<QuizPage />} />
                 <Route path="quiz" element={<QuizPage />} />
+                <Route path="quizzes" element={<QuizzesPage />} />
                 <Route path="resultado/:id" element={<ResultPage />} />
                 <Route path="result/:id" element={<ResultPage />} />
                 <Route path="dashboard" element={<DashboardPage />} />
@@ -73,6 +101,18 @@ const App = () => (
                 <Route path="terms" element={<Placeholder />} />
                 <Route path="privacidade" element={<Placeholder />} />
                 <Route path="privacy" element={<Placeholder />} />
+                <Route
+                  path="admin"
+                  element={<Navigate to="../paineladmin" replace />}
+                />
+                <Route
+                  path="paineladmin"
+                  element={
+                    <AdminRoute>
+                      <AdminPage />
+                    </AdminRoute>
+                  }
+                />
               </Route>
 
               <Route path="*" element={<NotFound />} />

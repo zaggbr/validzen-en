@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Crown, ArrowRight, Clock, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { usePremiumAssessmentForPost } from "@/hooks/usePremiumAssessment";
 import { useI18n } from "@/i18n/I18nContext";
+import { useAuth } from "@/contexts/AuthContext";
 import PremiumAssessmentFlow from "./PremiumAssessmentFlow";
 
 interface PremiumAssessmentCTAProps {
@@ -12,7 +14,9 @@ interface PremiumAssessmentCTAProps {
 }
 
 const PremiumAssessmentCTA = ({ postSlug }: PremiumAssessmentCTAProps) => {
-  const { locale } = useI18n();
+  const { locale, localePath } = useI18n();
+  const navigate = useNavigate();
+  const { isPremium } = useAuth();
   const { data: assessment } = usePremiumAssessmentForPost(postSlug);
   const [showFlow, setShowFlow] = useState(false);
 
@@ -48,7 +52,9 @@ const PremiumAssessmentCTA = ({ postSlug }: PremiumAssessmentCTAProps) => {
             </div>
           </div>
           <Button onClick={() => setShowFlow(true)} variant="hero" size="lg" className="shrink-0">
-            {locale === "pt" ? "Desbloquear" : "Unlock"}
+            {isPremium 
+              ? (locale === "pt" ? "Começar" : "Start") 
+              : (locale === "pt" ? "Desbloquear" : "Unlock")}
             <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
@@ -62,7 +68,10 @@ const PremiumAssessmentCTA = ({ postSlug }: PremiumAssessmentCTAProps) => {
           </DialogHeader>
           <PremiumAssessmentFlow
             assessmentSlug={assessment.slug}
-            onComplete={() => setShowFlow(false)}
+            onComplete={() => {
+              setShowFlow(false);
+              navigate(localePath("/dashboard"));
+            }}
           />
         </DialogContent>
       </Dialog>
