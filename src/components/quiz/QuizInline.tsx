@@ -1,21 +1,17 @@
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  ResponsiveContainer,
-} from "recharts";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, ArrowLeft, Clock, BarChart3 } from "lucide-react";
+import { ArrowRight, ArrowLeft, Clock, BarChart3, Lock, UserPlus } from "lucide-react";
 import { useQuizQuestions, calculateScores, useSubmitQuizResult } from "@/hooks/useQuiz";
 import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions } from "@/lib/quizInsights";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/I18nContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface QuizInlineProps {
@@ -34,6 +30,7 @@ const slideVariants = {
 
 const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const { locale, t, localePath } = useI18n();
+  const { user, isPremium, incrementQuizCompletion } = useAuth();
   const { data: questions = [], isLoading } = useQuizQuestions(quizSlug, locale);
   const { data: dimensions = [] } = useDimensions();
   const submitResult = useSubmitQuizResult();
@@ -43,6 +40,10 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const [resultId, setResultId] = useState<string | null>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [dir, setDir] = useState(1);
+
+  // Access gating: guests can't start, free users limited to 5
+  const isGuest = !user;
+  const canStart = isPremium || (!isGuest); // logged-in users can attempt (limit checked on submit)
 
   const handleSelect = useCallback(
     (value: number) => {
@@ -61,6 +62,15 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       setScores(s);
 
       try {
+        // Check quiz limit before submitting
+        const canSubmit = await incrementQuizCompletion(quizSlug);
+        if (!canSubmit) {
+          // Limit reached — still show result but don't save
+          setResultId(null);
+          setPhase("done");
+          return;
+        }
+
         const id = await submitResult.mutateAsync({
           quizSlug,
           answers,
@@ -73,7 +83,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       }
       setPhase("done");
     }
-  }, [idx, questions, answers, quizSlug, locale, submitResult]);
+  }, [idx, questions, answers, quizSlug, locale, submitResult, incrementQuizCompletion]);
 
   const handleBack = () => {
     if (idx > 0) {
@@ -95,6 +105,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const q = questions[idx];
   const pct = Math.round(((idx + 1) / questions.length) * 100);
 
+  // CTA phase
   if (phase === "cta") {
     return (
       <div
@@ -119,14 +130,24 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
               </span>
             </div>
           </div>
-          <Button onClick={() => setPhase("active")} variant="hero" size="lg">
-            {t("quiz.start")} <ArrowRight className="ml-1 h-4 w-4" />
-          </Button>
+          {isGuest ? (
+            <Button asChild variant="hero" size="lg">
+              <Link to={localePath("/login")}>
+                <UserPlus className="mr-1.5 h-4 w-4" />
+                {t("result.create_account")}
+              </Link>
+            </Button>
+          ) : (
+            <Button onClick={() => setPhase("active")} variant="hero" size="lg">
+              {t("quiz.start")} <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     );
   }
 
+  // Active question phase
   if (phase === "active") {
     return (
       <div
@@ -178,16 +199,8 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
     );
   }
 
-  // Done phase
+  // Done phase — card-based results (no radar chart)
   const top = getTopDimensions(scores, dimensions, locale, 3);
-  const dimMap = new Map(dimensions.map((d) => [d.slug, d]));
-  const radarData = Object.entries(scores).map(([dim, score]) => {
-    const d = dimMap.get(dim);
-    return {
-      dimension: d ? (locale === "en" ? d.name_en : d.name_pt) : dim,
-      score,
-    };
-  });
 
   return (
     <motion.div
@@ -196,38 +209,50 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       animate={{ opacity: 1, y: 0 }}
       className="my-10 overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/5 to-background p-6 md:p-8"
     >
-      <h3 className="mb-4 text-center text-lg font-bold text-title">
+      <h3 className="mb-6 text-center text-lg font-bold text-title">
         🗺️ {t("result.title")}
       </h3>
 
-      <div className="mx-auto mb-6 max-w-xs">
-        <ResponsiveContainer width="100%" height={220}>
-          <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-            <PolarGrid stroke="hsl(var(--border))" />
-            <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 8, fill: "hsl(var(--muted-foreground))" }} />
-            <Radar dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} />
-          </RadarChart>
-        </ResponsiveContainer>
-      </div>
-
-      <div className="mb-6 flex flex-wrap justify-center gap-3">
-        {top.map((item) => (
-          <div key={item.dimension} className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium">
-            <span>{item.emoji}</span>
-            <span className="text-foreground">{item.label}</span>
-            <span className={cn("font-bold", item.score > 66 ? "text-destructive" : item.score > 33 ? "text-secondary" : "text-accent")}>
-              {item.score}%
-            </span>
-          </div>
+      {/* Card-based results instead of RadarChart */}
+      <div className="mb-6 grid gap-3 sm:grid-cols-3">
+        {top.map((item, i) => (
+          <Card key={item.dimension} className={cn(
+            "overflow-hidden border-border/50 transition-all",
+            i === 0 && "ring-1 ring-primary/20"
+          )}>
+            <CardContent className="p-0">
+              <div className="h-1 bg-muted/30">
+                <div className="h-full bg-secondary" style={{ width: `${item.score}%` }} />
+              </div>
+              <div className="p-4 text-center">
+                <span className="text-2xl">{item.emoji}</span>
+                <h4 className="mt-1 text-sm font-bold text-title">{item.label}</h4>
+                <div className="mt-1 flex items-baseline justify-center gap-1">
+                  <span className="text-2xl font-black text-foreground">{item.score}%</span>
+                </div>
+                <Badge className={cn("mt-2 text-[9px] font-bold uppercase", item.severityColor)}>
+                  {item.severity}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       <div className="text-center">
-        <Button asChild variant="hero" size="lg">
-          <Link to={localePath(`/resultado/${resultId}`)}>
-            {t("quiz.see_result")} <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
-        </Button>
+        {resultId ? (
+          <Button asChild variant="hero" size="lg">
+            <Link to={localePath(`/resultado/${resultId}`)}>
+              {t("quiz.see_result")} <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </Button>
+        ) : (
+          <Button asChild variant="hero" size="lg">
+            <Link to={localePath("/dashboard")}>
+              {locale === "pt" ? "Ir para o Dashboard" : "Go to Dashboard"} <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </Button>
+        )}
       </div>
     </motion.div>
   );

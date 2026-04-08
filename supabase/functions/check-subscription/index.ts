@@ -59,22 +59,29 @@ serve(async (req) => {
       });
     }
 
-    // === STRIPE path: validate via Stripe API ===
+// === STRIPE path: validate via Stripe API ===
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
-      // Fallback: trust DB value
-      return new Response(JSON.stringify({ subscribed: profile?.is_premium ?? false }), {
+      return new Response(JSON.stringify({ 
+        subscribed: profile?.is_premium ?? false,
+        platform: "stripe-fallback" 
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    const userEmail = user.email.toLowerCase();
+    const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
 
     if (customers.data.length === 0) {
-      await supabaseClient.from("user_profiles").update({ is_premium: false, premium_until: null }).eq("id", user.id);
-      return new Response(JSON.stringify({ subscribed: false, platform: "stripe" }), {
+      // Don't reset DB here! Just return current DB status
+      return new Response(JSON.stringify({ 
+        subscribed: profile?.is_premium ?? false, 
+        platform: "stripe",
+        reason: "no_customer_found"
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
@@ -83,26 +90,22 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     const subscriptions = await stripe.subscriptions.list({ customer: customerId, status: "active", limit: 1 });
     const hasActiveSub = subscriptions.data.length > 0;
-    let subscriptionEnd = null;
+    const subscriptionEnd = profile?.premium_until || null;
 
-    if (hasActiveSub) {
-      subscriptionEnd = new Date(subscriptions.data[0].current_period_end * 1000).toISOString();
-      await supabaseClient.from("user_profiles").update({
-        is_premium: true,
-        premium_until: subscriptionEnd,
-        stripe_customer_id: customerId,
-        payment_platform: "stripe",
-      }).eq("id", user.id);
-    } else {
-      await supabaseClient.from("user_profiles").update({
-        is_premium: false,
-        premium_until: null,
-        stripe_customer_id: customerId,
-      }).eq("id", user.id);
-    }
+    const profileData = {
+      id: user.id,
+      is_premium: hasActiveSub || (profile?.is_premium && (!profile.premium_until || new Date(profile.premium_until) > new Date())),
+      premium_until: subscriptionEnd,
+      stripe_customer_id: customerId,
+      payment_platform: "stripe" as const,
+      display_name: profile?.display_name || user.raw_user_meta_data?.full_name || user.raw_user_meta_data?.name || "",
+      avatar_url: profile?.avatar_url || user.raw_user_meta_data?.avatar_url || "",
+    };
+
+    await supabaseClient.from("user_profiles").upsert(profileData);
 
     return new Response(JSON.stringify({
-      subscribed: hasActiveSub,
+      subscribed: profileData.is_premium,
       platform: "stripe",
       subscription_end: subscriptionEnd,
     }), {

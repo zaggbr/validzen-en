@@ -12,27 +12,24 @@ import { getSpecificQuizCountToday, incrementSpecificQuizCount } from "@/lib/sub
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Crown, ArrowLeft } from "lucide-react";
+import { Crown, ArrowLeft, UserPlus } from "lucide-react";
 
 type Phase = "intro" | "questions" | "result";
 
 const QuizPage = () => {
   const { slug = "geral" } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { user, isPremium } = useAuth();
+  const { user, isPremium, userUsage, incrementQuizCompletion } = useAuth();
   const { t, locale, localePath } = useI18n();
 
   const isGlobal = slug === "geral" || slug === "general";
 
-  // Logged-in user without PRO → upgrade gate (all quizzes blocked)
-  const showUpgradeGate = !!user && !isPremium;
+  // New tiered rules:
+  // 1. Guest -> 0 quizzes
+  const showLoginGate = !user;
 
-  // Anonymous user → 2 specific quizzes free, 3rd requires login
-  const showLoginGate = !user && !isGlobal && getSpecificQuizCountToday() >= 2;
-
-  // Global quiz always requires PRO (handled by showUpgradeGate for logged users,
-  // and shown as upgrade prompt for anonymous)
-  const globalLockedAnonymous = isGlobal && !user;
+  // 2. Logged Free -> 5 simple quizzes
+  const showUpgradeGate = !!user && !isPremium && (isGlobal || userUsage.quizzesDone >= 3);
 
   const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug, locale);
   const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug, locale);
@@ -44,9 +41,6 @@ const QuizPage = () => {
   const [direction, setDirection] = useState(1);
 
   const handleStart = () => {
-    if (!isGlobal && !user) {
-      incrementSpecificQuizCount();
-    }
     setPhase("questions");
   };
 
@@ -67,6 +61,12 @@ const QuizPage = () => {
       const quizSlug = quiz?.slug ?? slug;
 
       try {
+        const canSubmit = await incrementQuizCompletion(quizSlug);
+        if (!canSubmit) {
+          navigate(localePath("/pro"));
+          return;
+        }
+
         const resultId = await submitResult.mutateAsync({
           quizSlug,
           answers,
@@ -78,7 +78,7 @@ const QuizPage = () => {
         // Error handled in hook via toast
       }
     }
-  }, [currentIdx, questions, answers, quiz, slug, locale, localePath, navigate, submitResult]);
+  }, [currentIdx, questions, answers, quiz, slug, locale, localePath, navigate, submitResult, incrementQuizCompletion]);
 
   const handleBack = useCallback(() => {
     if (currentIdx > 0) {
@@ -145,12 +145,12 @@ const QuizPage = () => {
             <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
           </Link>
         )}
-        {phase === "intro" && !showUpgradeGate && !showLoginGate && !globalLockedAnonymous && (
+        {phase === "intro" && !showUpgradeGate && !showLoginGate && (
           <QuizIntro quiz={quizIntroData} onStart={handleStart} />
         )}
 
-        {/* Logged-in user without PRO, or anonymous trying the global quiz → upgrade */}
-        {phase === "intro" && (showUpgradeGate || globalLockedAnonymous) && (
+        {/* Logged-in user without PRO but limit reached or global quiz → upgrade */}
+        {phase === "intro" && showUpgradeGate && user && (
           <Card className="mx-4 max-w-md text-center">
             <CardContent className="flex flex-col items-center p-8">
               <Crown className="mb-4 h-12 w-12 text-secondary" />
@@ -174,24 +174,26 @@ const QuizPage = () => {
           </Card>
         )}
 
-        {/* Anonymous user hit their free quiz limit → invite to login */}
+        {/* Guest user → invite to login */}
         {phase === "intro" && showLoginGate && (
           <Card className="mx-4 max-w-md text-center">
             <CardContent className="flex flex-col items-center p-8">
-              <Crown className="mb-4 h-12 w-12 text-secondary" />
+              <UserPlus className="mb-4 h-12 w-12 text-secondary" />
               <h2 className="mb-2 text-xl font-bold text-title">
-                {t("pro.quiz_limit_title")}
+                {locale === "pt" ? "Crie sua conta gratuita" : "Create your free account"}
               </h2>
               <p className="mb-6 text-sm text-muted-foreground">
-                {t("pro.quiz_limit_desc")}
+                {locale === "pt" 
+                  ? "Para realizar nossos quizzes e assessments, você precisa estar logado na plataforma." 
+                  : "To take our quizzes and assessments, you need to be logged into the platform."}
               </p>
               <div className="flex flex-col gap-3 w-full">
                 <Button variant="hero" size="lg" asChild>
                   <Link to={localePath("/login")}>{t("result.create_account")}</Link>
                 </Button>
-                <Button variant="outline" size="lg" asChild>
-                  <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
-                </Button>
+                <p className="text-xs text-muted-foreground">
+                   {locale === "pt" ? "Visitantes podem ler até 3 textos gratuitos." : "Visitors can read up to 3 free articles."}
+                </p>
               </div>
             </CardContent>
           </Card>

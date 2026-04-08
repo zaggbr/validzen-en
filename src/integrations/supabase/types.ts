@@ -525,9 +525,11 @@ export type Database = {
           id: string
           is_premium: boolean
           last_quiz_at: string | null
+          posts_viewed_count: number
           preferred_locale: string
           premium_until: string | null
           quiz_count: number
+          quizzes_completed_count: number
           stripe_customer_id: string | null
         }
         Insert: {
@@ -537,9 +539,11 @@ export type Database = {
           id: string
           is_premium?: boolean
           last_quiz_at?: string | null
+          posts_viewed_count?: number
           preferred_locale?: string
           premium_until?: string | null
           quiz_count?: number
+          quizzes_completed_count?: number
           stripe_customer_id?: string | null
         }
         Update: {
@@ -549,9 +553,11 @@ export type Database = {
           id?: string
           is_premium?: boolean
           last_quiz_at?: string | null
+          posts_viewed_count?: number
           preferred_locale?: string
           premium_until?: string | null
           quiz_count?: number
+          quizzes_completed_count?: number
           stripe_customer_id?: string | null
         }
         Relationships: []

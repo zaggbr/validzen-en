@@ -33,8 +33,8 @@ serve(async (req) => {
     // Check if caller is admin (by email)
     const ADMIN_EMAILS = ["continentemedia@gmail.com", "zagg@uol.com.br"];
     if (!ADMIN_EMAILS.includes(userData.user?.email ?? "")) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), {
-        status: 403,
+      return new Response(JSON.stringify({ error: "Forbidden: email não autorizado" }), {
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -51,32 +51,38 @@ serve(async (req) => {
       .order("created_at", { ascending: false });
     if (profilesError) throw new Error(`Profiles error: ${profilesError.message}`);
 
-    // Build email map from auth users
-    const emailMap: Record<string, string> = {};
-    for (const u of authUsers.users) {
-      emailMap[u.id] = u.email ?? "";
+    // Build profile map from user_profiles
+    const profileMap: Record<string, any> = {};
+    if (profiles) {
+      for (const p of profiles) {
+        profileMap[p.id] = p;
+      }
     }
 
-    // Merge
-    const result = profiles.map((p) => ({
-      id: p.id,
-      display_name: p.display_name,
-      email: emailMap[p.id] ?? "",
-      is_premium: p.is_premium,
-      subscribed_at: p.subscribed_at,
-      premium_until: p.premium_until,
-      payment_platform: p.payment_platform,
-      created_at: p.created_at,
-    }));
+    // Merge using authUsers as base to ensure everyone shows up
+    const result = authUsers.users.map((u: any) => {
+      const p = profileMap[u.id] || {};
+      return {
+        id: u.id,
+        display_name: p.display_name || u.user_metadata?.full_name || u.user_metadata?.name || null,
+        email: u.email ?? "",
+        is_premium: p.is_premium === true,
+        subscribed_at: p.subscribed_at || null,
+        premium_until: p.premium_until || null,
+        payment_platform: p.payment_platform || null,
+        created_at: u.created_at || p.created_at || new Date().toISOString(),
+      };
+    });
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    // Return 200 so the client can read the actual error message
     return new Response(
       JSON.stringify({ error: (err as Error).message }),
       {
-        status: 500,
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );

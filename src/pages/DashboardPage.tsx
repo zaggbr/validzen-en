@@ -1,19 +1,14 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
-  Tooltip,
   LineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -21,7 +16,18 @@ import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Calendar, TrendingUp, ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { 
+  TrendingUp, 
+  ArrowLeft, 
+  Lock, 
+  Sparkles, 
+  ChevronRight, 
+  User, 
+  History as HistoryIcon,
+  Crown,
+  Info 
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import PremiumGate from "@/components/PremiumGate";
 import { useLatestResult, useProgressOverTime } from "@/hooks/useDashboard";
@@ -30,17 +36,30 @@ import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions, generateInterpretation } from "@/lib/quizInsights";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 
 const DashboardPage = () => {
-  const { data: latestResult, results, isLoading } = useLatestResult();
+  const { data: latestResult, results, isLoading: loadingResults } = useLatestResult();
   const evolutionData = useProgressOverTime();
   const { t, locale, localePath } = useI18n();
   const { data: allPosts = [] } = usePosts(locale);
-  const { data: dimensions = [] } = useDimensions();
-  const { isPremium } = useAuth();
+  const { data: dimensions = [], isLoading: loadingDims } = useDimensions();
+  const { isPremium, user } = useAuth();
 
-  const simpleQuizCount = results?.filter(r => r.quiz_slug !== 'geral' && r.quiz_slug !== 'general').length || 0;
-  const showHolisticView = isPremium && simpleQuizCount > 3;
+  const isLoading = (isPremium && loadingResults) || loadingDims;
+  const isSimulacrum = !isPremium || !latestResult;
+
+  // Mock data for simulacrum — 8 diverse emotional dimensions to show the full map
+  const mockResults = [
+    { dimension: "ansiedade", label: locale === "pt" ? "Ansiedade" : "Anxiety", score: 45, severity: locale === "pt" ? "Leve" : "Mild", emoji: "🧘", color: "bg-blue-500", severityColor: "bg-blue-100 text-blue-700", interpretation: locale === "pt" ? "Níveis controlados, mas observe picos de estresse." : "Controlled levels, but watch for stress spikes." },
+    { dimension: "burnout", label: locale === "pt" ? "Burnout" : "Burnout", score: 82, severity: locale === "pt" ? "Alto" : "High", emoji: "🔥", color: "bg-red-500", severityColor: "bg-red-100 text-red-700", interpretation: locale === "pt" ? "Risco elevado detectado. Recomendamos pausa imediata." : "High risk detected. Immediate break recommended." },
+    { dimension: "relacoes", label: locale === "pt" ? "Relações" : "Relationships", score: 37, severity: locale === "pt" ? "Leve" : "Mild", emoji: "💬", color: "bg-emerald-500", severityColor: "bg-emerald-100 text-emerald-700", interpretation: locale === "pt" ? "Vínculos saudáveis, com oportunidade de aprofundamento." : "Healthy bonds, with opportunity to deepen." },
+    { dimension: "sentido", label: locale === "pt" ? "Sentido" : "Purpose", score: 68, severity: locale === "pt" ? "Moderado" : "Moderate", emoji: "🧭", color: "bg-amber-500", severityColor: "bg-amber-100 text-amber-700", interpretation: locale === "pt" ? "Há uma busca ativa por significado. Explore novos caminhos." : "There is an active search for meaning. Explore new paths." },
+    { dimension: "identidade", label: locale === "pt" ? "Identidade" : "Identity", score: 52, severity: locale === "pt" ? "Moderado" : "Moderate", emoji: "👤", color: "bg-indigo-500", severityColor: "bg-indigo-100 text-indigo-700", interpretation: locale === "pt" ? "Sua percepção de si está em evolução. Continue explorando." : "Your self-perception is evolving. Keep exploring." },
+    { dimension: "emocoes", label: locale === "pt" ? "Emoções" : "Emotions", score: 59, severity: locale === "pt" ? "Moderado" : "Moderate", emoji: "🎭", color: "bg-pink-500", severityColor: "bg-pink-100 text-pink-700", interpretation: locale === "pt" ? "Equilíbrio emocional estável com pequenos desvios." : "Stable emotional balance with minor deviations." },
+    { dimension: "ia_futuro", label: locale === "pt" ? "IA e Futuro" : "AI & Future", score: 71, severity: locale === "pt" ? "Alto" : "High", emoji: "🤖", color: "bg-cyan-500", severityColor: "bg-cyan-100 text-cyan-700", interpretation: locale === "pt" ? "Preocupação elevada com o futuro tecnológico." : "High concern about the technological future." },
+    { dimension: "sociedade", label: locale === "pt" ? "Sociedade" : "Society", score: 64, severity: locale === "pt" ? "Moderado" : "Moderate", emoji: "🌍", color: "bg-stone-500", severityColor: "bg-stone-100 text-stone-700", interpretation: locale === "pt" ? "Sensibilidade aguçada às mudanças sociais." : "Arp sensitivity to social changes." },
+  ];
 
   if (isLoading) {
     return (
@@ -62,30 +81,11 @@ const DashboardPage = () => {
     );
   }
 
-  if (!latestResult) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex flex-1 flex-col items-center justify-center py-20 text-center">
-          <span className="mb-4 text-5xl">🧭</span>
-          <h1 className="mb-2 text-2xl font-bold text-title">{t("dashboard.title")}</h1>
-          <p className="mb-6 text-sm text-muted-foreground">{t("dashboard.no_results")}</p>
-          <Button asChild variant="hero" size="lg">
-            <Link to={localePath("/quiz/geral")}>
-              {t("dashboard.cta_quiz")} <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
-          </Button>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const top = latestResult ? getTopDimensions(latestResult.scores, dimensions, locale) : [];
+  const interpretation = latestResult ? generateInterpretation(top, locale) : "";
 
-  const top = getTopDimensions(latestResult.scores, dimensions, locale);
-  const interpretation = generateInterpretation(top, locale);
-
-  const recommendedSlugs = latestResult.recommended_post_slugs.length > 0
-    ? latestResult.recommended_post_slugs
+  const recommendedSlugs = (latestResult?.recommended_post_slugs?.length ?? 0) > 0
+    ? (latestResult?.recommended_post_slugs ?? [])
     : dimensions
         .filter((d) => top.some((t) => t.dimension === d.slug))
         .flatMap((d) => d.recommended_post_slugs)
@@ -96,18 +96,18 @@ const DashboardPage = () => {
     .filter(Boolean);
 
   const dimMap = new Map(dimensions.map((d) => [d.slug, d]));
-  const radarData = Object.entries(latestResult.scores).map(([dim, score]) => {
-    const d = dimMap.get(dim);
-    return {
-      dimension: d ? (locale === "en" ? d.name_en : d.name_pt) : dim,
-      score,
-      fullMark: 100,
-    };
-  });
 
   const dimensionKeys = evolutionData.length > 0
     ? Object.keys(evolutionData[0]).filter((k) => k !== "date")
     : [];
+
+  const mockHistory = isSimulacrum ? [
+    { id: "mock-1", quiz_slug: "geral", completed_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
+    { id: "mock-2", quiz_slug: "ansiedade", completed_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+    { id: "mock-3", quiz_slug: "burnout", completed_at: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString() },
+  ] : [];
+
+  const displayResults = isSimulacrum ? mockHistory : results;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -122,76 +122,167 @@ const DashboardPage = () => {
             <p className="text-sm text-muted-foreground">{t("dashboard.subtitle")}</p>
           </motion.div>
 
-          <div className="mb-10">
-            <h2 className="mb-4 text-xl font-bold text-title">{t("dashboard.seus_afetos")}</h2>
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
-              {top.map((item, i) => (
-                <motion.div key={item.dimension} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.08 }}>
-                  <Card className="h-full">
-                    <CardContent className="flex flex-col items-center p-5 text-center">
-                      <span className="mb-1 text-2xl">{item.emoji}</span>
-                      <h3 className="text-sm font-bold text-title">{item.label}</h3>
-                      <span className="mb-1 text-xl font-bold">{item.score}%</span>
-                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${item.severityColor}`}>{item.severity}</span>
+          {!isPremium && (
+            <div className="mb-8 rounded-2xl border border-secondary/20 bg-gradient-to-r from-secondary/5 to-primary/5 p-6 flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
+                <Lock className="h-5 w-5" />
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <p className="font-semibold text-title text-sm">
+                  {locale === "pt" ? "Você está vendo uma demonstração do seu Mapa Emocional" : "You are viewing a demo of your Emotional Map"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {locale === "pt" ? "Assine o PRO para ver seus dados reais e acompanhar sua evolução." : "Subscribe to PRO to see your real data and track your evolution."}
+                </p>
+              </div>
+              <Button size="sm" variant="hero" asChild className="shrink-0">
+                <Link to={localePath(user ? "/pro" : "/login")}>
+                  {user ? t("pro.upgrade_cta") : t("result.create_account")}
+                </Link>
+              </Button>
+            </div>
+          )}
+
+          <div className="mb-12">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-title">{t("dashboard.seus_afetos")}</h2>
+              {isSimulacrum && (
+                <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/20">
+                  {locale === "pt" ? "Modo Demonstração" : "Demo Mode"}
+                </Badge>
+              )}
+            </div>
+            
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {(isSimulacrum ? mockResults : top).map((item, i) => (
+                <motion.div 
+                  key={item.dimension} 
+                  initial={{ opacity: 0, y: 20 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Card className={cn(
+                    "h-full overflow-hidden border-border/50 transition-all hover:shadow-lg",
+                    i === 1 && isSimulacrum && "ring-2 ring-secondary/30 scale-[1.02] shadow-xl"
+                  )}>
+                    <CardContent className="p-0">
+                      <div className="flex h-2 bg-muted/30">
+                        <div 
+                          className={cn("h-full", item.dimension === 'burnout' ? 'bg-red-500' : 'bg-secondary')} 
+                          style={{ width: `${item.score}%` }} 
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-4 flex items-center justify-between">
+                          <span className="text-3xl">{item.emoji}</span>
+                          <span className={cn("rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider", (item as any).severityColor || "bg-muted text-muted-foreground")}>
+                            {item.severity}
+                          </span>
+                        </div>
+                        <h3 className="mb-1 text-lg font-bold text-title text-start">{item.label}</h3>
+                        <div className="mb-4 flex items-baseline gap-1">
+                          <span className="text-3xl font-black text-foreground">{item.score}%</span>
+                          <span className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">Intensity</span>
+                        </div>
+                        <p className="text-sm text-balance text-muted-foreground leading-relaxed italic text-start">
+                          "{item.interpretation}"
+                        </p>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               ))}
+
+              {isSimulacrum && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }} 
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="lg:col-span-1"
+                >
+                  <Card className="h-full bg-gradient-to-br from-secondary/10 to-primary/5 border-secondary/20 border-dashed border-2 flex flex-col items-center justify-center p-8 text-center">
+                     <Crown className="h-10 w-10 text-secondary/40 mb-4" />
+                     <h3 className="font-bold text-title mb-2">{locale === "pt" ? "Desbloqueie seu Mapa Completo" : "Unlock your Full Map"}</h3>
+                     <p className="text-xs text-muted-foreground mb-6">
+                       {locale === "pt" ? "Assine o PRO para ver seus resultados reais e acompanhar sua evolução emocional." : "Subscribe to PRO to see your real results and track your emotional evolution."}
+                     </p>
+                     <Button size="sm" variant="hero" asChild>
+                       <Link to={localePath(user ? "/pro" : "/login")}>
+                         {user ? t("pro.upgrade_cta") : t("result.create_account")}
+                       </Link>
+                     </Button>
+                  </Card>
+                </motion.div>
+              )}
             </div>
           </div>
 
-          {showHolisticView && (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="mb-10">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">{t("dashboard.olhar_holistico")}</CardTitle>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(latestResult.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US", { day: "2-digit", month: "long", year: "numeric" })}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={360}>
-                    <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-                      <PolarGrid stroke="hsl(var(--border))" />
-                      <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-                      <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9 }} />
-                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "0.5rem", fontSize: "0.8rem" }} formatter={(v: number) => [`${v}%`, "Score"]} />
-                      <Radar dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} dot={{ r: 3, fill: "hsl(var(--secondary))", stroke: "hsl(var(--secondary))" }} />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          <div className="mb-10 rounded-lg border-l-4 border-secondary bg-muted/40 px-6 py-5">
-            <p className="text-sm leading-relaxed text-muted-foreground">{interpretation}</p>
+          <div className={cn("mb-12 rounded-2xl border border-border bg-muted/30 p-8", isSimulacrum && "select-none pointer-events-none opacity-60")}>
+            <div className="flex items-center gap-3 mb-4">
+               <div className="h-10 w-10 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary">
+                 <Sparkles className="h-5 w-5" />
+               </div>
+               <h2 className="text-lg font-bold text-title">📝 {t("result.interpretation")}</h2>
+            </div>
+            <p className="text-md leading-relaxed text-muted-foreground text-start">
+              {isSimulacrum 
+                ? (locale === "pt" 
+                    ? "Esta é uma análise detalhada baseada em seus resultados consolidados, cruzando dados de ansiedade, estresse e regulação emocional..." 
+                    : "This is a detailed analysis based on your consolidated results, crossing data from anxiety, stress and emotional regulation...") 
+                : interpretation}
+            </p>
           </div>
 
-          <div className="mb-10">
-            <h2 className="mb-4 text-xl font-bold text-title">
-              <Calendar className="mr-2 inline h-5 w-5" />{t("dashboard.history")}
+          <div className="mb-12">
+            <h2 className="mb-4 text-2xl font-bold text-title flex items-center gap-2">
+              <HistoryIcon className="h-6 w-6 text-secondary" /> {t("dashboard.history")}
             </h2>
-            <Card>
-              <CardContent className="p-4">
-                {!results || results.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">{t("dashboard.no_history")}</p>
+            <Card className={cn("overflow-hidden border-border/50", isSimulacrum && "opacity-60 pointer-events-none")}>
+              <CardContent className="p-0">
+                {!displayResults || displayResults.length === 0 ? (
+                   <div className="py-12 text-center">
+                     <p className="text-sm text-muted-foreground">{t("dashboard.no_history")}</p>
+                     <Button variant="link" asChild className="mt-2 text-secondary">
+                        <Link to={localePath("/quizzes")}>{t("dashboard.cta_quiz")}</Link>
+                     </Button>
+                   </div>
                 ) : (
-                  <ul className="divide-y divide-border">
-                    {results.map((r) => (
-                      <li key={r.id} className="flex items-center justify-between py-3">
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
-                            Quiz {r.quiz_slug === "geral" ? (locale === "pt" ? "Genérico" : "General") : r.quiz_slug}
-                          </p>
-                          <p className="text-xs text-muted-foreground">{new Date(r.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US")}</p>
-                        </div>
-                        <Button asChild variant="ghost" size="sm">
-                          <Link to={localePath(`/quiz/${r.quiz_slug}`)}>{t("dashboard.retry")}</Link>
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-muted/30 border-b border-border">
+                        <tr>
+                          <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Avaliação</th>
+                          <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Data</th>
+                          <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Ação</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {displayResults.slice(0, 5).map((r) => (
+                          <tr key={r.id} className="hover:bg-muted/10 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                                  {r.quiz_slug === "geral" ? "G" : (r.quiz_slug || 'Q').charAt(0).toUpperCase()}
+                                </div>
+                                <span className="text-sm font-semibold text-title">
+                                  {r.quiz_slug === "geral" ? (locale === "pt" ? "Mapeamento Geral" : "General Mapping") : r.quiz_slug}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-muted-foreground">
+                              {new Date(r.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US")}
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <Button asChild variant="ghost" size="sm" className="text-secondary hover:text-secondary hover:bg-secondary/10">
+                                <Link to={localePath(`/resultado/${r.id}`)}>
+                                  {locale === "pt" ? "Ver Detalhes" : "View Details"} <ChevronRight className="ml-1 h-3 w-3" />
+                                </Link>
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -260,14 +351,14 @@ const DashboardPage = () => {
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row">
-                <Card className="flex-1">
+                <Card className="flex-1 transition-all hover:border-secondary/30">
                   <CardContent className="p-5 text-center">
                     <span className="text-3xl">📄</span>
                     <h4 className="mt-2 text-sm font-bold text-title">{t("dashboard.export_pdf")}</h4>
                     <p className="text-xs text-muted-foreground">{t("dashboard.export_pdf_desc")}</p>
                   </CardContent>
                 </Card>
-                <Card className="flex-1">
+                <Card className="flex-1 transition-all hover:border-secondary/30">
                   <CardContent className="p-5 text-center">
                     <span className="text-3xl">📅</span>
                     <h4 className="mt-2 text-sm font-bold text-title">{t("dashboard.plan_30days")}</h4>

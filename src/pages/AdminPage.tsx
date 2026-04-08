@@ -39,12 +39,13 @@ const AdminPage = () => {
   const fetchUsers = async () => {
     try {
       const { data, error } = await supabase.functions.invoke("admin-users");
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if (error) throw new Error(`Erro na função: ${error.message}`);
+      if (data?.error) throw new Error(`Erro do servidor: ${data.error}`);
+      if (!Array.isArray(data)) throw new Error(`Resposta inesperada: ${JSON.stringify(data)}`);
       setUsers(data as UserAdminData[]);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro ao buscar usuários:", err);
-      setError("Não foi possível carregar os usuários.");
+      setError(err?.message || "Não foi possível carregar os usuários.");
     } finally {
       setLoading(false);
     }

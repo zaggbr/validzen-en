@@ -27,24 +27,30 @@ const PostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isLoading } = usePostBySlug(slug);
   const { t, locale, localePath } = useI18n();
-  const { user, isPremium } = useAuth();
+  const { user, isPremium, incrementPostView } = useAuth();
   const { data: related = [] } = useRelatedPosts(post?.related_post_slugs || []);
   const [showGate, setShowGate] = useState(false);
 
   useEffect(() => {
-    if (isLoading || !post || user || isPremium) return;
+    setShowGate(false); // Reset gate on navigation
+    const handleViewCounter = async () => {
+      if (isLoading || !post || isPremium) return;
 
-    const viewedPosts = JSON.parse(localStorage.getItem("validzen_viewed_posts") || "[]") as string[];
-    
-    if (!viewedPosts.includes(post.slug)) {
-      if (viewedPosts.length >= 5) {
+      // 1. Strict PRO check
+      if (post.is_premium) {
         setShowGate(true);
-      } else {
-        const newViewed = [...viewedPosts, post.slug];
-        localStorage.setItem("validzen_viewed_posts", JSON.stringify(newViewed));
+        return;
       }
-    }
-  }, [post, isLoading, user, isPremium]);
+
+      // 2. Daily/Usage limit check
+      const canView = await incrementPostView(post.slug);
+      if (!canView) {
+        setShowGate(true);
+      }
+    };
+
+    handleViewCounter();
+  }, [slug, post, isLoading, isPremium, incrementPostView]);
 
   if (isLoading) {
     return (
@@ -163,13 +169,23 @@ const PostPage = () => {
 
           <div className="flex gap-10">
             <div className="min-w-0 max-w-3xl flex-1">
-              {sections.length > 1 && (
+              {sections.length > 1 && !showGate && (
                 <div className="mb-8 lg:hidden">
                   <TableOfContents sections={sections} />
                 </div>
               )}
 
-              {sections.length > 0 ? (
+              {showGate ? (
+                <div className="relative">
+                  <div className="prose-validzen blur-sm select-none pointer-events-none opacity-40">
+                    {sections.length > 0 ? (
+                       <section className="mb-8">{sections[0].body.substring(0, 300)}...</section>
+                    ) : (
+                       <div className="mb-8">{post.content.substring(0, 300)}...</div>
+                    )}
+                  </div>
+                </div>
+              ) : sections.length > 0 ? (
                 sections.map((section, i) => (
                   <div key={section.id}>
                     <section id={section.id} className="mb-8 scroll-mt-24">
@@ -204,11 +220,11 @@ const PostPage = () => {
                 )
               )}
 
-              {post.quiz_slug && (
+              {!showGate && post.quiz_slug && (
                 <QuizCTA theme={post.category.toLowerCase()} quizSlug={post.quiz_slug} />
               )}
 
-              <PremiumAssessmentCTA postSlug={post.slug} />
+              {!showGate && <PremiumAssessmentCTA postSlug={post.slug} />}
 
               {post.video_url && (
                 <section className="my-10">
@@ -260,7 +276,7 @@ const PostPage = () => {
 
             <aside className="hidden w-64 shrink-0 lg:block">
               <div className="sticky top-24 space-y-8">
-                {sections.length > 1 && <TableOfContents sections={sections} />}
+                {sections.length > 1 && !showGate && <TableOfContents sections={sections} />}
                 <AdBanner slot="post-sidebar" format="vertical" className="hidden lg:block" />
               </div>
             </aside>
@@ -271,14 +287,28 @@ const PostPage = () => {
           <div className="absolute inset-0 z-50 flex items-start justify-center bg-gradient-to-b from-transparent via-background/90 to-background pt-32">
             <div className="sticky top-40 max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center shadow-2xl mx-4">
               <Lock className="mx-auto mb-4 h-10 w-10 text-secondary" />
-              <h2 className="text-2xl font-bold mb-3">{t("pro.unlock_title")}</h2>
+              <h2 className="text-2xl font-bold mb-3">
+                {post.is_premium ? t("pro.unlock_title") : t("pro.unlock_title")}
+              </h2>
               <p className="text-muted-foreground mb-6 text-sm">
-                {t("pro.unlock_desc_full")}
+                {post.is_premium 
+                  ? (locale === "pt" ? "Este conteúdo é exclusivo para assinantes PRO." : "This content is exclusive to PRO subscribers.")
+                  : t("pro.unlock_desc_full")}
               </p>
               <div className="flex flex-col gap-3">
-                <Button asChild size="lg" variant="hero">
-                  <Link to={localePath("/login")}>{t("result.create_account")}</Link>
-                </Button>
+                {post.is_premium && !user ? (
+                   <Button asChild size="lg" variant="hero">
+                    <Link to={localePath("/login")}>{t("result.create_account")}</Link>
+                  </Button>
+                ) : (post.is_premium && user) ? (
+                  <Button asChild size="lg" variant="hero">
+                    <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
+                  </Button>
+                ) : (
+                  <Button asChild size="lg" variant="hero">
+                    <Link to={localePath("/login")}>{t("result.create_account")}</Link>
+                  </Button>
+                )}
               </div>
             </div>
           </div>

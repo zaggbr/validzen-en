@@ -54,7 +54,7 @@ serve(async (req) => {
 
     console.log("Searching for existing customer in Stripe...");
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId = customers.data.length > 0 ? customers.data[0].id : undefined;
+    const customerId = customers.data.length > 0 ? customers.data[0].id : undefined;
     console.log(`Customer ID: ${customerId || "New Customer"}`);
 
     const origin = req.headers.get("origin") || "https://validzen.pages.dev";
@@ -71,6 +71,7 @@ serve(async (req) => {
       cancel_url: `${origin}/pt/pro?checkout=canceled`,
       metadata: {
         userId: user.id,
+        userEmail: user.email,
       },
     });
 

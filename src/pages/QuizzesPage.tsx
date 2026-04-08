@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { 
-  Crown, 
-  ArrowRight, 
-  Clock, 
-  Lock, 
-  Search, 
+import {
+  Crown,
+  ArrowRight,
+  Clock,
+  Lock,
+  Search,
   Sparkles,
   ChevronRight
 } from "lucide-react";
@@ -22,7 +22,6 @@ import { Input } from "@/components/ui/input";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useDimensions } from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
 
 interface UnifiedQuiz {
@@ -36,15 +35,51 @@ interface UnifiedQuiz {
   theme: string;
 }
 
+interface Theme {
+  slug: string;
+  name_pt: string;
+  name_en: string;
+  icon: string;
+}
+
+// Hardcoded themes — independent of DB dimensions table
+const THEMES: Theme[] = [
+  { slug: "ansiedade",  name_pt: "Ansiedade",   name_en: "Anxiety",       icon: "😰" },
+  { slug: "burnout",    name_pt: "Burnout",      name_en: "Burnout",       icon: "🔥" },
+  { slug: "emocoes",    name_pt: "Emoções",      name_en: "Emotions",      icon: "🎭" },
+  { slug: "relacoes",   name_pt: "Relações",     name_en: "Relationships", icon: "💔" },
+  { slug: "identidade", name_pt: "Identidade",   name_en: "Identity",      icon: "👤" },
+  { slug: "sentido",    name_pt: "Sentido",      name_en: "Purpose",       icon: "🧭" },
+  { slug: "sociedade",  name_pt: "Sociedade",    name_en: "Society",       icon: "🌍" },
+];
+
+const SIMPLE_QUIZ_THEME_MAP: Record<string, string> = {
+  "luto-civilizatorio-futuro": "sociedade",
+  "teste-crise-reprodutiva": "relacoes",
+  "teste-anemoia": "sentido",
+  "teste-perfeccionismo-procrastinacao": "ansiedade",
+  "teste-luto-nao-reconhecido": "sociedade",
+  "teste-fawning-people-pleasing": "relacoes",
+  "teste-dismorfia-temporal": "burnout",
+  "teste-embotamento-emocional": "emocoes",
+  "teste-alexitimia": "emocoes",
+  "teste-vergonha-cronica": "identidade",
+  "teste-raiva-reprimida": "emocoes",
+  "geral": "emocoes",
+};
+
 const QuizzesPage = () => {
   const { t, locale, localePath } = useI18n();
-  const { user, isPremium } = useAuth();
+  const { user, isPremium, userUsage } = useAuth();
   const navigate = useNavigate();
-  const { data: dimensions = [], isLoading: loadingDims } = useDimensions();
   const [quizzes, setQuizzes] = useState<UnifiedQuiz[]>([]);
   const [loadingQuizzes, setLoadingQuizzes] = useState(true);
   const [search, setSearch] = useState("");
   const [activeDeepAssessment, setActiveDeepAssessment] = useState<UnifiedQuiz | null>(null);
+
+  // Quizzes page is a Vitrine for non-PRO users — content visible, no blur, only actions blocked
+  const isLocked = !isPremium;
+  const lockType = !user ? "login" : "upgrade";
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -75,7 +110,7 @@ const QuizzesPage = () => {
               estimated_time: q.estimated_time || 1,
               is_premium: false,
               type: "simple",
-              theme: q.dimensions?.[0] || "geral",
+              theme: SIMPLE_QUIZ_THEME_MAP[q.slug] || "geral",
             });
           });
         }
@@ -124,19 +159,19 @@ const QuizzesPage = () => {
     navigate(localePath(`/quiz/${quiz.slug}`));
   };
 
-  const filteredDimensions = dimensions.filter(dim => {
-    const themeQuizzes = quizzes.filter(q => q.theme === dim.slug);
+  const filteredThemes = THEMES.filter(theme => {
+    const themeQuizzes = quizzes.filter(q => q.theme === theme.slug);
     if (themeQuizzes.length === 0) return false;
-    
+
     if (!search) return true;
-    
-    const dimName = locale === "en" ? dim.name_en : dim.name_pt;
+
+    const dimName = locale === "en" ? theme.name_en : theme.name_pt;
     const matchesDim = dimName.toLowerCase().includes(search.toLowerCase());
-    const matchesQuizzes = themeQuizzes.some(q => 
-      q.title.toLowerCase().includes(search.toLowerCase()) || 
+    const matchesQuizzes = themeQuizzes.some(q =>
+      q.title.toLowerCase().includes(search.toLowerCase()) ||
       q.description.toLowerCase().includes(search.toLowerCase())
     );
-    
+
     return matchesDim || matchesQuizzes;
   });
 
@@ -183,31 +218,60 @@ const QuizzesPage = () => {
         </section>
 
         {/* Content Section */}
-        <section className="container py-12 md:py-20">
-          {(loadingDims || loadingQuizzes) ? (
+        <section className="container py-12 md:py-20 relative">
+          {(!loadingQuizzes && isLocked) && (
+            <div className="absolute inset-x-0 z-40 flex items-start justify-center pt-20 pointer-events-none min-h-[600px]">
+              <div className="sticky top-[30vh] max-w-lg w-full bg-card/95 border border-border shadow-2xl shadow-primary/5 rounded-3xl p-10 text-center pointer-events-auto mx-4 backdrop-blur-md">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
+                  <Lock className="h-8 w-8" />
+                </div>
+                <h2 className="text-3xl font-extrabold mb-4">{lockType === "login" ? t("pro.unlock_title") : t("pro.quiz_limit_title")}</h2>
+                <p className="text-muted-foreground mb-8 text-lg">
+                  {lockType === "login" 
+                    ? (locale === "pt" ? "Crie sua conta livre ou assine o PRO para acessar o diretório de testes." : "Create your free account or subscribe to PRO to access the tests directory.")
+                    : (locale === "pt" ? "Você atingiu o limite de 3 quizzes gratuitos. Assine o PRO para acesso ilimitado!" : "You've reached the free limit of 3 quizzes. Subscribe to PRO for unlimited access!")
+                  }
+                </p>
+                <div className="flex flex-col gap-4">
+                  <Button asChild size="lg" variant="hero" className="py-7 text-lg shadow-lg shadow-primary/20">
+                    <Link to={localePath(user ? "/pro" : "/login")}>
+                      {user ? t("pro.upgrade_cta") : t("result.create_account")}
+                    </Link>
+                  </Button>
+                  {lockType === "login" && (
+                    <Button asChild variant="link" className="text-muted-foreground">
+                       <Link to={localePath("/login")}>{locale === "pt" ? "Já tenho uma conta" : "I already have an account"}</Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {loadingQuizzes ? (
             <div className="grid gap-12">
               {[1, 2].map(i => (
                 <div key={i} className="space-y-6">
                   <div className="h-8 w-48 animate-pulse rounded bg-muted" />
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {[1, 2, 3].map(j => (
-                      <div key={j} className="h-48 animate-pulse rounded-xl bg-muted/50" />
+                  <div className="flex flex-col gap-4">
+                    {[1, 2].map(j => (
+                      <div key={j} className="h-24 animate-pulse rounded-xl bg-muted/50" />
                     ))}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="space-y-20">
-              {filteredDimensions.map((dim, idx) => {
-                const themeQuizzes = quizzes.filter(q => q.theme === dim.slug);
+            <div className={cn("space-y-20 transition-all duration-700", isLocked && "pointer-events-none select-none")}>
+              {filteredThemes.map((theme, idx) => {
+                const themeQuizzes = quizzes.filter(q => q.theme === theme.slug);
                 const simpleOnes = themeQuizzes.filter(q => q.type === "simple");
                 const deepOne = themeQuizzes.find(q => q.type === "deep");
-                const dimName = locale === "en" ? dim.name_en : dim.name_pt;
+                const dimName = locale === "en" ? theme.name_en : theme.name_pt;
 
                 return (
-                  <motion.div 
-                    key={dim.slug}
+                  <motion.div
+                    key={theme.slug}
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -216,7 +280,7 @@ const QuizzesPage = () => {
                     <div className="mb-8 flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-2xl shadow-sm">
-                          {dim.icon || "⚓"}
+                          {theme.icon}
                         </div>
                         <div>
                           <h2 className="text-2xl font-bold tracking-tight text-title">{dimName}</h2>
@@ -227,106 +291,104 @@ const QuizzesPage = () => {
                       </div>
                     </div>
 
-                    <div className="grid gap-6 lg:grid-cols-12">
-                      {/* Standard Quizzes Grid */}
-                      <div className="grid gap-4 lg:col-span-8 md:grid-cols-2">
+                    <div className="flex flex-col gap-8">
+                      {/* Standard Quizzes List - Single Column */}
+                      <div className="flex flex-col gap-4">
                         {simpleOnes.map(quiz => (
                           <Card 
                             key={quiz.id} 
-                            className="group relative h-full overflow-hidden border-border/40 bg-card transition-all hover:border-secondary/30 hover:shadow-xl hover:shadow-secondary/5"
+                            className="group relative overflow-hidden border-border/40 bg-card transition-all hover:border-secondary/30 hover:shadow-lg hover:shadow-secondary/5"
                           >
-                            <CardContent className="flex h-full flex-col p-6">
-                              <div className="mb-4 flex items-center justify-between">
-                                <Badge variant="secondary" className="bg-muted/50 text-muted-foreground text-[10px] uppercase tracking-wider">
-                                  {t("pro.simple_quizzes")}
-                                </Badge>
-                                <span className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
-                                  <Clock className="h-3 w-3" />
-                                  {quiz.estimated_time} {t("pro.month")}
-                                </span>
+                            <CardContent className="flex flex-col md:flex-row items-center justify-between p-6 gap-6">
+                              <div className="flex-1 text-center md:text-left">
+                                <div className="mb-2 flex items-center justify-center md:justify-start gap-3">
+                                   <Badge variant="secondary" className="bg-muted/50 text-muted-foreground text-[10px] uppercase tracking-wider">
+                                     {t("pro.simple_quizzes")}
+                                   </Badge>
+                                   <span className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+                                     <Clock className="h-3 w-3" />
+                                     {quiz.estimated_time} {t("post.min_read")}
+                                   </span>
+                                </div>
+                                <h3 className="mb-1 text-xl font-bold text-title group-hover:text-secondary transition-colors">
+                                  {quiz.title}
+                                </h3>
+                                <p className="text-sm text-balance text-muted-foreground line-clamp-1 opacity-80">
+                                  {quiz.description}
+                                </p>
                               </div>
-                              <h3 className="mb-2 text-lg font-bold text-title group-hover:text-secondary transition-colors">
-                                {quiz.title}
-                              </h3>
-                              <p className="mb-6 flex-1 text-sm text-muted-foreground line-clamp-2">
-                                {quiz.description}
-                              </p>
-                              <Button 
-                                variant="ghost" 
-                                className="mt-auto w-full justify-between bg-muted/30 group-hover:bg-secondary group-hover:text-white transition-all"
-                                onClick={() => handleStart(quiz)}
-                              >
-                                {t("pro.start_quiz")}
-                                <ChevronRight className="h-4 w-4" />
-                              </Button>
+                              <div className="min-w-[160px] w-full md:w-auto">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  className="w-full justify-between bg-muted/20 group-hover:bg-secondary group-hover:text-white transition-all shadow-sm py-5 px-6 font-semibold"
+                                  onClick={() => handleStart(quiz)}
+                                >
+                                  {t("pro.start_quiz")}
+                                  <ChevronRight className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </CardContent>
                           </Card>
                         ))}
                       </div>
-
-                      {/* Deep Assessment Highlight */}
+ 
+                      {/* Deep Assessment Highlight - Full width row */}
                       {deepOne && (
-                        <div className="lg:col-span-4">
-                          <Card 
-                            className="group relative h-full overflow-hidden border-secondary/20 bg-gradient-to-br from-background via-card to-secondary/5 shadow-lg ring-1 ring-secondary/10"
-                          >
-                            <CardContent className="flex h-full flex-col p-8">
-                              <div className="mb-6 flex items-center justify-between">
+                        <Card 
+                          className="group relative overflow-hidden border-secondary/20 bg-gradient-to-r from-secondary/5 via-card to-background shadow-lg ring-1 ring-secondary/10"
+                        >
+                          <CardContent className="flex flex-col md:flex-row p-8 items-center gap-8">
+                            <div className="mb-4 md:mb-0 flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-secondary/10 text-secondary shadow-inner">
+                              <Crown className="h-10 w-10 text-secondary" />
+                            </div>
+                            
+                            <div className="flex-1 text-center md:text-left">
+                              <div className="mb-2 flex flex-wrap items-center justify-center md:justify-start gap-4">
                                 <Badge variant="secondary" className="bg-secondary/10 text-secondary border-secondary/20 text-[10px] font-bold uppercase tracking-widest">
                                   {t("pro.pro_badge")}
                                 </Badge>
-                                <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-secondary uppercase tracking-widest flex items-center gap-2">
                                   <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
-                                  <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">
-                                    {t("pro.premium_assessments")}
-                                  </span>
-                                </div>
+                                  {t("pro.premium_assessments")}
+                                </span>
                               </div>
-                              
-                              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 text-secondary shadow-inner">
-                                <Crown className="h-7 w-7" />
-                              </div>
-
-                              <h3 className="mb-3 text-2xl font-black tracking-tight text-title leading-tight">
+                              <h3 className="mb-2 text-3xl font-black tracking-tight text-title">
                                 {deepOne.title}
                               </h3>
-                              
-                              <p className="mb-8 flex-1 text-sm leading-relaxed text-muted-foreground italic">
+                              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground italic">
                                 "{deepOne.description}"
                               </p>
-
-                              <div className="mb-8 space-y-4">
-                                <div className="flex items-center gap-3 text-xs font-semibold text-title">
-                                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-secondary/20 text-secondary">
-                                    <Clock className="h-3 w-3" />
-                                  </div>
+                            </div>
+ 
+                            <div className="flex flex-col gap-4 min-w-[200px] w-full md:w-auto">
+                              <div className="flex items-center justify-center md:justify-start gap-6">
+                                <div className="flex items-center gap-2 text-xs font-semibold text-title">
+                                  <Clock className="h-4 w-4 text-secondary" />
                                   <span>{deepOne.estimated_time} {t("post.min_read")}</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-xs font-semibold text-title">
-                                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-secondary/20 text-secondary">
-                                    <Lock className="h-3 w-3" />
-                                  </div>
+                                <div className="flex items-center gap-2 text-xs font-semibold text-title">
+                                  <Lock className="h-4 w-4 text-secondary" />
                                   <span>{locale === "pt" ? "Personalizado & Clínico" : "Personalized & Clinical"}</span>
                                 </div>
                               </div>
-
                               <Button 
-                                className="w-full bg-secondary text-white shadow-lg shadow-secondary/20 hover:bg-secondary/90 hover:scale-[1.02] transition-all transform active:scale-95 py-6 font-bold"
+                                className="w-full bg-secondary text-white shadow-xl shadow-secondary/30 hover:bg-secondary/90 hover:scale-[1.02] transition-all transform active:scale-95 py-6 font-bold text-lg"
                                 onClick={() => handleStart(deepOne)}
                               >
                                 {t("pro.start_deep")}
                                 <ArrowRight className="ml-2 h-5 w-5" />
                               </Button>
-                            </CardContent>
-                          </Card>
-                        </div>
+                            </div>
+                          </CardContent>
+                        </Card>
                       )}
                     </div>
                   </motion.div>
                 );
               })}
 
-              {!filteredDimensions.length && !loadingDims && (
+              {!filteredThemes.length && (
                 <div className="py-20 text-center">
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-muted">
                     <Search className="h-10 w-10 text-muted-foreground" />
@@ -346,22 +408,7 @@ const QuizzesPage = () => {
           )}
         </section>
 
-        {/* PRO Banner */}
-        {!isPremium && (
-          <section className="container mb-24">
-            <div className="rounded-3xl bg-secondary p-8 md:p-16 text-center text-white relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-              <div className="relative z-10 mx-auto max-w-2xl">
-                <Crown className="mx-auto mb-6 h-16 w-16 opacity-50" />
-                <h2 className="mb-6 text-3xl font-bold md:text-5xl">{t("pro.page_title")}</h2>
-                <p className="mb-10 text-lg opacity-90">{t("pro.page_subtitle")}</p>
-                <Button size="lg" variant="hero" className="bg-white text-secondary hover:bg-white/90" asChild>
-                  <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
-                </Button>
-              </div>
-            </div>
-          </section>
-        )}
+
 
         {/* Deep Assessment Flow Modal */}
         <Dialog 

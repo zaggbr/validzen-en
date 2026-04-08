@@ -138,6 +138,8 @@ export interface UserProfile {
   premium_until: string | null;
   stripe_customer_id: string | null;
   quiz_count: number;
+  posts_viewed_count: number;
+  quizzes_completed_count: number;
   last_quiz_at: string | null;
   created_at: string;
 }
