@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useParams, useNavigate, Outlet } from "react-router-dom";
 import { useI18n, Locale } from "@/i18n/I18nContext";
+import CookieConsent from "./CookieConsent";
 
 const LocaleLayout = () => {
   const { lang } = useParams<{ lang: string }>();
@@ -15,7 +16,12 @@ const LocaleLayout = () => {
     }
   }, [lang, locale, setLocale]);
 
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <CookieConsent />
+    </>
+  );
 };
 
 export default LocaleLayout;
