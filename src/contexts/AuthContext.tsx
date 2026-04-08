@@ -55,6 +55,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .eq("id", userId)
       .maybeSingle();
 
+    const isUserAdmin = email ? ADMIN_EMAILS.includes(email) : false;
+
     if (!data && !error) {
       // Auto-create profile if somehow missing
       const { data: newProfile, error: createError } = await supabase
@@ -63,15 +65,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           id: userId, 
           display_name: email?.split("@")[0] || "User",
           posts_viewed_count: 0,
-          quizzes_completed_count: 0
+          quizzes_completed_count: 0,
+          is_premium: isUserAdmin // Garante acesso db-level para admins recém-criados
         })
         .select()
         .single();
       
       if (!createError) data = newProfile;
+    } else if (data && isUserAdmin && data.is_premium !== true) {
+      // Força a atualização no banco de dados para administradores que não têm a flag premium,
+      // para garantir que passem pelas regras de RLS (Database Level).
+      const { data: updatedProfile } = await supabase
+        .from("user_profiles")
+        .update({ is_premium: true })
+        .eq("id", userId)
+        .select()
+        .single();
+      
+      if (updatedProfile) data = updatedProfile;
     }
 
-    const isUserAdmin = email ? ADMIN_EMAILS.includes(email) : false;
     setIsAdmin(isUserAdmin);
 
     if (data) {

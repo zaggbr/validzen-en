@@ -38,8 +38,24 @@ const AdminPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke("admin-users");
-      if (error) throw new Error(`Erro na função: ${error.message}`);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL || 'https://qugirvcaivozqssryajd.supabase.co'}/functions/v1/admin-users`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+          },
+        }
+      );
+      
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Erro ${response.status}: ${text}`);
+      }
+      
+      const data = await response.json();
       if (data?.error) throw new Error(`Erro do servidor: ${data.error}`);
       if (!Array.isArray(data)) throw new Error(`Resposta inesperada: ${JSON.stringify(data)}`);
       setUsers(data as UserAdminData[]);
