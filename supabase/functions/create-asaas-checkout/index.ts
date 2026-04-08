@@ -105,10 +105,15 @@ serve(async (req) => {
 
     // 4. Create Payment Link
     console.log(`Creating payment link for plan: ${plan}...`);
-    const origin = req.headers.get("origin") || "https://validzen.pages.dev";
+    const origin = req.headers.get("origin") || "https://meumapa.validzen.com";
     const planValue = 14.9;
-    const planLabel = plan === "monthly" ? "ValidZen PRO — Mensal" : "ValidZen PRO — Anual";
-    const billingType = plan === "monthly" ? "MONTHLY" : "YEARLY";
+    const planLabel = plan === "monthly" 
+      ? "ValidZen PRO — Mensal" 
+      : (plan === "promo6" ? "ValidZen PRO — Semestral" : "ValidZen PRO — Anual");
+    
+    let billingType = "MONTHLY";
+    if (plan === "yearly") billingType = "YEARLY";
+    if (plan === "promo6") billingType = "SEMIANNUAL";
 
     const linkRes = await fetch(`${ASAAS_API_URL}/paymentLinks`, {
       method: "POST",

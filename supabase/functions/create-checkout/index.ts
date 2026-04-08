@@ -57,7 +57,7 @@ serve(async (req) => {
     const customerId = customers.data.length > 0 ? customers.data[0].id : undefined;
     console.log(`Customer ID: ${customerId || "New Customer"}`);
 
-    const origin = req.headers.get("origin") || "https://validzen.pages.dev";
+    const origin = req.headers.get("origin") || "https://meumapa.validzen.com";
     console.log(`Origin: ${origin}`);
 
     console.log("Creating checkout session...");

@@ -92,7 +92,7 @@ const PostPage = () => {
 
   const sections = post?.content ? parseContentSections(post.content) : [];
   const isMarkdown = post?.content ? (/^##\s+/m.test(post.content) && !/<h2[\s>]/i.test(post.content)) : true;
-  const url = `https://validzen.app/${locale}/conteudo/${post?.slug}`;
+  const url = `https://meumapa.validzen.com/${locale}/conteudo/${post?.slug}`;
   const author = {
     name: post?.author_name || "ValidZen Team",
     avatar: post?.author_avatar || "",
@@ -113,8 +113,8 @@ const PostPage = () => {
         authorName={post.author_name}
         faq={post.faq}
         breadcrumbs={[
-          { name: t("nav.home"), url: `https://validzen.app/${locale}` },
-          { name: post.category, url: `https://validzen.app/${locale}/categoria/${post.category}` },
+          { name: t("nav.home"), url: `https://meumapa.validzen.com/${locale}` },
+          { name: post.category, url: `https://meumapa.validzen.com/${locale}/categoria/${post.category}` },
           { name: post.title, url },
         ]}
       />

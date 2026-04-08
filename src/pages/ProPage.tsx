@@ -32,9 +32,14 @@ const ProPage = () => {
     }
     setLoading(plan);
     try {
-      // Route to Stripe exclusively
-      const functionName = "create-checkout";
-      const body = { priceId: STRIPE_PRICES[plan] };
+      // Choose platform based on locale
+      const isAsaas = locale === "pt";
+      const functionName = isAsaas ? "create-asaas-checkout" : "create-checkout";
+      
+      const body = isAsaas 
+        ? { plan } 
+        : { priceId: STRIPE_PRICES[plan] };
+
       const { data, error } = await supabase.functions.invoke(functionName, { body });
       if (error) throw error;
       if (data?.url) {

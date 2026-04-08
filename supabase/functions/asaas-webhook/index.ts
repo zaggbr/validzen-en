@@ -51,6 +51,8 @@ serve(async (req) => {
     let premiumUntil: Date;
     if (plan === "yearly") {
       premiumUntil = new Date(now.setFullYear(now.getFullYear() + 1));
+    } else if (plan === "promo6") {
+      premiumUntil = new Date(now.setMonth(now.getMonth() + 6));
     } else {
       premiumUntil = new Date(now.setMonth(now.getMonth() + 1));
     }

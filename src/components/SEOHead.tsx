@@ -15,7 +15,7 @@ interface SEOHeadProps {
   breadcrumbs?: { name: string; url: string }[];
 }
 
-const SITE_URL = "https://validzen.app";
+const SITE_URL = "https://meumapa.validzen.com";
 const DEFAULT_IMAGE = "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e0ac6d82-a8c1-47d4-b61e-995f6e9306ad/id-preview-50321adc--f56c5f96-ebf3-481f-8def-b724d0ed6ec4.lovable.app-1774536337531.png";
 
 const SEOHead = ({
