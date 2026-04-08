@@ -28,6 +28,7 @@ const Footer = () => {
             <Link to={localePath("/sobre")} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("common.about")}</Link>
             <Link to={localePath("/termos")} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("common.terms")}</Link>
             <Link to={localePath("/privacidade")} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("common.privacy")}</Link>
+            <a href="mailto:info@validzen.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t("common.contact")}</a>
             <Link to={localePath("/pro")} className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pro</Link>
           </div>
 

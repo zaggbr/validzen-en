@@ -12,6 +12,9 @@ import PostPage from "./pages/PostPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import CategoryPage from "./pages/CategoryPage";
 import Placeholder from "./pages/Placeholder";
+import AboutPage from "./pages/AboutPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import ProPage from "./pages/ProPage";
 import QuizPage from "./pages/QuizPage";
 import QuizzesPage from "./pages/QuizzesPage";
@@ -93,14 +96,14 @@ const App = () => (
                 <Route path="login" element={<LoginPage />} />
                 <Route path="videos" element={<Placeholder />} />
                 <Route path="pro" element={<ProPage />} />
-                <Route path="sobre" element={<Placeholder />} />
-                <Route path="about" element={<Placeholder />} />
+                <Route path="sobre" element={<AboutPage />} />
+                <Route path="about" element={<AboutPage />} />
                 <Route path="conta" element={<Placeholder />} />
                 <Route path="account" element={<Placeholder />} />
-                <Route path="termos" element={<Placeholder />} />
-                <Route path="terms" element={<Placeholder />} />
-                <Route path="privacidade" element={<Placeholder />} />
-                <Route path="privacy" element={<Placeholder />} />
+                <Route path="termos" element={<TermsPage />} />
+                <Route path="terms" element={<TermsPage />} />
+                <Route path="privacidade" element={<PrivacyPage />} />
+                <Route path="privacy" element={<PrivacyPage />} />
                 <Route
                   path="admin"
                   element={<Navigate to="../paineladmin" replace />}
