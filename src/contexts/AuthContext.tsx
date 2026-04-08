@@ -104,9 +104,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const refreshSubscription = useCallback(async (userId?: string, email?: string) => {
     try {
       await supabase.functions.invoke("check-subscription");
+    } catch (err) {
+      console.warn("Background check-subscription sync failed", err);
+    } finally {
       if (userId) await fetchProfile(userId, email);
-    } catch {
-      // silently fail
     }
   }, [fetchProfile]);
 
