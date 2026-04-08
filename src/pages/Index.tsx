@@ -7,6 +7,7 @@ import HowItWorks from "@/components/HowItWorks";
 import AdBanner from "@/components/AdBanner";
 import SEOHead from "@/components/SEOHead";
 import { useI18n } from "@/i18n/I18nContext";
+import TopAdBanner from "@/components/TopAdBanner";
 
 const Index = () => {
   const { t } = useI18n();
@@ -15,6 +16,7 @@ const Index = () => {
     <div className="flex min-h-screen flex-col">
       <SEOHead title="ValidZen — The Meaning Crisis Project" description={t("home.hero_description")} />
       <Header />
+      <TopAdBanner />
       <main className="flex-1">
         <HeroSection />
         <ThemesSection />
