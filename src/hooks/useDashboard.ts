@@ -48,6 +48,39 @@ export function useUserResults() {
   });
 }
 
+export function usePremiumResults() {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ["premium-results", user?.id],
+    queryFn: async (): Promise<any[]> => {
+      if (!user) {
+        const sessionId = getSessionId();
+        if (!sessionId) return [];
+
+        const { data, error } = await supabase
+          .from("premium_assessment_results" as any)
+          .select("*")
+          .eq("session_id", sessionId)
+          .is("user_id", null)
+          .order("completed_at", { ascending: false });
+
+        if (error) throw error;
+        return data || [];
+      }
+
+      const { data, error } = await supabase
+        .from("premium_assessment_results" as any)
+        .select("*")
+        .eq("user_id", user.id)
+        .order("completed_at", { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
 export function useLatestResult() {
   const { data: results, ...rest } = useUserResults();
   const latestResult = results && results.length > 0 ? results[0] : null;

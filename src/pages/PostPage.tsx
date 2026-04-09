@@ -14,7 +14,6 @@ import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
 import AdBanner from "@/components/AdBanner";
 import SEOHead from "@/components/SEOHead";
-import TopAdBanner from "@/components/TopAdBanner";
 import { usePostBySlug, useRelatedPosts } from "@/hooks/usePosts";
 import { parseContentSections } from "@/types/database";
 import { ChevronRight, Clock, Calendar, ArrowLeft, Lock } from "lucide-react";
@@ -57,7 +56,6 @@ const PostPage = () => {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
-      <TopAdBanner />
         <main className="flex-1">
           <div className="container py-8 md:py-12">
             <Skeleton className="mb-4 h-4 w-48" />
@@ -78,7 +76,6 @@ const PostPage = () => {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
-      <TopAdBanner />
         <main className="flex flex-1 items-center justify-center">
           <div className="text-center">
             <span className="text-5xl">📄</span>
@@ -122,7 +119,6 @@ const PostPage = () => {
         ]}
       />
       <Header />
-      <TopAdBanner />
       <main className="flex-1 relative">
         <article className="container py-8 md:py-12">
           <Link to={localePath("/")} className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors">

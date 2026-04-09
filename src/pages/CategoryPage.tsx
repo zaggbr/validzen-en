@@ -8,7 +8,6 @@ import { ArrowLeft } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { stripEmojis } from "@/lib/utils";
-import TopAdBanner from "@/components/TopAdBanner";
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -33,7 +32,6 @@ const CategoryPage = () => {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
-        <TopAdBanner />
         <main className="flex-1">
           <div className="container py-10 md:py-16 space-y-4">
             <Skeleton className="h-4 w-32" />
@@ -54,7 +52,6 @@ const CategoryPage = () => {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
-        <TopAdBanner />
         <main className="flex flex-1 items-center justify-center">
           <div className="text-center">
             <span className="text-5xl">📂</span>
@@ -72,7 +69,6 @@ const CategoryPage = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <TopAdBanner />
       <main className="flex-1">
         <div className="container py-10 md:py-16">
           <Link to={localePath("/categorias")} className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">

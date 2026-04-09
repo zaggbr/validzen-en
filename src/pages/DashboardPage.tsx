@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import PremiumGate from "@/components/PremiumGate";
-import { useLatestResult, useProgressOverTime } from "@/hooks/useDashboard";
+import { useLatestResult, useProgressOverTime, usePremiumResults } from "@/hooks/useDashboard";
 import { usePosts } from "@/hooks/usePosts";
 import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions, generateInterpretation } from "@/lib/quizInsights";
@@ -40,14 +40,16 @@ import { cn } from "@/lib/utils";
 
 const DashboardPage = () => {
   const { data: latestResult, results, isLoading: loadingResults } = useLatestResult();
+  const { data: premiumResults = [], isLoading: loadingPremium } = usePremiumResults();
   const evolutionData = useProgressOverTime();
   const { t, locale, localePath } = useI18n();
   const { data: allPosts = [] } = usePosts(locale);
   const { data: dimensions = [], isLoading: loadingDims } = useDimensions();
   const { isPremium, user } = useAuth();
 
-  const isLoading = (isPremium && loadingResults) || loadingDims;
+  const isLoading = (isPremium && loadingResults) || loadingDims || loadingPremium;
   const isSimulacrum = !isPremium || !latestResult;
+  const latestPremium = premiumResults.length > 0 ? premiumResults[0] : null;
 
   // Mock data for simulacrum — 8 diverse emotional dimensions to show the full map
   const mockResults = [
@@ -140,6 +142,41 @@ const DashboardPage = () => {
                   {user ? t("pro.upgrade_cta") : t("result.create_account")}
                 </Link>
               </Button>
+            </div>
+          )}
+
+          {latestPremium && (
+            <div className="mb-12">
+              <h2 className="mb-4 text-2xl font-bold text-title flex items-center gap-2">
+                <Crown className="h-6 w-6 text-accent" /> {locale === "pt" ? "Seu Perfil Profundo" : "Your Deep Profile"}
+              </h2>
+              <Card className="border-accent/40 bg-gradient-to-br from-card to-accent/5 overflow-hidden shadow-md">
+                <CardContent className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center">
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-accent/10 border-4 border-card shadow-sm">
+                    <Sparkles className="h-10 w-10 text-accent" />
+                  </div>
+                  <div className="flex-1 text-center md:text-left space-y-2">
+                    <h3 className="text-xl md:text-2xl font-bold text-title">
+                      {latestPremium.interpretation?.profile_name}
+                    </h3>
+                    <p className="text-sm font-medium text-accent">
+                      {locale === "pt" ? "Padrão Dominante de Personalidade" : "Dominant Personality Pattern"}
+                    </p>
+                    <p className="text-sm text-muted-foreground max-w-2xl text-balance">
+                      {locale === "pt" 
+                        ? `Você completou o Assessment Aprofundado. Seu diagnóstico indicou que sua pontuação geral de rigidez emocional é de ${latestPremium.overall_score}%.` 
+                        : `You completed the In-Depth Assessment. Your diagnosis indicated that your overall emotional rigidity score is ${latestPremium.overall_score}%.`
+                      }
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                     <div className="flex flex-col items-center justify-center px-6 py-4 bg-background rounded-xl border border-border shadow-sm">
+                       <span className="text-sm font-medium text-muted-foreground mb-1 uppercase tracking-wider">{locale === "pt" ? "Score" : "Score"}</span>
+                       <span className="text-4xl font-black text-foreground">{latestPremium.overall_score}%</span>
+                     </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )}
 

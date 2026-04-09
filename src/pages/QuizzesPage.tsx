@@ -23,7 +23,6 @@ import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import TopAdBanner from "@/components/TopAdBanner";
 
 interface UnifiedQuiz {
   id: string;
@@ -183,7 +182,6 @@ const QuizzesPage = () => {
         description={t("pro.quizzes_subtitle")}
       />
       <Header />
-      <TopAdBanner />
       
       <main className="flex-1">
         {/* Hero Section */}
