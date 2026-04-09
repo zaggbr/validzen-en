@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -29,6 +29,7 @@ import {
   Info 
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import PremiumGate from "@/components/PremiumGate";
 import { useLatestResult, useProgressOverTime, usePremiumResults } from "@/hooks/useDashboard";
 import { usePosts } from "@/hooks/usePosts";
@@ -50,6 +51,24 @@ const DashboardPage = () => {
   const isLoading = (isPremium && loadingResults) || loadingDims || loadingPremium;
   const isSimulacrum = !isPremium || !latestResult;
   const latestPremium = premiumResults.length > 0 ? premiumResults[0] : null;
+
+  const [premiumProgress, setPremiumProgress] = useState(0);
+
+  useEffect(() => {
+    if (isPremium && !latestPremium) {
+      try {
+        const saved = localStorage.getItem("premium_progress_teste-profundo");
+        if (saved) {
+          const parsed = Object.keys(JSON.parse(saved)).length;
+          // As assumimos ~70 questões como base para a barra de progresso visual
+          const pct = Math.min(Math.round((parsed / 70) * 100), 99);
+          setPremiumProgress(pct);
+        }
+      } catch {
+        // fail silently
+      }
+    }
+  }, [isPremium, latestPremium]);
 
   // Mock data for simulacrum — 8 diverse emotional dimensions to show the full map
   const mockResults = [
@@ -140,6 +159,35 @@ const DashboardPage = () => {
               <Button size="sm" variant="hero" asChild className="shrink-0">
                 <Link to={localePath(user ? "/pro" : "/login")}>
                   {user ? t("pro.upgrade_cta") : t("result.create_account")}
+                </Link>
+              </Button>
+            </div>
+          )}
+
+          {isPremium && !latestPremium && (
+            <div className="mb-8 rounded-2xl border border-accent/20 bg-gradient-to-r from-accent/5 to-card p-6 flex flex-col md:flex-row items-center gap-6 shadow-sm">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
+                <Crown className="h-7 w-7" />
+              </div>
+              <div className="flex-1 text-center md:text-left space-y-2 w-full">
+                <h3 className="font-bold text-title text-lg">
+                  {locale === "pt" ? "Conclua seu Assessment Aprofundado" : "Complete your In-Depth Assessment"}
+                </h3>
+                <p className="text-sm text-muted-foreground text-balance">
+                  {locale === "pt" 
+                    ? "Para destravar seu Padrão Primário de Personalidade e seu mapa completo, você precisa terminar a avaliação profunda." 
+                    : "To unlock your Primary Personality Pattern and your full map, you need to finish the in-depth assessment."}
+                </p>
+                <div className="pt-2 flex items-center gap-3 w-full max-w-md mx-auto md:mx-0">
+                  <Progress value={premiumProgress} className="h-2 flex-1" />
+                  <span className="text-xs font-semibold text-accent w-8 text-right">{premiumProgress}%</span>
+                </div>
+              </div>
+              <Button variant="hero" asChild className="shrink-0 w-full md:w-auto">
+                <Link to={localePath("/assessment/teste-profundo")}>
+                  {premiumProgress > 0 
+                    ? (locale === "pt" ? "Continuar" : "Continue") 
+                    : (locale === "pt" ? "Começar Agora" : "Start Now")}
                 </Link>
               </Button>
             </div>

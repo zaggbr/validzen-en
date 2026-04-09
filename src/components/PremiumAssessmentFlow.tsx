@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, CheckCircle2, Lock } from "lucide-react";
@@ -38,12 +38,39 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
   const [dir, setDir] = useState(1);
   const [result, setResult] = useState<ReturnType<typeof calculatePatternScores> | null>(null);
 
+  // Load progress from local storage on mount
+  useEffect(() => {
+    if (questions.length === 0) return;
+    try {
+      const saved = localStorage.getItem(`premium_progress_${assessmentSlug}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setAnswers(parsed);
+        // Jump to the first unanswered question
+        const answeredKeys = Object.keys(parsed);
+        if (answeredKeys.length > 0 && answeredKeys.length < questions.length) {
+          // Find index of first question not in answers
+          const nextIdx = questions.findIndex(q => parsed[q.id] === undefined);
+          if (nextIdx !== -1) setIdx(nextIdx);
+          else setIdx(questions.length - 1);
+        }
+      }
+    } catch {
+      // fail silently
+    }
+  }, [questions, assessmentSlug]);
+
   const handleSelect = useCallback(
     (value: number) => {
       if (questions.length === 0) return;
-      setAnswers((prev) => ({ ...prev, [questions[idx].id]: value }));
+      setAnswers((prev) => {
+        const next = { ...prev, [questions[idx].id]: value };
+        // Save to local storage instantly
+        localStorage.setItem(`premium_progress_${assessmentSlug}`, JSON.stringify(next));
+        return next;
+      });
     },
-    [idx, questions]
+    [idx, questions, assessmentSlug]
   );
 
   const handleNext = useCallback(async () => {
@@ -70,6 +97,9 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
           overall_score: res.overall_score,
           top_dimensions: [res.dominant_pattern, res.secondary_pattern],
         });
+        
+        // Clear progress upon successful completion
+        localStorage.removeItem(`premium_progress_${assessmentSlug}`);
       } catch {
         // Result still shown even if save fails
       }
