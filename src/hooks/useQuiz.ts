@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Quiz, QuizQuestion, QuizOption } from "@/types/database";
 import { useToast } from "@/hooks/use-toast";
@@ -162,6 +162,31 @@ export function useSubmitQuizResult() {
       } catch { /* silently fail */ }
 
       return data.id as string;
+    },
+  });
+}
+
+export function useDeleteQuizResult() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (resultId: string) => {
+      const { error } = await supabase
+        .from("quiz_results")
+        .delete()
+        .eq("id", resultId);
+
+      if (error) {
+        toast({ title: "Erro ao remover resultado", description: error.message, variant: "destructive" });
+        throw error;
+      }
+      return resultId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-results"] });
+      queryClient.invalidateQueries({ queryKey: ["user-quizzes"] });
+      toast({ title: "Resultado removido", description: "O quiz foi resetado e você pode refazê-lo." });
     },
   });
 }

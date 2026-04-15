@@ -26,12 +26,15 @@ import {
   User, 
   History as HistoryIcon,
   Crown,
-  Info 
+  Info,
+  RotateCcw,
+  Trash2
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import PremiumGate from "@/components/PremiumGate";
 import { useLatestResult, useProgressOverTime, usePremiumResults } from "@/hooks/useDashboard";
+import { useDeleteQuizResult } from "@/hooks/useQuiz";
 import { usePosts } from "@/hooks/usePosts";
 import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions, generateInterpretation } from "@/lib/quizInsights";
@@ -52,6 +55,7 @@ const DashboardPage = () => {
   const isSimulacrum = !isPremium || !latestResult;
   const latestPremium = premiumResults.length > 0 ? premiumResults[0] : null;
 
+  const deleteResult = useDeleteQuizResult();
   const [premiumProgress, setPremiumProgress] = useState(0);
 
   useEffect(() => {
@@ -102,7 +106,55 @@ const DashboardPage = () => {
     );
   }
 
+  // Aggregate results: For each dimension, find the most recent result that contains it
+  const aggregateResults = () => {
+    if (isSimulacrum) return mockResults;
+    
+    const resultsMap: Record<string, any> = {};
+    
+    // Sort results by date descending (already sorted from hook but let's be safe)
+    const sorted = [...(results || [])].sort((a, b) => 
+      new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime()
+    );
+
+    dimensions.forEach(dim => {
+      // Find the most recent result that has a score for this dimension
+      const latestForDim = sorted.find(r => r.scores && r.scores[dim.slug] !== undefined);
+      
+      if (latestForDim) {
+        const score = latestForDim.scores[dim.slug];
+        const severity = score <= 33 ? (locale === 'pt' ? "Leve" : "Mild") : 
+                         score <= 66 ? (locale === 'pt' ? "Moderado" : "Moderate") : 
+                         (locale === 'pt' ? "Alto" : "High");
+        
+        const severityColor = score <= 33 ? "bg-blue-100 text-blue-700" : 
+                              score <= 66 ? "bg-amber-100 text-amber-700" : 
+                              "bg-red-100 text-red-700";
+
+        let interpretation = "";
+        if (score <= 33) interpretation = locale === "en" ? dim.interpretation_low_en : dim.interpretation_low_pt;
+        else if (score <= 66) interpretation = locale === "en" ? dim.interpretation_moderate_en : dim.interpretation_moderate_pt;
+        else interpretation = locale === "en" ? dim.interpretation_high_en : dim.interpretation_high_pt;
+
+        resultsMap[dim.slug] = {
+          dimension: dim.slug,
+          label: locale === "en" ? dim.name_en : dim.name_pt,
+          score,
+          severity,
+          emoji: dim.icon,
+          severityColor,
+          interpretation,
+          resultId: latestForDim.id,
+          quizSlug: latestForDim.quiz_slug
+        };
+      }
+    });
+
+    return Object.values(resultsMap);
+  };
+
   const top = latestResult ? getTopDimensions(latestResult.scores, dimensions, locale) : [];
+  const mosaic = aggregateResults();
   const interpretation = latestResult ? generateInterpretation(top, locale) : "";
 
   const recommendedSlugs = (latestResult?.recommended_post_slugs?.length ?? 0) > 0
@@ -239,7 +291,7 @@ const DashboardPage = () => {
             </div>
             
             <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              {(isSimulacrum ? mockResults : top).map((item, i) => (
+              {mosaic.map((item: any, i) => (
                 <motion.div 
                   key={item.dimension} 
                   initial={{ opacity: 0, y: 20 }} 
@@ -247,7 +299,7 @@ const DashboardPage = () => {
                   transition={{ delay: i * 0.1 }}
                 >
                   <Card className={cn(
-                    "h-full overflow-hidden border-border/50 transition-all hover:shadow-lg",
+                    "group relative h-full overflow-hidden border-border/50 transition-all hover:shadow-lg",
                     i === 1 && isSimulacrum && "ring-2 ring-secondary/30 scale-[1.02] shadow-xl"
                   )}>
                     <CardContent className="p-0">
@@ -260,9 +312,24 @@ const DashboardPage = () => {
                       <div className="p-6">
                         <div className="mb-4 flex items-center justify-between">
                           <span className="text-3xl">{item.emoji}</span>
-                          <span className={cn("rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider", (item as any).severityColor || "bg-muted text-muted-foreground")}>
-                            {item.severity}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={cn("rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider", (item as any).severityColor || "bg-muted text-muted-foreground")}>
+                              {item.severity}
+                            </span>
+                            {!isSimulacrum && (
+                              <button
+                                onClick={() => {
+                                  if (window.confirm(locale === 'pt' ? 'Quer mesmo refazer? O resultado antigo será perdido.' : 'Do you really want to redo? The old result will be lost.')) {
+                                    deleteResult.mutate(item.resultId);
+                                  }
+                                }}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                                title={locale === 'pt' ? 'Refazer Quiz' : 'Redo Quiz'}
+                              >
+                                <RotateCcw className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                         <h3 className="mb-1 text-lg font-bold text-title text-start">{item.label}</h3>
                         <div className="mb-4 flex items-baseline gap-1">

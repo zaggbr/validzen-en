@@ -1,12 +1,13 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, ArrowLeft, Clock, BarChart3, Lock, UserPlus } from "lucide-react";
-import { useQuizQuestions, calculateScores, useSubmitQuizResult } from "@/hooks/useQuiz";
+import { ArrowRight, ArrowLeft, Clock, BarChart3, Lock, UserPlus, RotateCcw } from "lucide-react";
+import { useQuizQuestions, calculateScores, useSubmitQuizResult, useDeleteQuizResult } from "@/hooks/useQuiz";
+import { useUserResults } from "@/hooks/useDashboard";
 import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions } from "@/lib/quizInsights";
 import { cn } from "@/lib/utils";
@@ -33,13 +34,48 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const { user, isPremium, incrementQuizCompletion } = useAuth();
   const { data: questions = [], isLoading } = useQuizQuestions(quizSlug, locale);
   const { data: dimensions = [] } = useDimensions();
+  const { data: results = [] } = useUserResults();
   const submitResult = useSubmitQuizResult();
+  const deleteResult = useDeleteQuizResult();
   const [phase, setPhase] = useState<Phase>("cta");
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [resultId, setResultId] = useState<string | null>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [dir, setDir] = useState(1);
+
+  const resetQuiz = useCallback(() => {
+    setPhase("cta");
+    setIdx(0);
+    setAnswers({});
+    setScores({});
+    setResultId(null);
+  }, []);
+
+  // Detect existing results
+  useEffect(() => {
+    if (results && results.length > 0) {
+      const existing = results.find(r => r.quiz_slug === quizSlug);
+      if (existing && phase !== "done") {
+        setPhase("done");
+        setScores(existing.scores);
+        setResultId(existing.id);
+      } else if (!existing && phase === "done") {
+        resetQuiz();
+      }
+    }
+  }, [results, quizSlug, phase, resetQuiz]);
+
+  const handleRedo = async () => {
+    if (resultId && window.confirm(locale === 'pt' ? 'Quer mesmo refazer? O resultado antigo será perdido.' : 'Do you really want to redo? The old result will be lost.')) {
+      try {
+        await deleteResult.mutateAsync(resultId);
+        resetQuiz();
+      } catch (err) {
+        console.error("Failed to redo quiz:", err);
+      }
+    }
+  };
 
   // Access gating: guests can't start, free users limited to 5
   const isGuest = !user;
@@ -239,13 +275,19 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
         ))}
       </div>
 
-      <div className="text-center">
+      <div className="mt-8 flex flex-col items-center justify-center gap-4">
         {resultId ? (
-          <Button asChild variant="hero" size="lg">
-            <Link to={localePath(`/resultado/${resultId}`)}>
-              {t("quiz.see_result")} <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <Button asChild variant="hero" size="lg">
+              <Link to={localePath(`/resultado/${resultId}`)}>
+                {t("quiz.see_result")} <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button onClick={handleRedo} variant="outline" size="lg" className="border-secondary/20 hover:bg-secondary/10 text-secondary">
+              <RotateCcw className="mr-2 h-4 w-4" />
+              {locale === 'pt' ? 'Refazer Quiz' : 'Redo Quiz'}
+            </Button>
+          </div>
         ) : (
           <Button asChild variant="hero" size="lg">
             <Link to={localePath("/dashboard")}>
