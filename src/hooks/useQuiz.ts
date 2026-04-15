@@ -196,6 +196,9 @@ export function useResetQuizMap() {
       if (res1.error) throw res1.error;
       if (res2.error) throw res2.error;
 
+      // Limpar localStorage
+      localStorage.removeItem("validzen_quiz_results");
+
       return true;
     },
     onSuccess: () => {
@@ -214,23 +217,31 @@ export function useResetQuizMap() {
 export function useDeleteQuizResult() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async (resultId: string) => {
-      const { error } = await supabase
-        .from("quiz_results")
-        .delete()
-        .eq("id", resultId);
+    mutationFn: async (quizSlug: string) => {
+      let query = supabase.from("quiz_results").delete().eq("quiz_slug", quizSlug);
+      
+      if (user) {
+        query = query.eq("user_id", user.id);
+      } else {
+        const sessionId = getSessionId();
+        if (sessionId) query = query.eq("session_id", sessionId).is("user_id", null);
+      }
+
+      const { error } = await query;
 
       if (error) {
         toast({ title: "Erro ao remover resultado", description: error.message, variant: "destructive" });
         throw error;
       }
-      return resultId;
+      return quizSlug;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-results"] });
       queryClient.invalidateQueries({ queryKey: ["user-quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["latest-result"] });
       toast({ title: "Resultado removido", description: "O quiz foi resetado e você pode refazê-lo." });
     },
   });

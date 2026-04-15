@@ -146,6 +146,7 @@ const DashboardPage = () => {
                             score <= 66 ? (locale === 'en' ? dim.interpretation_moderate_en : dim.interpretation_moderate_pt) :
                             (locale === 'en' ? dim.interpretation_high_en : dim.interpretation_high_pt),
             resultId: r.id,
+            quizSlug: r.quiz_slug,
             completedAt: r.completed_at
           };
         }
@@ -338,13 +339,13 @@ const DashboardPage = () => {
                               <button
                                 onClick={() => {
                                   if (window.confirm(locale === 'pt' ? 'Quer mesmo refazer? O resultado antigo será perdido.' : 'Do you really want to redo? The old result will be lost.')) {
-                                    deleteResult.mutate(item.resultId);
+                                    deleteResult.mutate(item.quizSlug);
                                   }
                                 }}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                                title={locale === 'pt' ? 'Refazer Quiz' : 'Redo Quiz'}
+                                className="group/btn flex items-center justify-center rounded-full bg-muted/80 p-1.5 text-muted-foreground transition-all hover:bg-secondary hover:text-white"
+                                title={locale === 'pt' ? 'Refazer esse Assessment' : 'Redo this Assessment'}
                               >
-                                <RotateCcw className="h-4 w-4" />
+                                <RotateCcw className="h-3 w-3" />
                               </button>
                             )}
                           </div>
