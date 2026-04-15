@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   TrendingUp, 
   ArrowLeft, 
+  ArrowRight,
   Lock, 
   Sparkles, 
   ChevronRight, 
@@ -43,7 +44,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 const DashboardPage = () => {
-  const { data: latestResult, results, isFetching: fetchingResults, isLoading: loadingResults } = useLatestResult();
+  const { data: latestResult, results, isLoading: loadingResults } = useLatestResult();
   const { data: premiumResults = [], isLoading: loadingPremium } = usePremiumResults();
   const evolutionData = useProgressOverTime();
   const { t, locale, localePath } = useI18n();
@@ -51,7 +52,7 @@ const DashboardPage = () => {
   const { data: dimensions = [], isLoading: loadingDims } = useDimensions();
   const { isPremium, user } = useAuth();
 
-  const isLoading = (isPremium && (loadingResults || fetchingResults)) || loadingDims || loadingPremium;
+  const isLoading = (isPremium && loadingResults) || loadingDims || loadingPremium;
   const isSimulacrum = !isPremium || !latestResult;
   const latestPremium = premiumResults.length > 0 ? premiumResults[0] : null;
 
@@ -273,6 +274,13 @@ const DashboardPage = () => {
                             </Badge>
                           </div>
                           
+                          {/* Assessment topic from slug */}
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-secondary/70 mb-1">
+                            {p.assessment_slug
+                              ? p.assessment_slug.replace("teste-profundo-", "").replace(/-/g, " ")
+                              : (locale === "pt" ? "Assessment Profundo" : "Deep Assessment")}
+                          </p>
+
                           <h3 className="text-lg font-bold text-title mb-2">
                             {p.interpretation?.profile_name || (locale === "pt" ? "Perfil Profundo" : "Deep Profile")}
                           </h3>
@@ -284,11 +292,6 @@ const DashboardPage = () => {
                             <span className="text-[10px] text-muted-foreground font-medium italic">
                               {new Date(p.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US")}
                             </span>
-                            <Button size="sm" variant="ghost" className="text-secondary p-0 h-auto hover:bg-transparent" asChild>
-                              <Link to={localePath(`/resultado/premium/${p.id}`)}>
-                                {locale === "pt" ? "Ver Mapa Completo" : "View Full Map"} <ChevronRight className="ml-1 h-3 w-3" />
-                              </Link>
-                            </Button>
                           </div>
                         </CardContent>
                       </Card>
