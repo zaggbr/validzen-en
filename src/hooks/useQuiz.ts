@@ -163,6 +163,51 @@ export function useSubmitQuizResult() {
 
       return data.id as string;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-results"] });
+      queryClient.invalidateQueries({ queryKey: ["user-quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["latest-result"] });
+    },
+  });
+}
+
+export function useResetQuizMap() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("User not authenticated");
+
+      // Delete results from both tables
+      const deleteResults = supabase
+        .from("quiz_results")
+        .delete()
+        .eq("user_id", user.id);
+
+      const deletePremium = supabase
+        .from("premium_assessment_results")
+        .delete()
+        .eq("user_id", user.id);
+
+      const [res1, res2] = await Promise.all([deleteResults, deletePremium]);
+
+      if (res1.error) throw res1.error;
+      if (res2.error) throw res2.error;
+
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-results"] });
+      queryClient.invalidateQueries({ queryKey: ["user-quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["latest-result"] });
+      queryClient.invalidateQueries({ queryKey: ["premium-results"] });
+      toast({ 
+        title: "Mapa Reiniciado", 
+        description: "Todo o seu progresso foi zerado com sucesso.",
+      });
+    },
   });
 }
 

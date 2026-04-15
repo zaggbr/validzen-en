@@ -34,7 +34,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import PremiumGate from "@/components/PremiumGate";
 import { useLatestResult, useProgressOverTime, usePremiumResults } from "@/hooks/useDashboard";
-import { useDeleteQuizResult } from "@/hooks/useQuiz";
+import { useDeleteQuizResult, useResetQuizMap } from "@/hooks/useQuiz";
 import { usePosts } from "@/hooks/usePosts";
 import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions, generateInterpretation } from "@/lib/quizInsights";
@@ -56,6 +56,7 @@ const DashboardPage = () => {
   const latestPremium = premiumResults.length > 0 ? premiumResults[0] : null;
 
   const deleteResult = useDeleteQuizResult();
+  const resetMap = useResetQuizMap();
   const [premiumProgress, setPremiumProgress] = useState(0);
 
   useEffect(() => {
@@ -106,48 +107,49 @@ const DashboardPage = () => {
     );
   }
 
-  // Aggregate results: For each dimension, find the most recent result that contains it
+  // Aggregate results: For each unique quiz_slug, find the latest submission
   const aggregateResults = () => {
     if (isSimulacrum) return mockResults;
     
+    // Group results by quiz_slug, keeping only the absolute latest for each
+    const latestByQuiz: Record<string, any> = {};
+    (results || []).forEach(r => {
+      if (!latestByQuiz[r.quiz_slug]) {
+        latestByQuiz[r.quiz_slug] = r;
+      }
+    });
+
     const resultsMap: Record<string, any> = {};
     
-    // Sort results by date descending (already sorted from hook but let's be safe)
-    const sorted = [...(results || [])].sort((a, b) => 
-      new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime()
-    );
-
-    dimensions.forEach(dim => {
-      // Find the most recent result that has a score for this dimension
-      const latestForDim = sorted.find(r => r.scores && r.scores[dim.slug] !== undefined);
+    // Convert quiz results into dimension scores for the mosaic
+    Object.values(latestByQuiz).forEach((r: any) => {
+      if (!r.scores) return;
       
-      if (latestForDim) {
-        const score = latestForDim.scores[dim.slug];
-        const severity = score <= 33 ? (locale === 'pt' ? "Leve" : "Mild") : 
-                         score <= 66 ? (locale === 'pt' ? "Moderado" : "Moderate") : 
-                         (locale === 'pt' ? "Alto" : "High");
-        
-        const severityColor = score <= 33 ? "bg-blue-100 text-blue-700" : 
-                              score <= 66 ? "bg-amber-100 text-amber-700" : 
-                              "bg-red-100 text-red-700";
+      Object.entries(r.scores).forEach(([slug, score]: [string, any]) => {
+        const dim = dimensions.find(d => d.slug === slug);
+        if (!dim) return;
 
-        let interpretation = "";
-        if (score <= 33) interpretation = locale === "en" ? dim.interpretation_low_en : dim.interpretation_low_pt;
-        else if (score <= 66) interpretation = locale === "en" ? dim.interpretation_moderate_en : dim.interpretation_moderate_pt;
-        else interpretation = locale === "en" ? dim.interpretation_high_en : dim.interpretation_high_pt;
-
-        resultsMap[dim.slug] = {
-          dimension: dim.slug,
-          label: locale === "en" ? dim.name_en : dim.name_pt,
-          score,
-          severity,
-          emoji: dim.icon,
-          severityColor,
-          interpretation,
-          resultId: latestForDim.id,
-          quizSlug: latestForDim.quiz_slug
-        };
-      }
+        // Only update if this result is newer than what we already found for this dimension
+        if (!resultsMap[slug] || new Date(r.completed_at) > new Date(resultsMap[slug].completedAt)) {
+          resultsMap[slug] = {
+            dimension: slug,
+            label: locale === "en" ? dim.name_en : dim.name_pt,
+            score,
+            severity: score <= 33 ? (locale === 'pt' ? "Leve" : "Mild") : 
+                       score <= 66 ? (locale === 'pt' ? "Moderado" : "Moderate") : 
+                       (locale === 'pt' ? "Alto" : "High"),
+            emoji: dim.icon,
+            severityColor: score <= 33 ? "bg-blue-100 text-blue-700" : 
+                            score <= 66 ? "bg-amber-100 text-amber-700" : 
+                            "bg-red-100 text-red-700",
+            interpretation: score <= 33 ? (locale === 'en' ? dim.interpretation_low_en : dim.interpretation_low_pt) :
+                            score <= 66 ? (locale === 'en' ? dim.interpretation_moderate_en : dim.interpretation_moderate_pt) :
+                            (locale === 'en' ? dim.interpretation_high_en : dim.interpretation_high_pt),
+            resultId: r.id,
+            completedAt: r.completed_at
+          };
+        }
+      });
     });
 
     return Object.values(resultsMap);
@@ -216,67 +218,83 @@ const DashboardPage = () => {
             </div>
           )}
 
-          {isPremium && !latestPremium && (
-            <div className="mb-8 rounded-2xl border border-accent/20 bg-gradient-to-r from-accent/5 to-card p-6 flex flex-col md:flex-row items-center gap-6 shadow-sm">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
-                <Crown className="h-7 w-7" />
-              </div>
-              <div className="flex-1 text-center md:text-left space-y-2 w-full">
-                <h3 className="font-bold text-title text-lg">
-                  {locale === "pt" ? "Conclua seu Assessment Aprofundado" : "Complete your In-Depth Assessment"}
-                </h3>
-                <p className="text-sm text-muted-foreground text-balance">
-                  {locale === "pt" 
-                    ? "Para destravar seu Padrão Primário de Personalidade e seu mapa completo, você precisa terminar a avaliação profunda." 
-                    : "To unlock your Primary Personality Pattern and your full map, you need to finish the in-depth assessment."}
-                </p>
-                <div className="pt-2 flex items-center gap-3 w-full max-w-md mx-auto md:mx-0">
-                  <Progress value={premiumProgress} className="h-2 flex-1" />
-                  <span className="text-xs font-semibold text-accent w-8 text-right">{premiumProgress}%</span>
-                </div>
-              </div>
-              <Button variant="hero" asChild className="shrink-0 w-full md:w-auto">
-                <Link to={localePath("/assessment/teste-profundo")}>
-                  {premiumProgress > 0 
-                    ? (locale === "pt" ? "Continuar" : "Continue") 
-                    : (locale === "pt" ? "Começar Agora" : "Start Now")}
-                </Link>
-              </Button>
-            </div>
-          )}
-
-          {latestPremium && (
+          {isPremium && (
             <div className="mb-12">
-              <h2 className="mb-4 text-2xl font-bold text-title flex items-center gap-2">
-                <Crown className="h-6 w-6 text-accent" /> {locale === "pt" ? "Seu Perfil Profundo" : "Your Deep Profile"}
+              <h2 className="mb-6 text-2xl font-bold text-title flex items-center gap-2">
+                <Crown className="h-6 w-6 text-secondary" /> 
+                {locale === "pt" ? "Seus Perfis Profundos" : "Your Deep Profiles"}
               </h2>
-              <Card className="border-accent/40 bg-gradient-to-br from-card to-accent/5 overflow-hidden shadow-md">
-                <CardContent className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center">
-                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-accent/10 border-4 border-card shadow-sm">
-                    <Sparkles className="h-10 w-10 text-accent" />
-                  </div>
-                  <div className="flex-1 text-center md:text-left space-y-2">
-                    <h3 className="text-xl md:text-2xl font-bold text-title">
-                      {latestPremium.interpretation?.profile_name}
-                    </h3>
-                    <p className="text-sm font-medium text-accent">
-                      {locale === "pt" ? "Padrão Dominante de Personalidade" : "Dominant Personality Pattern"}
-                    </p>
-                    <p className="text-sm text-muted-foreground max-w-2xl text-balance">
-                      {locale === "pt" 
-                        ? `Você completou o Assessment Aprofundado. Seu diagnóstico indicou que sua pontuação geral de rigidez emocional é de ${latestPremium.overall_score}%.` 
-                        : `You completed the In-Depth Assessment. Your diagnosis indicated that your overall emotional rigidity score is ${latestPremium.overall_score}%.`
-                      }
-                    </p>
-                  </div>
-                  <div className="shrink-0">
-                     <div className="flex flex-col items-center justify-center px-6 py-4 bg-background rounded-xl border border-border shadow-sm">
-                       <span className="text-sm font-medium text-muted-foreground mb-1 uppercase tracking-wider">{locale === "pt" ? "Score" : "Score"}</span>
-                       <span className="text-4xl font-black text-foreground">{latestPremium.overall_score}%</span>
-                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+              
+              {!premiumResults || premiumResults.length === 0 ? (
+                <div className="rounded-2xl border border-secondary/20 bg-secondary/5 p-8 text-center max-w-2xl mx-auto">
+                  <h3 className="text-xl font-bold text-title mb-4">
+                    {locale === "pt" ? "Mergulho Aprofundado Pendente" : "Deep Dive Pending"}
+                  </h3>
+                  <p className="text-muted-foreground mb-8 text-balance">
+                    {locale === "pt" 
+                      ? "Você ainda não completou o seu Assessment Profundo. Este teste revela o seu Padrão Primário de Personalidade e Traços de Caráter." 
+                      : "You haven't completed your Deep Assessment yet. This test reveals your Primary Personality Pattern and Character Traits."}
+                  </p>
+                  
+                  {premiumProgress > 0 && (
+                    <div className="max-w-sm mx-auto mb-8">
+                       <div className="flex justify-between text-xs mb-2">
+                          <span className="font-bold text-secondary">{locale === "pt" ? "Progresso Atual" : "Current Progress"}</span>
+                          <span className="font-bold">{premiumProgress}%</span>
+                       </div>
+                       <Progress value={premiumProgress} className="h-2 bg-secondary/10" />
+                    </div>
+                  )}
+
+                  <Button size="lg" variant="hero" asChild>
+                    <Link to={localePath("/quiz/teste-profundo")}>
+                      {locale === "pt" ? "Começar Agora" : "Start Now"} <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  {premiumResults.map((p, idx) => (
+                    <motion.div 
+                      key={p.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                    >
+                      <Card className="group relative overflow-hidden h-full border-secondary/20 bg-gradient-to-br from-secondary/5 to-primary/5 hover:border-secondary transition-all">
+                        <CardContent className="p-6">
+                          <div className="mb-4 flex items-center justify-between">
+                            <div className="h-10 w-10 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary">
+                              <Crown className="h-5 w-5" />
+                            </div>
+                            <Badge variant="secondary" className="bg-secondary text-white uppercase text-[10px]">
+                              {locale === "pt" ? "Resultado PRO" : "PRO Result"}
+                            </Badge>
+                          </div>
+                          
+                          <h3 className="text-lg font-bold text-title mb-2">
+                            {p.interpretation?.profile_name || (locale === "pt" ? "Perfil Profundo" : "Deep Profile")}
+                          </h3>
+                          <p className="text-xs text-muted-foreground mb-4 line-clamp-3 italic">
+                            {p.summary || (locale === "pt" ? "Análise completa dos seus traços de caráter e funcionamento psicológico." : "Complete analysis of your character traits and psychological functioning.")}
+                          </p>
+                          
+                          <div className="flex items-center justify-between mt-auto pt-4 border-t border-secondary/10">
+                            <span className="text-[10px] text-muted-foreground font-medium italic">
+                              {new Date(p.completed_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US")}
+                            </span>
+                            <Button size="sm" variant="ghost" className="text-secondary p-0 h-auto hover:bg-transparent" asChild>
+                              <Link to={localePath(`/resultado/premium/${p.id}`)}>
+                                {locale === "pt" ? "Ver Mapa Completo" : "View Full Map"} <ChevronRight className="ml-1 h-3 w-3" />
+                              </Link>
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -520,6 +538,32 @@ const DashboardPage = () => {
               </div>
             </div>
           </PremiumGate>
+
+          {isPremium && (
+            <div className="mt-16 flex flex-col items-center border-t border-border pt-12 pb-8">
+               <h3 className="text-lg font-bold text-title mb-2">
+                 {locale === "pt" ? "Deseja começar de novo?" : "Want to start over?"}
+               </h3>
+               <p className="text-sm text-muted-foreground mb-6 text-center max-w-md">
+                 {locale === "pt" 
+                   ? "A reinicialização apagará todo o seu progresso, incluindo histórico de quizzes e assessments profundos." 
+                   : "Resetting will clear all your progress, including quiz history and deep assessments."}
+               </p>
+               <Button 
+                variant="outline" 
+                size="lg" 
+                className="text-destructive border-destructive/20 hover:bg-destructive/5"
+                onClick={() => {
+                  if (window.confirm(locale === "pt" ? "Atenção: Isso zerará todo o seu progresso definitivamente. Deseja continuar?" : "Attention: This will permanently reset all your progress. Continue?")) {
+                    resetMap.mutate();
+                  }
+                }}
+               >
+                 <Trash2 className="mr-2 h-4 w-4" />
+                 {locale === "pt" ? "Reiniciar Meu Mapa" : "Reset My Map"}
+               </Button>
+            </div>
+          )}
 
           <div className="mx-auto max-w-xl">
             <Disclaimer />
