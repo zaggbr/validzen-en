@@ -104,6 +104,7 @@ export function calculateScores(
 
 export function useSubmitQuizResult() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
 
   return useMutation({
@@ -238,10 +239,33 @@ export function useDeleteQuizResult() {
       }
       return quizSlug;
     },
-    onSuccess: () => {
+    onMutate: async (quizSlug: string) => {
+      // Cancel any in-flight re-fetches
+      await queryClient.cancelQueries({ queryKey: ["user-results"] });
+
+      // Snapshot current data for rollback
+      const previousResults = queryClient.getQueryData(["user-results", user?.id]);
+
+      // Optimistically remove from cache immediately
+      queryClient.setQueryData(["user-results", user?.id], (old: any) =>
+        Array.isArray(old) ? old.filter((r: any) => r.quiz_slug !== quizSlug) : old
+      );
+
+      return { previousResults };
+    },
+    onError: (_err, _quizSlug, context) => {
+      // Rollback on error
+      if (context?.previousResults !== undefined) {
+        queryClient.setQueryData(["user-results", user?.id], context.previousResults);
+      }
+    },
+    onSettled: () => {
+      // Always re-sync with server
       queryClient.invalidateQueries({ queryKey: ["user-results"] });
       queryClient.invalidateQueries({ queryKey: ["user-quizzes"] });
       queryClient.invalidateQueries({ queryKey: ["latest-result"] });
+    },
+    onSuccess: () => {
       toast({ title: "Resultado removido", description: "O quiz foi resetado e você pode refazê-lo." });
     },
   });

@@ -43,7 +43,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 const DashboardPage = () => {
-  const { data: latestResult, results, isLoading: loadingResults } = useLatestResult();
+  const { data: latestResult, results, isFetching: fetchingResults, isLoading: loadingResults } = useLatestResult();
   const { data: premiumResults = [], isLoading: loadingPremium } = usePremiumResults();
   const evolutionData = useProgressOverTime();
   const { t, locale, localePath } = useI18n();
@@ -51,7 +51,7 @@ const DashboardPage = () => {
   const { data: dimensions = [], isLoading: loadingDims } = useDimensions();
   const { isPremium, user } = useAuth();
 
-  const isLoading = (isPremium && loadingResults) || loadingDims || loadingPremium;
+  const isLoading = (isPremium && (loadingResults || fetchingResults)) || loadingDims || loadingPremium;
   const isSimulacrum = !isPremium || !latestResult;
   const latestPremium = premiumResults.length > 0 ? premiumResults[0] : null;
 

@@ -82,9 +82,9 @@ export function usePremiumResults() {
 }
 
 export function useLatestResult() {
-  const { data: results, ...rest } = useUserResults();
+  const { data: results, isFetching, ...rest } = useUserResults();
   const latestResult = results && results.length > 0 ? results[0] : null;
-  return { data: latestResult, results, ...rest };
+  return { data: latestResult, results, isFetching, ...rest };
 }
 
 export function useResultById(id: string | undefined) {
