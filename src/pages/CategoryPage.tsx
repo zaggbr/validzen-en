@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  const { data: allPosts = [], isLoading } = usePosts("en", slug);
+  const { data: allPosts = [], isLoading } = usePosts(slug);
   const { data: categories = [] } = useCategories();
   const [sort, setSort] = useState<"recent" | "popular">("recent");
 

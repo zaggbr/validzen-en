@@ -31,7 +31,7 @@ const ResultPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: result, isLoading: loadingResult } = useResultById(id);
-  const { data: allPosts = [] } = usePosts("en");
+  const { data: allPosts = [] } = usePosts();
   const { data: dimensions = [], isLoading: loadingDims } = useDimensions();
   const { isPremium, user } = useAuth();
 

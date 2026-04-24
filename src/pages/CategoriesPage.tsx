@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 const CategoriesPage = () => {
   const { data: categories = [], isLoading } = useCategories();
-  const { data: counts = {} } = useCategoryPostCounts("en");
+  const { data: counts = {} } = useCategoryPostCounts();
 
   if (isLoading) {
     return (

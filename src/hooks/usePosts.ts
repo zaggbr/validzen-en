@@ -13,16 +13,13 @@ function mapRow(row: any): Post {
   } as Post;
 }
 
-export function usePosts(locale: string = "en", categorySlug?: string, layer?: number) {
+export function usePosts(categorySlug?: string, layer?: number) {
   const { toast } = useToast();
 
-  // Fallback: if locale is empty/undefined, default to "en"
-  const effectiveLocale = locale || "en";
-
   return useQuery({
-    queryKey: ["posts", effectiveLocale, categorySlug, layer],
+    queryKey: ["posts", categorySlug, layer],
     queryFn: async (): Promise<Post[]> => {
-      console.log("[usePosts] query params:", { locale: effectiveLocale, categorySlug, layer });
+      console.log("[usePosts] query params:", { categorySlug, layer });
       console.log("[usePosts] supabase URL:", import.meta.env.VITE_SUPABASE_URL);
 
       let query = supabase
@@ -30,7 +27,6 @@ export function usePosts(locale: string = "en", categorySlug?: string, layer?: n
         .select("*")
         .order("published_at", { ascending: false });
 
-      if (effectiveLocale) query = query.eq("locale", effectiveLocale);
       if (categorySlug) query = query.eq("category", categorySlug);
       if (layer) query = query.eq("layer", layer);
 
@@ -103,14 +99,11 @@ export function useCategories() {
 }
 
 /** Count posts per category for a given locale */
-export function useCategoryPostCounts(locale?: string) {
+export function useCategoryPostCounts() {
   return useQuery({
-    queryKey: ["category-post-counts", locale],
+    queryKey: ["category-post-counts"],
     queryFn: async (): Promise<Record<string, number>> => {
-      let query = supabase.from("posts").select("category");
-      if (locale) query = query.eq("locale", locale);
-
-      const { data, error } = await query;
+      const { data, error } = await supabase.from("posts").select("category");
       if (error) throw error;
 
       const counts: Record<string, number> = {};

@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 
 const PopularPosts = () => {
-  const { data: posts = [], isLoading } = usePosts("en");
+  const { data: posts = [], isLoading } = usePosts();
 
   // Show up to 6 most recent posts
   const displayPosts = posts.slice(0, 6);

@@ -44,7 +44,7 @@ const DashboardPage = () => {
   const { data: latestResult, results, isLoading: loadingResults } = useLatestResult();
   const { data: premiumResults = [], isLoading: loadingPremium } = usePremiumResults();
   const evolutionData = useProgressOverTime();
-  const { data: allPosts = [] } = usePosts("en");
+  const { data: allPosts = [] } = usePosts();
   const { data: dimensions = [], isLoading: loadingDims } = useDimensions();
   const { isPremium, user } = useAuth();
 
