@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useI18n } from "@/i18n/I18nContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -7,77 +6,66 @@ import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 const PrivacyPage = () => {
-  const { t, localePath } = useI18n();
-
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <SEOHead 
-        title={`${t("common.privacy")} — ValidZen`}
-        description="Política de Privacidade do ZGC Media Services e nossa conduta em relação aos seus dados."
+        title="Privacy Policy — ValidZen"
+        description="Privacy Policy for ZGC Media Services and our conduct regarding your data."
       />
       <Header />
-      <main className="flex-1 bg-background py-12">
+      <main className="flex-1 py-12 md:py-24">
         <div className="container max-w-3xl">
           <Link 
-            to={localePath("/")} 
-            className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors"
+            to="/dashboard" 
+            className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+            <ArrowLeft className="h-4 w-4" /> Return to Blueprint
           </Link>
 
           <motion.article 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="prose-validzen"
+            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground prose-li:text-muted-foreground prose-li:italic"
           >
-            <h1 className="mb-6 text-3xl font-bold text-title md:text-4xl">Política de Privacidade</h1>
+            <h1 className="mb-10 text-4xl font-black text-title italic tracking-tight md:text-5xl">Privacy Policy</h1>
             
-            <p>
-              A sua privacidade é importante para nós. É política do <strong>ZGC Media Services</strong> respeitar 
-              a sua privacidade em relação a qualquer informação sua que possamos coletar em qualquer site 
-              que possuímos e operamos.
+            <p className="text-lg leading-relaxed">
+              Your privacy is fundamental to our mission. It is the policy of <strong>ZGC Media Services</strong> to respect 
+              your privacy regarding any information we may collect from you across our website, Journeys, and other platforms we own and operate.
             </p>
 
-            <p>
-              Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço. 
-              Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento. Também informamos por que 
-              estamos coletando e como será usado.
+            <p className="text-lg leading-relaxed">
+              We only ask for personal information when we truly need it to provide a specialized service or generate your Personal Blueprint. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used to enhance your self-mastery experience.
             </p>
 
-            <p>
-              Apenas retemos as informações coletadas pelo tempo necessário para fornecer o serviço solicitado. 
-              Quando armazenamos dados, protegemos dentro de meios comercialmente aceitáveis para evitar perdas 
-              e roubos, bem como acesso, divulgação, cópia, uso ou modificação não autorizados.
+            <p className="text-lg leading-relaxed">
+              We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use, or modification.
             </p>
 
-            <p>
-              Não compartilhamos informações de identificação pessoal publicamente ou com terceiros, 
-              exceto quando exigido por lei.
+            <p className="text-lg leading-relaxed">
+              We don’t share any personally identifying information publicly or with third-parties, except when required to by law or to process your premium membership features.
             </p>
 
-            <h2>Compromisso do Usuário</h2>
-            <p>
-              O usuário se compromete a fazer uso adequado dos conteúdos e da informação que o 
-              ZGC Media Services oferece no site:
+            <h2 className="text-2xl font-black italic mt-12 mb-6">User Commitment</h2>
+            <p className="text-lg leading-relaxed">
+              As a member of our community, you undertake to make appropriate use of the contents and information that 
+              ZGC Media Services offers on the site:
             </p>
-            <ul>
-              <li>Não se envolver em atividades que sejam ilegais ou contrárias à boa fé e à ordem pública;</li>
-              <li>Não difundir propaganda ou conteúdo de natureza racista, xenofóbica, ou contra os direitos humanos;</li>
-              <li>Não causar danos aos sistemas físicos (hardwares) e lógicos (softwares) do site.</li>
+            <ul className="space-y-2">
+              <li>Not to engage in activities that are illegal or contrary to good faith and public order;</li>
+              <li>Not to spread propaganda or content of a racist, xenophobic nature, or against human rights;</li>
+              <li>Not to cause damage to the physical (hardware) and logical (software) systems of the site.</li>
             </ul>
 
-            <h2>Mais informações</h2>
-            <p>
-              Esperemos que esteja esclarecido e, como mencionado anteriormente, se houver algo que você não 
-              tem certeza se precisa ou não, geralmente é mais seguro deixar os cookies ativados, caso interaja 
-              com um dos recursos que você usa em nosso site.
+            <h2 className="text-2xl font-black italic mt-12 mb-6">More information</h2>
+            <p className="text-lg leading-relaxed">
+              We hope this clarifies our stance on your internal agency and data privacy. If there is something that you aren't sure whether you need or not, it's usually safer to leave cookies enabled in case it does interact with one of the features you use on our site to track your evolution.
             </p>
 
-            <div className="mt-10 pt-10 border-t border-border text-xs text-muted-foreground">
-              <p>ZGC Media Services</p>
-              <p>CNPJ: 51.186.693/0001-90</p>
-              <p>Contato: atendimento@educta.com.br</p>
-              <p>Esta política é efetiva a partir de 15 de Março 2026.</p>
+            <div className="mt-16 pt-10 border-t border-border text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+              <p>ZGC Media Services — ValidZen Global</p>
+              <p>Contact: continentemedia@gmail.com</p>
+              <p>This policy is effective as of April 22, 2026.</p>
             </div>
           </motion.article>
         </div>

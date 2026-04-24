@@ -13,40 +13,32 @@ import {
 } from "@/components/ui/accordion";
 import { Check, X, Crown, Zap, ArrowRight, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useI18n } from "@/i18n/I18nContext";
 import { supabase } from "@/integrations/supabase/client";
 import { STRIPE_PRICES } from "@/lib/subscription";
 import { toast } from "sonner";
 
 const ProPage = () => {
   const { user, isPremium } = useAuth();
-  const { t, locale, localePath } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleCheckout = async (plan: "monthly" | "promo6") => {
     if (!user) {
-      navigate(localePath("/login"), { state: { from: location.pathname } });
+      navigate("/login", { state: { from: location.pathname } });
       return;
     }
     setLoading(plan);
     try {
-      // Choose platform based on locale
-      const isAsaas = locale === "pt";
-      const functionName = isAsaas ? "create-asaas-checkout" : "create-checkout";
-      
-      const body = isAsaas 
-        ? { plan } 
-        : { priceId: STRIPE_PRICES[plan] };
-
-      const { data, error } = await supabase.functions.invoke(functionName, { body });
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId: STRIPE_PRICES[plan] }
+      });
       if (error) throw error;
       if (data?.url) {
         window.location.href = data.url;
       }
     } catch (err: any) {
-      toast.error(err.message || "Erro ao iniciar checkout");
+      toast.error(err.message || "We couldn't initialize your checkout. Please share your attempt again.");
     } finally {
       setLoading(null);
     }
@@ -60,89 +52,100 @@ const ProPage = () => {
         window.location.href = data.url;
       }
     } catch (err: any) {
-      toast.error(err.message || "Erro ao abrir portal");
+      toast.error(err.message || "We couldn't open your portal at this time.");
     }
   };
 
   const freeFeatures = [
-    { text: t("pro.free_content"), included: true },
-    { text: t("pro.free_quiz_generic"), included: true },
-    { text: t("pro.free_quiz_specific"), included: true },
-    { text: t("pro.free_result_basic"), included: true },
-    { text: t("pro.free_video_1"), included: true },
-    { text: t("pro.free_with_ads"), included: false },
+    { text: "Access to introductory self-knowledge content", included: true },
+    { text: "Begin core Journeys & assessments", included: true },
+    { text: "Limited specific pattern explorations", included: true },
+    { text: "Basic insight summaries", included: true },
+    { text: "Guided introductory videos", included: true },
+    { text: "Ad-supported experience", included: false },
   ];
 
   const proFeatures = [
-    t("pro.pro_all_free"),
-    t("pro.pro_no_ads"),
-    t("pro.pro_unlimited_quiz"),
-    t("pro.pro_dashboard"),
-    t("pro.pro_evolution"),
-    t("pro.pro_all_videos"),
-    t("pro.pro_export_pdf"),
-    t("pro.pro_plan_30"),
-    t("pro.pro_exclusive"),
-    t("pro.pro_recommendations"),
+    "Everything in Free, plus:",
+    "Completely ad-free experience",
+    "Unlimited access to all Journeys & Discovery tools",
+    "Personalized Insight Blueprint",
+    "Evolution tracking toward self-mastery",
+    "Access to the full library of guided wisdom",
+    "Export detailed PDF clinical-grade blueprints",
+    "Tailored 30-day self-mastery plan",
+    "Exclusive deep-pattern content",
+    "Personalized self-mastery recommendations",
   ];
 
   const faqItems = [
-    { q: t("pro.faq_cancel_q"), a: t("pro.faq_cancel_a") },
-    { q: t("pro.faq_guarantee_q"), a: t("pro.faq_guarantee_a") },
-    { q: t("pro.faq_data_q"), a: t("pro.faq_data_a") },
+    { 
+      q: "Can I cancel my membership at any time?", 
+      a: "Yes, you can pause or cancel your journey whenever you like. You'll retain your PRO access until the end of your current cycle." 
+    },
+    { 
+      q: "Is there a satisfaction guarantee?", 
+      a: "Absolutely. If you feel ValidZen hasn't restored your internal agency within the first 7 days, contact us for a full refund." 
+    },
+    { 
+      q: "Is my blueprint data secure and private?", 
+      a: "Your privacy is our priority. All your discovery data is encrypted and never shared. We protect your inner world." 
+    },
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <main className="flex-1">
         <div className="container py-12 md:py-20">
-          <Link to={localePath("/")} className="mb-10 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors">
-            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+          <Link to="/quizzes" className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
+            <ArrowLeft className="h-4 w-4" /> Back to Journeys
           </Link>
 
           {/* Hero */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-14 text-center"
+            className="mb-16 text-center"
           >
-            <Crown className="mx-auto mb-4 h-12 w-12 text-secondary" />
-            <h1 className="mb-3 text-3xl font-bold text-title md:text-5xl">
-              {t("pro.page_title")}
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-secondary/10 text-secondary shadow-lg shadow-secondary/10">
+              <Crown className="h-8 w-8" />
+            </div>
+            <h1 className="mb-4 text-4xl font-black text-title md:text-6xl italic tracking-tight">
+              Reclaim Your Self-Mastery
             </h1>
-            <p className="mx-auto max-w-lg text-muted-foreground">
-              {t("pro.page_subtitle")}
+            <p className="mx-auto max-w-lg text-lg text-muted-foreground italic leading-relaxed">
+              Deepen your journey of self-discovery with ValidZen PRO. We’ve gathered the most advanced tools to map your internal agency.
             </p>
           </motion.div>
 
           {/* Pricing cards */}
-          <div className="mx-auto mb-16 grid max-w-4xl gap-6 md:grid-cols-2">
+          <div className="mx-auto mb-20 grid max-w-5xl gap-8 md:grid-cols-2">
             {/* FREE */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
-              <Card className="h-full">
-                <CardContent className="p-6">
-                  <h2 className="mb-1 text-xl font-bold text-title">FREE</h2>
-                  <p className="mb-6 text-3xl font-bold text-foreground">
-                    R$0<span className="text-sm font-normal text-muted-foreground">/{t("pro.month")}</span>
+              <Card className="h-full border-border/50 shadow-sm hover:shadow-xl transition-all rounded-[2rem]">
+                <CardContent className="p-10 flex flex-col h-full">
+                  <h2 className="mb-2 text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">Core Access</h2>
+                  <p className="mb-8 text-5xl font-black text-foreground italic">
+                    Free
                   </p>
-                  <ul className="mb-6 space-y-3">
+                  <ul className="mb-10 space-y-4 flex-1">
                     {freeFeatures.map((f, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm">
+                      <li key={i} className="flex items-start gap-3 text-sm font-bold italic">
                         {f.included ? (
-                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                          <Check className="mt-1 h-4 w-4 shrink-0 text-accent" />
                         ) : (
-                          <X className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                          <X className="mt-1 h-4 w-4 shrink-0 text-destructive opacity-40" />
                         )}
-                        <span className={f.included ? "" : "text-muted-foreground"}>
+                        <span className={f.included ? "text-title" : "text-muted-foreground line-through opacity-50"}>
                           {f.text}
                         </span>
                       </li>
                     ))}
                   </ul>
-                  <Button variant="outline" className="w-full" asChild>
-                    <Link to={localePath("/")}>
-                      {t("pro.start_free")} <ArrowRight className="ml-1 h-4 w-4" />
+                  <Button variant="outline" className="w-full py-7 rounded-xl font-black uppercase text-[10px] tracking-widest border-border hover:bg-secondary/5" asChild>
+                    <Link to="/quizzes">
+                      Start Core Journey <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </CardContent>
@@ -151,58 +154,58 @@ const ProPage = () => {
 
             {/* PRO */}
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
-              <Card className="relative h-full border-secondary/50 shadow-lg">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-4 py-1 text-xs font-bold text-secondary-foreground">
-                  {t("pro.popular")}
+              <Card className="relative h-full border-secondary/30 shadow-2xl shadow-secondary/5 rounded-[2.5rem] bg-gradient-to-br from-card to-secondary/5">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-secondary-foreground shadow-xl">
+                  UNLIMITED MASTERY
                 </div>
-                <CardContent className="p-6">
-                  <h2 className="mb-1 flex items-center gap-2 text-xl font-bold text-title">
-                    <Zap className="h-5 w-5 text-secondary" /> PRO
+                <CardContent className="p-10 flex flex-col h-full">
+                  <h2 className="mb-2 flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-secondary">
+                    <Zap className="h-4 w-4" /> PRO Blueprint
                   </h2>
 
-                  <div className="mb-6 space-y-2">
-                    <p className="text-3xl font-bold text-foreground">
-                      R$14,90<span className="text-sm font-normal text-muted-foreground">/{t("pro.month")}</span>
+                  <div className="mb-8 space-y-2">
+                    <p className="text-5xl font-black text-foreground italic">
+                      $2.99<span className="text-sm font-black uppercase tracking-widest text-muted-foreground not-italic"> / month</span>
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {t("pro.or")} R$14,90/6 {t("pro.months")}{" "}
-                      <span className="font-semibold text-accent">(PROMOÇÃO)</span>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                      or $14.99 for 6 months{" "}
+                      <span className="text-secondary opacity-80">(Best Value)</span>
                     </p>
                   </div>
 
-                  <ul className="mb-6 space-y-3">
+                  <ul className="mb-10 space-y-4 flex-1">
                     {proFeatures.map((f, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                      <li key={i} className="flex items-start gap-3 text-sm font-bold text-title italic">
+                        <Check className="mt-1 h-4 w-4 shrink-0 text-secondary" />
                         {f}
                       </li>
                     ))}
                   </ul>
 
                   {isPremium ? (
-                    <Button onClick={handleManage} variant="outline" className="w-full">
-                      {t("pro.manage_subscription")}
+                    <Button onClick={handleManage} variant="outline" className="w-full py-7 rounded-xl font-black uppercase text-[10px] tracking-widest border-secondary/20 hover:bg-secondary/10 text-secondary">
+                      Manage My Blueprint
                     </Button>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                       <Button
                         onClick={() => handleCheckout("promo6")}
                         variant="hero"
-                        className="w-full"
+                        className="w-full py-8 rounded-full font-black uppercase tracking-widest text-md shadow-2xl shadow-secondary/30 transition-transform hover:scale-105 active:scale-95"
                         disabled={!!loading}
                       >
-                        {loading === "promo6" ? "..." : t("pro.subscribe_promo6") || "Assinar Promoção (6 Meses)"}
+                        {loading === "promo6" ? "Initializing Discovery..." : "Unlock 6-Month Mastery"}
                       </Button>
                       <Button
                         onClick={() => handleCheckout("monthly")}
                         variant="outline"
-                        className="w-full"
+                        className="w-full py-7 rounded-full font-black uppercase text-[10px] tracking-widest border-secondary/20 hover:bg-secondary/10 text-secondary"
                         disabled={!!loading}
                       >
-                        {loading === "monthly" ? "..." : t("pro.subscribe_monthly")}
+                        {loading === "monthly" ? "Gathering Insights..." : "Begin Monthly Journey"}
                       </Button>
-                      <p className="text-center text-xs text-muted-foreground">
-                        {t("pro.guarantee")}
+                      <p className="text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                        7-day self-mastery guarantee
                       </p>
                     </div>
                   )}
@@ -212,17 +215,17 @@ const ProPage = () => {
           </div>
 
           {/* FAQ */}
-          <div className="mx-auto max-w-2xl">
-            <h2 className="mb-6 text-center text-2xl font-bold text-title">
-              {t("pro.faq_title")}
+          <div className="mx-auto max-w-3xl">
+            <h2 className="mb-10 text-center text-3xl font-black text-title italic">
+              Discovery FAQ
             </h2>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="single" collapsible className="w-full space-y-4">
               {faqItems.map((item, i) => (
-                <AccordionItem key={i} value={`faq-${i}`}>
-                  <AccordionTrigger className="text-left text-sm font-medium">
+                <AccordionItem key={i} value={`faq-${i}`} className="border-none bg-muted/20 rounded-2xl px-8 transition-all hover:bg-muted/40">
+                  <AccordionTrigger className="text-left text-sm font-bold uppercase tracking-widest hover:no-underline py-6">
                     {item.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm text-muted-foreground">
+                  <AccordionContent className="text-md text-muted-foreground italic leading-relaxed pb-6">
                     {item.a}
                   </AccordionContent>
                 </AccordionItem>

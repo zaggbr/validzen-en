@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useI18n } from "@/i18n/I18nContext";
 
 interface AdBannerProps {
   slot: string;
@@ -23,7 +22,6 @@ const formatToStyle: Record<AdBannerProps["format"], { minHeight: string; maxWid
 
 const AdBanner = ({ slot, format, className = "" }: AdBannerProps) => {
   const { isPremium } = useAuth();
-  const { t } = useI18n();
   const adRef = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
 
@@ -41,12 +39,11 @@ const AdBanner = ({ slot, format, className = "" }: AdBannerProps) => {
 
   const clientId = import.meta.env.VITE_ADSENSE_CLIENT_ID;
   if (!clientId) {
-    // In development / when no AdSense configured, show placeholder
     return (
-      <div className={`mx-auto flex items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 text-xs text-muted-foreground ${className}`}
+      <div className={`mx-auto flex items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 text-[10px] uppercase tracking-widest text-muted-foreground/60 ${className}`}
         style={{ ...formatToStyle[format], width: "100%" }}
       >
-        <span>{t("common.ad_label")}</span>
+        <span>Advertisement</span>
       </div>
     );
   }
@@ -57,7 +54,7 @@ const AdBanner = ({ slot, format, className = "" }: AdBannerProps) => {
   return (
     <div className={`mx-auto ${className}`} style={{ width: "100%" }}>
       <span className="mb-1 block text-center text-[10px] uppercase tracking-widest text-muted-foreground/60">
-        {t("common.ad_label")}
+        Advertisement
       </span>
       <ins
         ref={adRef}

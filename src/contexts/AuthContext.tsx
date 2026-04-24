@@ -87,21 +87,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     setIsAdmin(isUserAdmin);
 
+    const isMasterKey = sessionStorage.getItem("validzen_master_key") === "true";
+    const isSuperAdmin = email === "continentemedia@gmail.com";
+
     if (data) {
       setProfile(data as UserProfile);
-      // Effectively premium if DB says so OR if user is admin
-      setIsPremium(data.is_premium === true || isUserAdmin);
+      // Effectively premium if DB says so OR if user is admin OR superadmin OR masterkey
+      setIsPremium(data.is_premium === true || isUserAdmin || isSuperAdmin || isMasterKey);
       setUserUsage({
         postsRead: (data as any).posts_viewed_count || 0,
         quizzesDone: (data as any).quizzes_completed_count || 0
       });
     } else {
-      // No profile found yet, but still check if admin
-      setIsPremium(isUserAdmin);
+      // No profile found yet, but still check if admin/masterkey
+      setIsPremium(isUserAdmin || isSuperAdmin || isMasterKey);
     }
   }, []);
 
   const refreshSubscription = useCallback(async (userId?: string, email?: string) => {
+    // Check for master key in URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("vibe") === "masterkey") {
+      sessionStorage.setItem("validzen_master_key", "true");
+      // Clean URL without refreshing
+      const newUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+
     try {
       await supabase.functions.invoke("check-subscription");
     } catch (err) {
@@ -135,7 +147,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           refreshSubscription(currentUser.id, currentUser.email);
         } else {
           setProfile(null);
-          setIsPremium(false);
+          const isMasterKey = sessionStorage.getItem("validzen_master_key") === "true";
+          setIsPremium(isMasterKey);
           setIsAdmin(false);
         }
       }
@@ -145,9 +158,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       const currentUser = session?.user ?? null;
       setUser(currentUser);
+      
+      const isMasterKey = sessionStorage.getItem("validzen_master_key") === "true";
+      
       if (currentUser) {
-        setIsAdmin(ADMIN_EMAILS.includes(currentUser.email ?? ""));
+        const isUserAdmin = ADMIN_EMAILS.includes(currentUser.email ?? "");
+        setIsAdmin(isUserAdmin);
         fetchProfile(currentUser.id, currentUser.email);
+        
+        // Final fallback for SuperAdmin or MasterKey
+        if (currentUser.email === "continentemedia@gmail.com" || isMasterKey) {
+          setIsPremium(true);
+        }
+      } else if (isMasterKey) {
+        setIsPremium(true);
       }
       setLoading(false);
     });

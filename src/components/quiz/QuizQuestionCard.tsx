@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { QuizQuestion } from "@/types/database";
 import { cn } from "@/lib/utils";
-import { useI18n } from "@/i18n/I18nContext";
 
 interface Props {
   question: QuizQuestion;
@@ -32,19 +31,17 @@ const QuizQuestionCard = ({
   isLast,
   direction,
 }: Props) => {
-  const { t } = useI18n();
-
   const renderScale = () => (
-    <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
+    <div className="flex flex-col gap-3 sm:flex-row sm:gap-3">
       {question.options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onSelect(opt.value)}
           className={cn(
-            "flex-1 rounded-lg border-2 px-4 py-3 text-sm font-medium transition-all duration-200",
+            "flex-1 rounded-xl border-2 px-4 py-4 text-sm font-black italic transition-all duration-200 uppercase tracking-widest",
             selectedValue === opt.value
-              ? "border-primary bg-primary text-primary-foreground shadow-md"
-              : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-primary/5"
+              ? "border-secondary bg-secondary text-white shadow-xl shadow-secondary/20"
+              : "border-border bg-card text-foreground hover:border-secondary/30"
           )}
         >
           {opt.text}
@@ -54,16 +51,16 @@ const QuizQuestionCard = ({
   );
 
   const renderMultipleChoice = () => (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       {question.options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onSelect(opt.value)}
           className={cn(
-            "rounded-lg border-2 px-5 py-4 text-left text-sm font-medium transition-all duration-200",
+            "rounded-xl border-2 px-6 py-5 text-left text-md font-black italic transition-all duration-200",
             selectedValue === opt.value
-              ? "border-primary bg-primary/10 text-foreground shadow-sm"
-              : "border-border bg-card text-foreground hover:border-primary/40"
+              ? "border-secondary bg-secondary/10 text-title shadow-sm"
+              : "border-border bg-card text-foreground hover:border-secondary/30"
           )}
         >
           {opt.text}
@@ -73,16 +70,16 @@ const QuizQuestionCard = ({
   );
 
   const renderYesNo = () => (
-    <div className="flex gap-4">
+    <div className="flex gap-6">
       {question.options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onSelect(opt.value)}
           className={cn(
-            "flex-1 rounded-lg border-2 px-6 py-5 text-base font-semibold transition-all duration-200",
+            "flex-1 rounded-[1.5rem] border-2 px-8 py-6 text-lg font-black italic transition-all duration-200 uppercase tracking-widest",
             selectedValue === opt.value
-              ? "border-primary bg-primary text-primary-foreground shadow-md"
-              : "border-border bg-card text-foreground hover:border-primary/40"
+              ? "border-secondary bg-secondary text-white shadow-2xl shadow-secondary/20"
+              : "border-border bg-card text-foreground hover:border-secondary/30"
           )}
         >
           {opt.text}
@@ -100,23 +97,25 @@ const QuizQuestionCard = ({
         initial="enter"
         animate="center"
         exit="exit"
-        transition={{ duration: 0.25, ease: "easeInOut" }}
-        className="mx-auto w-full max-w-xl"
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="mx-auto w-full max-w-2xl"
       >
-        <h2 className="mb-8 text-center text-lg font-semibold text-title md:text-xl">
+        <h2 className="mb-12 text-center text-2xl font-black text-title md:text-3xl italic tracking-tight leading-tight">
           {question.question_text}
         </h2>
 
-        {question.question_type === "scale" && renderScale()}
-        {question.question_type === "multiple_choice" && renderMultipleChoice()}
-        {question.question_type === "yes_no" && renderYesNo()}
+        <div className="mb-12">
+          {question.question_type === "scale" && renderScale()}
+          {question.question_type === "multiple_choice" && renderMultipleChoice()}
+          {question.question_type === "yes_no" && renderYesNo()}
+        </div>
 
-        <div className="mt-10 flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={onBack} disabled={isFirst} className="gap-1">
-            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+        <div className="flex items-center justify-between border-t border-border pt-10">
+          <Button variant="ghost" size="sm" onClick={onBack} disabled={isFirst} className="font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground hover:text-secondary">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Previous
           </Button>
-          <Button onClick={onNext} disabled={selectedValue === null} variant="hero" size="lg" className="gap-1">
-            {isLast ? t("quiz.see_result") : t("quiz.next")} <ArrowRight className="h-4 w-4" />
+          <Button onClick={onNext} disabled={selectedValue === null} variant="hero" size="lg" className="rounded-full px-10 py-7 font-black uppercase tracking-widest shadow-xl shadow-secondary/20 transition-all hover:scale-105 active:scale-95">
+            {isLast ? "Reveal Discovery" : "Continue Journey"} <ArrowRight className="ml-3 h-5 w-5" />
           </Button>
         </div>
       </motion.div>

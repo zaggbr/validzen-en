@@ -26,7 +26,6 @@ export function usePremiumAssessmentForPost(postSlug: string | undefined) {
     queryFn: async (): Promise<PremiumAssessment | null> => {
       if (!postSlug) return null;
 
-      // Get linked assessment slug
       const { data: link, error: linkErr } = await supabase
         .from("premium_assessment_posts" as any)
         .select("assessment_slug")
@@ -72,7 +71,7 @@ export function usePremiumAssessmentBySlug(slug: string | undefined) {
 /** Fetch questions for a premium assessment */
 export function usePremiumAssessmentQuestions(
   assessmentSlug: string | undefined,
-  locale: string = "pt"
+  locale: string = "en"
 ) {
   return useQuery({
     queryKey: ["premium-assessment-questions", assessmentSlug, locale],
@@ -95,7 +94,7 @@ export function usePremiumAssessmentQuestions(
 export function calculatePatternScores(
   questions: PremiumAssessmentQuestion[],
   answers: Record<string, number>,
-  locale: string
+  locale: string = "en"
 ): {
   scores: Record<string, number>;
   dominant_pattern: string;
@@ -121,18 +120,15 @@ export function calculatePatternScores(
     if (answerValue == null) continue;
     totalAnswered++;
 
-    // Map option index to pattern
     const patternIdx = Math.min(answerValue, patterns.length - 1);
     counts[patterns[patternIdx]]++;
   }
 
-  // Calculate percentages
   const scores: Record<string, number> = {};
   patterns.forEach((p) => {
     scores[p] = totalAnswered > 0 ? Math.round((counts[p] / totalAnswered) * 100) : 0;
   });
 
-  // Sort by score descending
   const sorted = Object.entries(scores).sort(([, a], [, b]) => b - a);
   const dominant_pattern = sorted[0]?.[0] || patterns[0];
   const secondary_pattern = sorted[1]?.[0] || patterns[1];
@@ -182,8 +178,8 @@ export function useSubmitPremiumResult() {
 
       if (error) {
         toast({
-          title: "Erro ao salvar resultado",
-          description: error.message,
+          title: "Failed to save findings",
+          description: "We couldn't preserve your progress. Please check your connection and try again.",
           variant: "destructive",
         });
         throw error;

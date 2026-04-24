@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { useI18n } from "@/i18n/I18nContext";
 
 interface QuizCTAProps {
   theme: string;
@@ -8,7 +7,6 @@ interface QuizCTAProps {
 }
 
 const QuizCTA = ({ theme, quizSlug }: QuizCTAProps) => {
-  const { t, localePath } = useI18n();
   const inlineEl = document.getElementById(`quiz-inline-${quizSlug}`);
 
   const handleClick = (e: React.MouseEvent) => {
@@ -20,15 +18,17 @@ const QuizCTA = ({ theme, quizSlug }: QuizCTAProps) => {
 
   return (
     <Link
-      to={localePath(`/quiz/${quizSlug}`)}
+      to={`/quiz/${quizSlug}`}
       onClick={handleClick}
-      className="my-6 flex items-center justify-between rounded-lg border border-secondary/20 bg-secondary/5 px-5 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary/10"
+      className="my-10 flex items-center justify-between rounded-2xl border border-secondary/20 bg-secondary/5 px-6 py-5 text-sm font-black italic text-foreground transition-all hover:bg-secondary/10 hover:shadow-lg shadow-secondary/5 group"
     >
-      <span>
-        📊 {t("quiz.quiz_cta")}{" "}
-        <span className="font-bold text-secondary">{theme}</span> {t("quiz.quiz_cta_suffix")}
+      <span className="flex items-center gap-3">
+        <span className="text-2xl">📊</span>
+        <span>
+          Discover your level of <span className="text-secondary uppercase tracking-tighter not-italic font-black">{theme}</span> on this Journey
+        </span>
       </span>
-      <ArrowRight className="h-4 w-4 shrink-0 text-secondary" />
+      <ArrowRight className="h-5 w-5 shrink-0 text-secondary transition-transform group-hover:translate-x-1" />
     </Link>
   );
 };

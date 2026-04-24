@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, List } from "lucide-react";
 import type { ContentSection } from "@/types/database";
-import { useI18n } from "@/i18n/I18nContext";
 
 interface TableOfContentsProps {
   sections: ContentSection[];
@@ -9,7 +8,6 @@ interface TableOfContentsProps {
 
 const TableOfContents = ({ sections }: TableOfContentsProps) => {
   const [open, setOpen] = useState(false);
-  const { t } = useI18n();
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -26,8 +24,8 @@ const TableOfContents = ({ sections }: TableOfContentsProps) => {
           onClick={() => setOpen(!open)}
           className="flex w-full items-center justify-between"
         >
-          <span className="flex items-center gap-2 text-sm font-semibold text-card-foreground">
-            <List className="h-4 w-4" /> {t("post.toc")}
+          <span className="flex items-center gap-2 text-sm font-semibold text-card-foreground uppercase tracking-widest">
+            <List className="h-4 w-4" /> Table of Contents
           </span>
           <ChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
@@ -39,7 +37,7 @@ const TableOfContents = ({ sections }: TableOfContentsProps) => {
               <button
                 key={s.id}
                 onClick={() => scrollTo(s.id)}
-                className="text-left text-sm text-muted-foreground hover:text-secondary transition-colors"
+                className="text-left text-sm text-muted-foreground hover:text-secondary transition-colors italic"
               >
                 {s.heading}
               </button>
@@ -50,14 +48,14 @@ const TableOfContents = ({ sections }: TableOfContentsProps) => {
 
       <nav className="sticky top-24 hidden lg:block">
         <h4 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          <List className="h-3.5 w-3.5" /> {t("post.toc")}
+          <List className="h-3.5 w-3.5" /> Table of Contents
         </h4>
         <div className="flex flex-col gap-2 border-l-2 border-border pl-4">
           {sections.map((s) => (
             <button
               key={s.id}
               onClick={() => scrollTo(s.id)}
-              className="text-left text-sm text-muted-foreground hover:text-secondary transition-colors"
+              className="text-left text-sm text-muted-foreground hover:text-secondary transition-colors italic"
             >
               {s.heading}
             </button>

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useI18n } from "@/i18n/I18nContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -7,65 +6,62 @@ import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 const AboutPage = () => {
-  const { t, localePath } = useI18n();
-
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <SEOHead 
-        title={`${t("common.about")} — ValidZen`}
-        description="Somos uma publisher house independente, dedicada à curadoria de conteúdos de alta qualidade e inovação."
+        title="About Us — ValidZen"
+        description="ValidZen is an independent discovery hub dedicated to psychological agency and self-mastery."
       />
       <Header />
-      <main className="flex-1 bg-background py-12">
+      <main className="flex-1 py-12 md:py-24">
         <div className="container max-w-3xl">
           <Link 
-            to={localePath("/")} 
-            className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors"
+            to="/dashboard" 
+            className="mb-12 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+            <ArrowLeft className="h-4 w-4" /> Return to Blueprint
           </Link>
 
           <motion.article 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="prose-validzen"
+            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground"
           >
-            <h1 className="mb-6 text-3xl font-bold text-title md:text-4xl">Quem Somos</h1>
+            <h1 className="mb-10 text-4xl font-black text-title italic tracking-tight md:text-5xl">Our Methodology</h1>
             
-            <p>
-              Somos uma publisher house independente, dedicada à curadoria de conteúdos de alta qualidade, 
-              consultoria técnica especializada em inovação e comunicação.
+            <p className="text-lg leading-relaxed">
+              ValidZen is a project by an independent publishing house dedicated to curating high-quality content 
+              and specialized technical consultancy in innovation, psychological agency, and communication.
             </p>
 
-            <p>
-              Com mais de 20 anos de experiência em projetos criativos, atendemos a uma ampla variedade 
-              de públicos, oferecendo material personalizado e envolvendo que ressoa em diferentes audiências.
+            <p className="text-lg leading-relaxed">
+              With over 20 years of experience in creative projects, we serve a global audience, 
+              offering personalized and engaging Journeys that resonate across different cultures and perspectives.
             </p>
 
-            <p>
-              Operamos marcas como <strong>Validzen</strong>, <strong>Educta.online</strong>, 
-              <strong>Educta.com.br</strong>, <strong>ContinenteMedia</strong>, <strong>PainelSaúde</strong>, 
-              entre outras.
+            <p className="text-lg leading-relaxed">
+              We operate several brands focused on education, mental wellbeing, and technology, 
+              including <strong>ValidZen</strong>, <strong>Educta</strong>, and <strong>ContinenteMedia</strong>.
             </p>
 
-            <p>
-              Nossa especialidade é entender as necessidades únicas e criar experiências que informam, 
-              entretêm e inspiram.
+            <p className="text-lg leading-relaxed">
+              Our specialty is understanding the unique needs of the modern mind and creating experiences that inform, 
+              guide, and inspire deep self-mastery.
             </p>
 
-            <p>
-              Trabalhamos temáticas personalizadas para marcas e influenciadores, utilizando os melhores 
-              recursos tecnológicos para explorar ideias inovadoras, conceitos e narrativas. Nosso trabalho 
-              é fundamentado em princípios éticos e jornalísticos, garantindo que cada peça de conteúdo 
-              seja confiável e impactante.
+            <p className="text-lg leading-relaxed">
+              We work on personalized themes for brands and influencers, using advanced 
+              technological resources to explore innovative ideas, concepts, and narratives. Our work 
+              is grounded in ethical principles, ensuring that every Discovery and Blueprint 
+              is reliable and impactful.
             </p>
 
-            <p>
-              Algumas de nossas recomendações de produtos podem incluir comissões, infomerciais e ativos 
-              comerciais proprietários - como infoprodutos e consultoria, sempre garantida a lisura e que 
-              isso não afeta nosso compromisso com a manutenção de altos padrões de qualidade. Cada 
-              recomendação é feita seguindo diretrizes éticas para assegurar a integridade e o valor para o 
-              nosso público.
+            <p className="text-lg leading-relaxed">
+              Some of our product recommendations may include affiliate links, sponsored content, 
+              or proprietary commercial assets—such as info-products and consultancy. We guarantee 
+              that this does not affect our commitment to maintaining high standards of quality. Each 
+              recommendation is made following ethical guidelines to ensure integrity and value for 
+              our community.
             </p>
           </motion.article>
         </div>

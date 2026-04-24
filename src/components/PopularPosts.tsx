@@ -1,24 +1,23 @@
 import PostCard from "./PostCard";
 import { usePosts } from "@/hooks/usePosts";
-import { useI18n } from "@/i18n/I18nContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 const PopularPosts = () => {
-  const { t, locale } = useI18n();
-  const { data: posts = [], isLoading } = usePosts(locale);
+  const { data: posts = [], isLoading } = usePosts("en");
 
   // Show up to 6 most recent posts
   const displayPosts = posts.slice(0, 6);
 
   if (isLoading) {
     return (
-      <section className="py-16 md:py-20">
+      <section className="py-24 md:py-32">
         <div className="container">
-          <Skeleton className="mb-2 h-8 w-48" />
-          <Skeleton className="mb-10 h-4 w-64" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Skeleton className="mb-4 h-10 w-64" />
+          <Skeleton className="mb-12 h-4 w-96" />
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-40" />
+              <Skeleton key={i} className="h-48 rounded-2xl" />
             ))}
           </div>
         </div>
@@ -29,22 +28,37 @@ const PopularPosts = () => {
   if (displayPosts.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-20">
+    <section className="py-24 md:py-32 bg-background">
       <div className="container">
-        <h2 className="mb-2 text-2xl font-bold md:text-3xl">{t("home.section_popular")}</h2>
-        <p className="mb-10 text-sm text-muted-foreground">
-          {t("home.section_popular_sub")}
-        </p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {displayPosts.map((post) => (
-            <PostCard
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-16"
+        >
+          <h2 className="mb-4 text-4xl font-black text-title italic tracking-tight md:text-5xl">Trending Insights</h2>
+          <p className="text-lg text-muted-foreground italic max-w-2xl">
+            Explore our latest blueprints and guided reflections for a clearer mind.
+          </p>
+        </motion.div>
+
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {displayPosts.map((post, idx) => (
+            <motion.div
               key={post.slug}
-              title={post.title}
-              excerpt={post.excerpt}
-              category={post.category}
-              readTime={`${post.reading_time} min`}
-              slug={post.slug}
-            />
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+            >
+              <PostCard
+                title={post.title}
+                excerpt={post.excerpt}
+                category={post.category}
+                readTime={`${post.reading_time}`}
+                slug={post.slug}
+              />
+            </motion.div>
           ))}
         </div>
       </div>

@@ -1,5 +1,4 @@
 import { Progress } from "@/components/ui/progress";
-import { useI18n } from "@/i18n/I18nContext";
 
 interface QuizProgressProps {
   current: number;
@@ -8,15 +7,14 @@ interface QuizProgressProps {
 
 const QuizProgress = ({ current, total }: QuizProgressProps) => {
   const pct = Math.round((current / total) * 100);
-  const { t } = useI18n();
 
   return (
     <div className="mb-8 w-full">
-      <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
-        <span>{t("quiz.question_of", { current, total })}</span>
-        <span>{pct}%</span>
+      <div className="mb-2 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
+        <span>Question {current} of {total}</span>
+        <span>{pct}% Completed</span>
       </div>
-      <Progress value={pct} className="h-2" />
+      <Progress value={pct} className="h-1.5" />
     </div>
   );
 };

@@ -1,13 +1,9 @@
-import { useI18n } from "@/i18n/I18nContext";
-
 const Disclaimer = () => {
-  const { t } = useI18n();
-
   return (
-    <div className="rounded-lg border border-secondary/20 bg-secondary/5 px-5 py-4">
-      <p className="text-xs font-medium text-secondary">⚠️ {t("common.disclaimer_label")}</p>
-      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-        {t("common.disclaimer_full")}
+    <div className="rounded-2xl border border-secondary/20 bg-secondary/5 px-6 py-5">
+      <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] italic mb-2">⚠️ Important Notice</p>
+      <p className="text-[10px] text-muted-foreground leading-relaxed italic font-bold opacity-70 uppercase tracking-widest">
+        ValidZen's discovery journeys and blueprints are for educational and self-mastery purposes only. They do not constitute professional clinical diagnosis or medical advice. In case of emotional crisis or emergency, please contact your local mental health services or a crisis hotline immediately.
       </p>
     </div>
   );

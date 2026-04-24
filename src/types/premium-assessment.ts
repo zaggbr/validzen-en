@@ -61,18 +61,18 @@ export interface AssessmentInterpretation {
 export const PATTERN_PROFILES: Record<string, { pt: string; en: string }> = {
   controle_performance: {
     pt: "O Performer Ansioso",
-    en: "The Anxious Performer",
+    en: "The Strategic Achiever",
   },
   paralisia_evitacao: {
     pt: "O Sobrevivente em Alerta",
-    en: "The Alert Survivor",
+    en: "The Shielded Resilient",
   },
   busca_sentido_ceticismo: {
     pt: "O Observador em Crise de Sentido",
-    en: "The Observer in Meaning Crisis",
+    en: "The Purpose Analyst",
   },
   desconexao_dissociacao: {
     pt: "O Desligado Funcional",
-    en: "The Functional Disconnected",
+    en: "The Pragmatic Observer",
   },
 };

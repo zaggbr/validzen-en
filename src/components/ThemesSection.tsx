@@ -1,22 +1,21 @@
 import CategoryCard from "./CategoryCard";
 import { useCategories, useCategoryPostCounts } from "@/hooks/usePosts";
-import { useI18n } from "@/i18n/I18nContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 const ThemesSection = () => {
-  const { t, locale } = useI18n();
   const { data: categories = [], isLoading } = useCategories();
-  const { data: counts = {} } = useCategoryPostCounts(locale);
+  const { data: counts = {} } = useCategoryPostCounts("en");
 
   if (isLoading) {
     return (
-      <section className="bg-muted/30 py-16 md:py-20">
+      <section className="bg-muted/10 py-24 md:py-32">
         <div className="container">
-          <Skeleton className="mx-auto mb-2 h-8 w-48" />
-          <Skeleton className="mx-auto mb-10 h-4 w-64" />
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          <Skeleton className="mx-auto mb-4 h-10 w-64" />
+          <Skeleton className="mx-auto mb-12 h-4 w-80" />
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-24" />
+              <Skeleton key={i} className="h-32 rounded-2xl" />
             ))}
           </div>
         </div>
@@ -27,22 +26,37 @@ const ThemesSection = () => {
   if (categories.length === 0) return null;
 
   return (
-    <section className="bg-muted/30 py-16 md:py-20">
+    <section className="bg-muted/10 py-24 md:py-32">
       <div className="container">
-        <h2 className="mb-2 text-center text-2xl font-bold md:text-3xl">
-          {t("home.section_themes")}
-        </h2>
-        <p className="mb-10 text-center text-sm text-muted-foreground">
-          {t("home.section_themes_sub")}
-        </p>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {categories.map((cat) => (
-            <CategoryCard
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-16 text-center"
+        >
+          <h2 className="mb-4 text-4xl font-black text-title italic tracking-tight md:text-5xl">
+            Discovery Territories
+          </h2>
+          <p className="mx-auto max-w-lg text-lg text-muted-foreground italic leading-relaxed">
+            Dive deep into specific areas of self-mastery and guided emotional discovery.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {categories.map((cat, idx) => (
+            <motion.div
               key={cat.slug}
-              name={locale === "en" ? cat.name_en : cat.name_pt}
-              slug={cat.slug}
-              postCount={counts[cat.slug] || 0}
-            />
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.05 }}
+            >
+              <CategoryCard
+                name={cat.name_en || cat.name_pt}
+                slug={cat.slug}
+                postCount={counts[cat.slug] || 0}
+              />
+            </motion.div>
           ))}
         </div>
       </div>

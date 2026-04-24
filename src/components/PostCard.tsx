@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { Clock } from "lucide-react";
-import { useI18n } from "@/i18n/I18nContext";
+import { Clock, ArrowRight } from "lucide-react";
 
 interface PostCardProps {
   title: string;
@@ -11,23 +10,28 @@ interface PostCardProps {
 }
 
 const PostCard = ({ title, excerpt, category, readTime, slug }: PostCardProps) => {
-  const { localePath } = useI18n();
-
   return (
     <Link
-      to={localePath(`/conteudo/${slug}`)}
-      className="group flex flex-col rounded-lg border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:border-secondary/30 hover:shadow-md"
+      to={`/content/${slug}`}
+      className="group flex flex-col rounded-[2rem] border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:border-secondary/30 hover:shadow-2xl hover:-translate-y-1"
     >
-      <span className="mb-2 inline-block w-fit rounded-md bg-secondary/10 px-2 py-0.5 text-xs font-medium text-secondary">
-        {category}
-      </span>
-      <h3 className="mb-2 text-base font-semibold leading-snug text-card-foreground group-hover:text-secondary transition-colors line-clamp-2">
+      <div className="mb-4 flex items-center justify-between">
+        <span className="rounded-full bg-secondary/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-secondary italic">
+          {category}
+        </span>
+        <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+          <Clock className="h-3 w-3" />
+          <span>{readTime} Min Discovery</span>
+        </div>
+      </div>
+      <h3 className="mb-3 text-xl font-black leading-tight text-title italic tracking-tight group-hover:text-secondary transition-colors line-clamp-2">
         {title}
       </h3>
-      <p className="mb-4 text-sm text-muted-foreground line-clamp-2">{excerpt}</p>
-      <div className="mt-auto flex items-center gap-1 text-xs text-muted-foreground">
-        <Clock className="h-3 w-3" />
-        <span>{readTime}</span>
+      <p className="mb-6 text-sm text-muted-foreground italic leading-relaxed line-clamp-2">{excerpt}</p>
+      <div className="mt-auto flex items-center justify-between">
+        <span className="text-[10px] font-black uppercase tracking-widest text-secondary opacity-0 transition-all group-hover:opacity-100 flex items-center gap-2">
+          Embark <ArrowRight className="h-3.5 w-3.5" />
+        </span>
       </div>
     </Link>
   );

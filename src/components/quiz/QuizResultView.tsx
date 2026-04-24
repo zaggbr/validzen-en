@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, RotateCcw } from "lucide-react";
 import { useDimensions } from "@/hooks/useDimensions";
 import { cn } from "@/lib/utils";
-import { useI18n } from "@/i18n/I18nContext";
 
 function getScoreLevel(score: number): { label: string; color: string } {
-  if (score <= 30) return { label: "Baixo", color: "text-accent" };
-  if (score <= 60) return { label: "Moderado", color: "text-secondary" };
-  return { label: "Alto", color: "text-destructive" };
+  if (score <= 30) return { label: "Low", color: "text-accent" };
+  if (score <= 60) return { label: "Moderate", color: "text-secondary" };
+  return { label: "High", color: "text-destructive" };
 }
 
 interface Props {
@@ -20,7 +19,6 @@ interface Props {
 }
 
 const QuizResultView = ({ result, onRetry }: Props) => {
-  const { t, locale, localePath } = useI18n();
   const { data: dimensions = [] } = useDimensions();
   const dimMap = new Map(dimensions.map((d) => [d.slug, d]));
 
@@ -37,10 +35,10 @@ const QuizResultView = ({ result, onRetry }: Props) => {
       <div className="mb-10 text-center">
         <span className="mb-3 inline-block text-5xl">🗺️</span>
         <h1 className="mb-2 text-3xl font-bold text-title">
-          {t("result.title")}
+          Your Emotional Map
         </h1>
-        <p className="text-sm text-muted-foreground">
-          {t("result.top_dimensions")}
+        <p className="text-sm text-muted-foreground italic">
+          Here are your results across the psychological dimensions we analyzed.
         </p>
       </div>
 
@@ -48,7 +46,7 @@ const QuizResultView = ({ result, onRetry }: Props) => {
         {sortedDimensions.map(([dim, score], i) => {
           const { label, color } = getScoreLevel(score);
           const d = dimMap.get(dim);
-          const name = d ? (locale === "en" ? d.name_en : d.name_pt) : dim;
+          const name = d ? d.name_en : dim;
           const emoji = d?.icon || "🧠";
           return (
             <motion.div
@@ -56,18 +54,18 @@ const QuizResultView = ({ result, onRetry }: Props) => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-lg border border-border bg-card p-4"
+              className="rounded-lg border border-border bg-card p-4 shadow-sm"
             >
               <div className="mb-2 flex items-center justify-between">
-                <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <span>{emoji}</span>
+                <span className="flex items-center gap-2 text-sm font-bold text-foreground">
+                  <span className="text-xl">{emoji}</span>
                   {name}
                 </span>
-                <span className={cn("text-sm font-bold", color)}>
+                <span className={cn("text-xs font-black uppercase tracking-wider", color)}>
                   {score}% — {label}
                 </span>
               </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-muted">
+              <div className="h-2 overflow-hidden rounded-full bg-muted">
                 <motion.div
                   className={cn(
                     "h-full rounded-full",
@@ -75,7 +73,7 @@ const QuizResultView = ({ result, onRetry }: Props) => {
                   )}
                   initial={{ width: 0 }}
                   animate={{ width: `${score}%` }}
-                  transition={{ duration: 0.6, delay: i * 0.05 }}
+                  transition={{ duration: 0.8, delay: i * 0.1, ease: "easeOut" }}
                 />
               </div>
             </motion.div>
@@ -85,17 +83,17 @@ const QuizResultView = ({ result, onRetry }: Props) => {
 
       <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <Button variant="hero" size="lg" asChild>
-          <Link to={localePath("/dashboard")}>
-            {t("dashboard.title")} <ArrowRight className="ml-1 h-4 w-4" />
+          <Link to="/dashboard">
+            Go to My Dashboard <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
-        <Button variant="outline" size="lg" onClick={onRetry} className="gap-1">
-          <RotateCcw className="h-4 w-4" /> {t("result.retry")}
+        <Button variant="outline" size="lg" onClick={onRetry} className="gap-2 text-muted-foreground">
+          <RotateCcw className="h-4 w-4" /> Retake Assessment
         </Button>
       </div>
 
-      <p className="mt-8 text-center text-xs text-muted-foreground">
-        ⚠️ {t("common.disclaimer_quiz")}
+      <p className="mt-8 text-center text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-60">
+        ⚠️ This is not a clinical diagnosis. Use for self-reflection only.
       </p>
     </motion.div>
   );

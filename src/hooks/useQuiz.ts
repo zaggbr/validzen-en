@@ -30,7 +30,7 @@ function mapQuestionRow(row: any, locale: string): QuizQuestion {
   } as QuizQuestion;
 }
 
-export function useQuizBySlug(slug: string | undefined, locale: string = "pt") {
+export function useQuizBySlug(slug: string | undefined, locale: string = "en") {
   const { toast } = useToast();
 
   return useQuery({
@@ -44,7 +44,7 @@ export function useQuizBySlug(slug: string | undefined, locale: string = "pt") {
         .maybeSingle();
 
       if (error) {
-        toast({ title: "Erro ao carregar quiz", description: error.message, variant: "destructive" });
+        toast({ title: "Error loading journey", description: error.message, variant: "destructive" });
         throw error;
       }
       return data ? mapQuizRow(data, locale) : null;
@@ -53,7 +53,7 @@ export function useQuizBySlug(slug: string | undefined, locale: string = "pt") {
   });
 }
 
-export function useQuizQuestions(quizSlug: string | undefined, locale: string = "pt") {
+export function useQuizQuestions(quizSlug: string | undefined, locale: string = "en") {
   const { toast } = useToast();
 
   return useQuery({
@@ -67,7 +67,7 @@ export function useQuizQuestions(quizSlug: string | undefined, locale: string = 
         .order("order_num", { ascending: true });
 
       if (error) {
-        toast({ title: "Erro ao carregar perguntas", description: error.message, variant: "destructive" });
+        toast({ title: "Error loading discovery steps", description: error.message, variant: "destructive" });
         throw error;
       }
       return (data || []).map((r) => mapQuestionRow(r, locale));
@@ -114,12 +114,12 @@ export function useSubmitQuizResult() {
       scores: Record<string, number>;
       locale?: string;
     }) => {
-      const { quizSlug, answers, scores, locale = "pt" } = params;
+      const { quizSlug, answers, scores, locale = "en" } = params;
       const values = Object.values(scores);
       const overall = values.length > 0
         ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
         : 0;
-      const severity = overall <= 33 ? "leve" : overall <= 66 ? "moderado" : "severo";
+      const severity = overall <= 33 ? "mild" : overall <= 66 ? "moderate" : "intense";
 
       // Get top 3 dimensions
       const topDimensions = Object.entries(scores)
@@ -151,7 +151,7 @@ export function useSubmitQuizResult() {
         .single();
 
       if (error) {
-        toast({ title: "Erro ao salvar resultado", description: error.message, variant: "destructive" });
+        toast({ title: "Error saving discovery", description: error.message, variant: "destructive" });
         throw error;
       }
 
@@ -208,8 +208,8 @@ export function useResetQuizMap() {
       queryClient.invalidateQueries({ queryKey: ["latest-result"] });
       queryClient.invalidateQueries({ queryKey: ["premium-results"] });
       toast({ 
-        title: "Mapa Reiniciado", 
-        description: "Todo o seu progresso foi zerado com sucesso.",
+        title: "Blueprint Reset", 
+        description: "All journey progress has been cleared successfully.",
       });
     },
   });
@@ -234,7 +234,7 @@ export function useDeleteQuizResult() {
       const { error } = await query;
 
       if (error) {
-        toast({ title: "Erro ao remover resultado", description: error.message, variant: "destructive" });
+        toast({ title: "Error removing journey", description: error.message, variant: "destructive" });
         throw error;
       }
       return quizSlug;
@@ -266,7 +266,7 @@ export function useDeleteQuizResult() {
       queryClient.invalidateQueries({ queryKey: ["latest-result"] });
     },
     onSuccess: () => {
-      toast({ title: "Resultado removido", description: "O quiz foi resetado e você pode refazê-lo." });
+      toast({ title: "Journey reset", description: "The discovery path has been cleared and you can begin again." });
     },
   });
 }

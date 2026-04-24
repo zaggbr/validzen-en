@@ -16,33 +16,30 @@ import AdBanner from "@/components/AdBanner";
 import SEOHead from "@/components/SEOHead";
 import { usePostBySlug, useRelatedPosts } from "@/hooks/usePosts";
 import { parseContentSections } from "@/types/database";
-import { ChevronRight, Clock, Calendar, ArrowLeft, Lock } from "lucide-react";
-import { useI18n } from "@/i18n/I18nContext";
+import { ChevronRight, Clock, Calendar, ArrowLeft, Lock, Crown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const PostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isLoading } = usePostBySlug(slug);
-  const { t, locale, localePath } = useI18n();
   const { user, isPremium, incrementPostView } = useAuth();
   const { data: related = [] } = useRelatedPosts(post?.related_post_slugs || []);
   const [showGate, setShowGate] = useState(false);
 
   useEffect(() => {
-    setShowGate(false); // Reset gate on navigation
+    setShowGate(false); 
     const handleViewCounter = async () => {
       if (isLoading || !post || isPremium) return;
 
-      // 1. Strict PRO check
       if (post.is_premium) {
         setShowGate(true);
         return;
       }
 
-      // 2. Daily/Usage limit check
       const canView = await incrementPostView(post.slug);
       if (!canView) {
         setShowGate(true);
@@ -57,13 +54,13 @@ const PostPage = () => {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
-          <div className="container py-8 md:py-12">
-            <Skeleton className="mb-4 h-4 w-48" />
-            <Skeleton className="mb-6 h-10 w-3/4" />
-            <Skeleton className="mb-4 h-4 w-64" />
-            <div className="space-y-4">
-              <Skeleton className="h-32 w-full" />
-              <Skeleton className="h-32 w-full" />
+          <div className="container py-8 md:py-12 space-y-6">
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-12 w-3/4" />
+            <Skeleton className="h-4 w-64" />
+            <div className="space-y-6">
+              <Skeleton className="h-40 w-full rounded-2xl" />
+              <Skeleton className="h-40 w-full rounded-2xl" />
             </div>
           </div>
         </main>
@@ -74,14 +71,14 @@ const PostPage = () => {
 
   if (!post) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-background">
         <Header />
         <main className="flex flex-1 items-center justify-center">
           <div className="text-center">
-            <span className="text-5xl">📄</span>
-            <h1 className="mt-4 text-2xl font-bold">{t("post.not_found")}</h1>
-            <Link to={localePath("/")} className="mt-4 inline-block text-sm text-secondary hover:underline">
-              {t("post.back_home")}
+            <span className="text-6xl">📄</span>
+            <h1 className="mt-6 text-3xl font-black italic">Insight Territory Not Found</h1>
+            <Link to="/dashboard" className="mt-4 inline-block text-xs font-black uppercase tracking-widest text-secondary hover:underline">
+              Return to Blueprint
             </Link>
           </div>
         </main>
@@ -92,7 +89,7 @@ const PostPage = () => {
 
   const sections = post?.content ? parseContentSections(post.content) : [];
   const isMarkdown = post?.content ? (/^##\s+/m.test(post.content) && !/<h2[\s>]/i.test(post.content)) : true;
-  const url = `https://meumapa.validzen.com/${locale}/conteudo/${post?.slug}`;
+  const url = `${window.location.origin}/content/${post?.slug}`;
   const author = {
     name: post?.author_name || "ValidZen Team",
     avatar: post?.author_avatar || "",
@@ -101,7 +98,7 @@ const PostPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <SEOHead
         title={post.meta_title || post.title}
         description={post.meta_description || post.excerpt}
@@ -113,110 +110,112 @@ const PostPage = () => {
         authorName={post.author_name}
         faq={post.faq}
         breadcrumbs={[
-          { name: t("nav.home"), url: `https://meumapa.validzen.com/${locale}` },
-          { name: post.category, url: `https://meumapa.validzen.com/${locale}/categoria/${post.category}` },
+          { name: "Home", url: window.location.origin },
+          { name: post.category, url: `${window.location.origin}/category/${post.category}` },
           { name: post.title, url },
         ]}
       />
       <Header />
       <main className="flex-1 relative">
-        <article className="container py-8 md:py-12">
-          <Link to={localePath("/")} className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors">
-            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+        <article className="container py-12 md:py-20">
+          <Link to="/dashboard" className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
+            <ArrowLeft className="h-4 w-4" /> Return to Blueprint
           </Link>
 
-          <nav className="mb-6 flex items-center gap-1 text-xs text-muted-foreground" aria-label="Breadcrumb">
-            <Link to={localePath("/")} className="hover:text-foreground transition-colors">{t("nav.home")}</Link>
-            <ChevronRight className="h-3 w-3" />
-            <Link to={localePath(`/categoria/${post.category}`)} className="hover:text-foreground transition-colors">
+          <nav className="mb-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground" aria-label="Breadcrumb">
+            <Link to="/" className="hover:text-secondary transition-colors">Home</Link>
+            <ChevronRight className="h-3 w-3 opacity-30" />
+            <Link to={`/category/${post.category}`} className="hover:text-secondary transition-colors text-secondary italic">
               {post.category}
             </Link>
-            <ChevronRight className="h-3 w-3" />
-            <span className="text-foreground line-clamp-1">{post.title}</span>
+            <ChevronRight className="h-3 w-3 opacity-30" />
+            <span className="text-foreground/60 line-clamp-1">{post.title}</span>
           </nav>
 
-          <header className="mb-8 max-w-3xl">
-            <div className="mb-3 flex flex-wrap gap-2">
+          <header className="mb-12 max-w-4xl">
+            <div className="mb-6 flex flex-wrap gap-2">
               {post.tags.map((tag) => (
-                <span key={tag} className="rounded-md bg-secondary/10 px-2.5 py-0.5 text-xs font-medium text-secondary">
+                <span key={tag} className="rounded-full bg-secondary/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-secondary italic">
                   {tag}
                 </span>
               ))}
             </div>
-            <h1 className="text-2xl font-bold leading-tight md:text-4xl">{post.title}</h1>
-            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-              <span>{t("post.by")} {post.author_name || "ValidZen"}</span>
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {t("post.updated_at")} {post.updated_at ? new Date(post.updated_at).toLocaleDateString(locale === "pt" ? "pt-BR" : "en-US") : ""}
+            <h1 className="text-3xl font-black leading-tight md:text-5xl italic tracking-tight text-title">{post.title}</h1>
+            <div className="mt-6 flex flex-wrap items-center gap-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">
+              <span className="italic">By {post.author_name || "ValidZen Intelligence"}</span>
+              <span className="flex items-center gap-1.5 italic">
+                <Calendar className="h-3.5 w-3.5" />
+                Updated {post.updated_at ? new Date(post.updated_at).toLocaleDateString("en-US", { month: 'long', day: 'numeric', year: 'numeric' }) : ""}
               </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {(post.reading_time || 5)} {t("post.min_read")}
+              <span className="flex items-center gap-1.5 italic">
+                <Clock className="h-3.5 w-3.5" />
+                {(post.reading_time || 5)} Min Journey
               </span>
               {post.is_premium && (
-                <span className="rounded bg-accent/20 px-2 py-0.5 text-xs font-bold text-accent">PRO</span>
+                <span className="flex items-center gap-1 text-secondary italic">
+                  <Crown className="h-3.5 w-3.5" /> PRO BLUEPRINT
+                </span>
               )}
             </div>
-            <div className="mt-4">
+            <div className="mt-8">
               <ShareButtons title={post.title} url={url} />
             </div>
           </header>
 
-          <div className="mb-8 max-w-3xl rounded-lg border-l-4 border-secondary bg-muted/50 px-6 py-5">
-            <p className="text-sm leading-relaxed text-foreground">{post.excerpt}</p>
+          <div className="mb-12 max-w-4xl rounded-[2rem] border border-secondary/20 bg-secondary/5 p-8 md:p-10 shadow-sm">
+            <p className="text-lg leading-relaxed text-title italic font-medium">{post.excerpt}</p>
           </div>
 
-          <div className="flex gap-10">
+          <div className="flex flex-col lg:flex-row gap-16">
             <div className="min-w-0 max-w-3xl flex-1">
               {sections.length > 1 && !showGate && (
-                <div className="mb-8 lg:hidden">
+                <div className="mb-10 lg:hidden">
                   <TableOfContents sections={sections} />
                 </div>
               )}
 
               {showGate ? (
                 <div className="relative">
-                  <div className="prose-validzen blur-sm select-none pointer-events-none opacity-40">
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic blur-sm select-none pointer-events-none opacity-40">
                     {sections.length > 0 ? (
-                       <section className="mb-8">{sections[0].body.substring(0, 300)}...</section>
+                       <section className="mb-8">{sections[0].body.substring(0, 400)}...</section>
                     ) : (
-                       <div className="mb-8">{post.content.substring(0, 300)}...</div>
+                       <div className="mb-8">{post.content.substring(0, 400)}...</div>
                     )}
                   </div>
                 </div>
               ) : sections.length > 0 ? (
                 sections.map((section, i) => (
                   <div key={section.id}>
-                    <section id={section.id} className="mb-8 scroll-mt-24">
+                    <section id={section.id} className="mb-12 scroll-mt-24">
                       {section.heading && (
-                        <h2 className="mb-4 text-xl font-bold md:text-2xl">{section.heading}</h2>
+                        <h2 className="mb-6 text-2xl font-black text-title italic md:text-3xl tracking-tight">{section.heading}</h2>
                       )}
                       {isMarkdown ? (
-                        <div className="prose-validzen">
+                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground">
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.body}</ReactMarkdown>
                         </div>
                       ) : (
-                        <div className="prose-validzen" dangerouslySetInnerHTML={{ __html: section.body }} />
+                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: section.body }} />
                       )}
                     </section>
 
                     {i === 1 && post.quiz_slug && (
                       <QuizInline
                         quizSlug={post.quiz_slug}
-                        title={t("quiz.what_level", { topic: post.category.toLowerCase() })}
-                        subtitle={t("quiz.answer_questions", { topic: post.category.toLowerCase() })}
+                        title={`What is your ${post.category.toLowerCase()} agency level?`}
+                        subtitle="Embark on a 10-step discovery path to map your current internal state."
                       />
                     )}
                   </div>
                 ))
               ) : (
                 isMarkdown ? (
-                  <div className="prose-validzen mb-8">
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground mb-12">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
                   </div>
                 ) : (
-                  <div className="prose-validzen mb-8" dangerouslySetInnerHTML={{ __html: post.content }} />
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground mb-12" dangerouslySetInnerHTML={{ __html: post.content }} />
                 )
               )}
 
@@ -227,12 +226,12 @@ const PostPage = () => {
               {!showGate && <PremiumAssessmentCTA postSlug={post.slug} />}
 
               {post.video_url && (
-                <section className="my-10">
-                  <h2 className="mb-4 text-xl font-bold">{t("post.related_video")}</h2>
-                  <div className="aspect-video overflow-hidden rounded-lg border border-border">
+                <section className="my-16 border-t border-border pt-12">
+                  <h2 className="mb-6 text-2xl font-black text-title italic">Guided Self-Mastery Video</h2>
+                  <div className="aspect-video overflow-hidden rounded-[2rem] border border-border shadow-2xl">
                     <iframe
                       src={post.video_url}
-                      title={`Video: ${post.title}`}
+                      title={`Guided Insight: ${post.title}`}
                       className="h-full w-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
@@ -243,21 +242,21 @@ const PostPage = () => {
 
               <FaqSection items={post.faq} />
 
-              <div className="my-8 lg:hidden">
+              <div className="my-12 lg:hidden">
                 <AdBanner slot="post-main" format="horizontal" />
               </div>
 
               {related.length > 0 && (
-                <section className="my-10">
-                  <h2 className="mb-6 text-xl font-bold">{t("post.related_content")}</h2>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {related.slice(0, 3).map((rp) => (
+                <section className="my-16 border-t border-border pt-12">
+                  <h2 className="mb-10 text-2xl font-black text-title italic tracking-tight">Deepen Your Discovery</h2>
+                  <div className="grid gap-8 sm:grid-cols-2">
+                    {related.slice(0, 2).map((rp) => (
                       <PostCard
                         key={rp.slug}
                         title={rp.title}
                         excerpt={rp.excerpt}
                         category={rp.category}
-                        readTime={`${rp.reading_time} min`}
+                        readTime={`${rp.reading_time}`}
                         slug={rp.slug}
                       />
                     ))}
@@ -265,48 +264,50 @@ const PostPage = () => {
                 </section>
               )}
 
-              <div className="my-10">
+              <div className="my-16">
                 <AuthorBox {...author} />
               </div>
 
-              <div className="my-10">
+              <div className="my-12">
                 <Disclaimer />
               </div>
             </div>
 
-            <aside className="hidden w-64 shrink-0 lg:block">
-              <div className="sticky top-24 space-y-8">
+            <aside className="hidden w-72 shrink-0 lg:block">
+              <div className="sticky top-32 space-y-12">
                 {sections.length > 1 && !showGate && <TableOfContents sections={sections} />}
-                <AdBanner slot="post-sidebar" format="vertical" className="hidden lg:block" />
+                <AdBanner slot="post-sidebar" format="vertical" className="hidden lg:block rounded-2xl overflow-hidden" />
               </div>
             </aside>
           </div>
         </article>
 
         {showGate && (
-          <div className="absolute inset-0 z-50 flex items-start justify-center bg-gradient-to-b from-transparent via-background/90 to-background pt-32">
-            <div className="sticky top-40 max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center shadow-2xl mx-4">
-              <Lock className="mx-auto mb-4 h-10 w-10 text-secondary" />
-              <h2 className="text-2xl font-bold mb-3">
-                {post.is_premium ? t("pro.unlock_title") : t("pro.unlock_title")}
+          <div className="absolute inset-0 z-50 flex items-start justify-center bg-gradient-to-b from-transparent via-background/95 to-background pt-64">
+            <div className="sticky top-48 max-w-md w-full bg-card border border-secondary/20 rounded-[2.5rem] p-10 text-center shadow-2xl mx-4">
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
+                <Lock className="h-8 w-8" />
+              </div>
+              <h2 className="text-3xl font-black text-title italic mb-4 tracking-tight">
+                Expand Your Internal Agency
               </h2>
-              <p className="text-muted-foreground mb-6 text-sm">
+              <p className="text-muted-foreground mb-10 text-md italic leading-relaxed">
                 {post.is_premium 
-                  ? (locale === "pt" ? "Este conteúdo é exclusivo para assinantes PRO." : "This content is exclusive to PRO subscribers.")
-                  : t("pro.unlock_desc_full")}
+                  ? "This deep blueprint is exclusive to PRO seekers. Subscribe to unlock clinical-grade insights and advanced self-mastery journeys."
+                  : "You've reached your free insight limit for today. Create a free account to continue your journey or upgrade for unlimited mastery."}
               </p>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
                 {post.is_premium && !user ? (
-                   <Button asChild size="lg" variant="hero">
-                    <Link to={localePath("/login")}>{t("result.create_account")}</Link>
+                   <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-black uppercase tracking-widest text-lg shadow-xl shadow-secondary/20">
+                    <Link to="/login">Join ValidZen Free</Link>
                   </Button>
                 ) : (post.is_premium && user) ? (
-                  <Button asChild size="lg" variant="hero">
-                    <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
+                  <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-black uppercase tracking-widest text-lg shadow-xl shadow-secondary/20">
+                    <Link to="/pro">Upgrade to PRO</Link>
                   </Button>
                 ) : (
-                  <Button asChild size="lg" variant="hero">
-                    <Link to={localePath("/login")}>{t("result.create_account")}</Link>
+                  <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-black uppercase tracking-widest text-lg shadow-xl shadow-primary/20">
+                    <Link to="/login">Create Free Account</Link>
                   </Button>
                 )}
               </div>

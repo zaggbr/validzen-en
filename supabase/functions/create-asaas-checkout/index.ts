@@ -129,7 +129,7 @@ serve(async (req) => {
         chargeType: "RECURRENT",
         subscriptionCycle: billingType,
         dueDateLimitDays: 3, // Adicionado para resolver o erro de vencimento
-        redirectLink: `${origin}/pt/dashboard?checkout=success`,
+        redirectLink: `${origin}/dashboard?checkout=success`,
         customer: asaasCustomerId,
         externalReference: `${user.id}::${plan}`,
       }),

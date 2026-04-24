@@ -6,14 +6,14 @@ import PopularPosts from "@/components/PopularPosts";
 import HowItWorks from "@/components/HowItWorks";
 import AdBanner from "@/components/AdBanner";
 import SEOHead from "@/components/SEOHead";
-import { useI18n } from "@/i18n/I18nContext";
 
 const Index = () => {
-  const { t } = useI18n();
-
   return (
     <div className="flex min-h-screen flex-col">
-      <SEOHead title="ValidZen — The Meaning Crisis Project" description={t("home.hero_description")} />
+      <SEOHead 
+        title="ValidZen — Understand Yourself, Find Your Meaning" 
+        description="Guided self-knowledge and emotional assessments to help you navigate the modern meaning crisis and improve your mental well-being." 
+      />
       <Header />
       <main className="flex-1">
         <HeroSection />

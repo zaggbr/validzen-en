@@ -2,7 +2,7 @@
   "name": "ValidZen",
   "short_name": "ValidZen",
   "description": "The Meaning Crisis Project",
-  "start_url": "/pt",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#1a1a4e",
   "background_color": "#faf5f0",

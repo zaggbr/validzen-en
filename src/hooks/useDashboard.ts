@@ -11,7 +11,7 @@ function mapResult(row: any): QuizResult {
     scores: row.scores || {},
     top_dimensions: row.top_dimensions || [],
     recommended_post_slugs: row.recommended_post_slugs || [],
-    locale: row.locale || "pt",
+    locale: row.locale || "en",
   } as QuizResult;
 }
 
@@ -130,14 +130,14 @@ export function useResultById(id: string | undefined) {
               id: found.id,
               user_id: null,
               session_id: null,
-              quiz_slug: found.quizId || "geral",
+              quiz_slug: found.quizId || "general",
               answers: found.answers || {},
               scores: found.scores || {},
               overall_score: null,
               severity: null,
               top_dimensions: [],
               recommended_post_slugs: [],
-              locale: "pt",
+              locale: "en",
               completed_at: found.completedAt || new Date().toISOString(),
             } as QuizResult;
           }
@@ -159,7 +159,7 @@ export function useProgressOverTime() {
     .slice()
     .reverse()
     .map((r) => ({
-      date: new Date(r.completed_at).toLocaleDateString("pt-BR", {
+      date: new Date(r.completed_at).toLocaleDateString("en-US", {
         month: "short",
         year: "2-digit",
       }),

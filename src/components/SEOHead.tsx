@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useI18n } from "@/i18n/I18nContext";
 
 interface SEOHeadProps {
   title: string;
@@ -15,7 +14,7 @@ interface SEOHeadProps {
   breadcrumbs?: { name: string; url: string }[];
 }
 
-const SITE_URL = "https://meumapa.validzen.com";
+const SITE_URL = "https://mymap.validzen.com";
 const DEFAULT_IMAGE = "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e0ac6d82-a8c1-47d4-b61e-995f6e9306ad/id-preview-50321adc--f56c5f96-ebf3-481f-8def-b724d0ed6ec4.lovable.app-1774536337531.png";
 
 const SEOHead = ({
@@ -31,10 +30,7 @@ const SEOHead = ({
   faq,
   breadcrumbs,
 }: SEOHeadProps) => {
-  const { locale } = useI18n();
-  const altLocale = locale === "pt" ? "en" : "pt";
   const canonicalUrl = canonical || window.location.href;
-  const altUrl = canonicalUrl.replace(`/${locale}/`, `/${altLocale}/`);
 
   useEffect(() => {
     document.title = title;
@@ -56,7 +52,7 @@ const SEOHead = ({
     setMeta("og:type", type, true);
     setMeta("og:image", image, true);
     setMeta("og:url", canonicalUrl, true);
-    setMeta("og:locale", locale === "pt" ? "pt_BR" : "en_US", true);
+    setMeta("og:locale", "en_US", true);
     setMeta("twitter:card", "summary_large_image");
     setMeta("twitter:title", title);
     setMeta("twitter:description", description);
@@ -79,20 +75,15 @@ const SEOHead = ({
     }
     canonicalEl.href = canonicalUrl;
 
-    // Hreflang
-    const setHreflang = (hreflang: string, href: string) => {
-      let el = document.querySelector(`link[hreflang="${hreflang}"]`) as HTMLLinkElement | null;
-      if (!el) {
-        el = document.createElement("link");
-        el.rel = "alternate";
-        el.hreflang = hreflang;
-        document.head.appendChild(el);
-      }
-      el.href = href;
-    };
-    setHreflang(locale, canonicalUrl);
-    setHreflang(altLocale, altUrl);
-    setHreflang("x-default", canonicalUrl.replace(`/${locale}/`, "/pt/"));
+    // Hreflang - Simplified to English only
+    let elEn = document.querySelector('link[hreflang="en"]') as HTMLLinkElement | null;
+    if (!elEn) {
+      elEn = document.createElement("link");
+      elEn.rel = "alternate";
+      elEn.hreflang = "en";
+      document.head.appendChild(elEn);
+    }
+    elEn.href = canonicalUrl;
 
     // JSON-LD
     const existingLd = document.getElementById("validzen-jsonld");
@@ -147,7 +138,7 @@ const SEOHead = ({
         url: SITE_URL,
         potentialAction: {
           "@type": "SearchAction",
-          target: `${SITE_URL}/${locale}/categorias?q={search_term_string}`,
+          target: `${SITE_URL}/categories?q={search_term_string}`,
           "query-input": "required name=search_term_string",
         },
       });
@@ -167,7 +158,7 @@ const SEOHead = ({
       const ld = document.getElementById("validzen-jsonld");
       if (ld) ld.remove();
     };
-  }, [title, description, canonical, noindex, type, image, locale, canonicalUrl, altUrl, altLocale, publishedAt, updatedAt, authorName, faq, breadcrumbs]);
+  }, [title, description, canonical, noindex, type, image, canonicalUrl, publishedAt, updatedAt, authorName, faq, breadcrumbs]);
 
   return null;
 };

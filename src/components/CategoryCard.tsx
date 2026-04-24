@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useI18n } from "@/i18n/I18nContext";
 import { stripEmojis } from "@/lib/utils";
 
 interface CategoryCardProps {
@@ -9,17 +8,17 @@ interface CategoryCardProps {
 }
 
 const CategoryCard = ({ name, slug, postCount }: CategoryCardProps) => {
-  const { localePath } = useI18n();
-
   return (
     <Link
-      to={localePath(`/categoria/${slug}`)}
-      className="group flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-6 text-center shadow-sm transition-all duration-200 hover:border-secondary/40 hover:shadow-md"
+      to={`/category/${slug}`}
+      className="group flex flex-col items-center gap-4 rounded-[1.5rem] border border-border bg-card/50 p-8 text-center shadow-sm transition-all duration-300 hover:border-secondary/40 hover:shadow-xl hover:-translate-y-1"
     >
-      <span className="text-sm font-semibold text-card-foreground group-hover:text-secondary transition-colors">
+      <span className="text-md font-black text-title italic tracking-tight group-hover:text-secondary transition-colors">
         {stripEmojis(name)}
       </span>
-      <span className="text-xs text-muted-foreground">{postCount} posts</span>
+      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 italic">
+        {postCount} {postCount === 1 ? 'Insight' : 'Insights'}
+      </span>
     </Link>
   );
 };

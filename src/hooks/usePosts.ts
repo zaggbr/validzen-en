@@ -13,11 +13,11 @@ function mapRow(row: any): Post {
   } as Post;
 }
 
-export function usePosts(locale?: string, categorySlug?: string, layer?: number) {
+export function usePosts(locale: string = "en", categorySlug?: string, layer?: number) {
   const { toast } = useToast();
 
-  // Fallback: if locale is empty/undefined, default to "pt"
-  const effectiveLocale = locale || "pt";
+  // Fallback: if locale is empty/undefined, default to "en"
+  const effectiveLocale = locale || "en";
 
   return useQuery({
     queryKey: ["posts", effectiveLocale, categorySlug, layer],

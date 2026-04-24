@@ -10,17 +10,25 @@ declare global {
 export function initGA(measurementId: string) {
   if (!measurementId || typeof window === "undefined") return;
 
-  // Load gtag script
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-  document.head.appendChild(script);
+  // Check if gtag script is already loaded (from index.html)
+  const existingScript = document.querySelector(`script[src*="googletagmanager.com/gtag/js?id=${measurementId}"]`);
+  
+  if (!existingScript) {
+    // Load gtag script
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+    document.head.appendChild(script);
+  }
 
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function (...args: any[]) {
-    window.dataLayer!.push(args);
-  };
-  window.gtag("js", new Date());
+  if (!window.gtag) {
+    window.gtag = function (...args: any[]) {
+      window.dataLayer!.push(args);
+    };
+    window.gtag("js", new Date());
+  }
+  
   window.gtag("config", measurementId, { send_page_view: false });
 }
 

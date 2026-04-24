@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useI18n } from "@/i18n/I18nContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -7,98 +6,90 @@ import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 const TermsPage = () => {
-  const { t, localePath } = useI18n();
-
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <SEOHead 
-        title={`${t("common.terms")} — ValidZen`}
-        description="Termos de serviço e condições de uso do site ValidZen."
+        title="Terms of Use — ValidZen"
+        description="Terms of service and conditions of use for the ValidZen website."
       />
       <Header />
-      <main className="flex-1 bg-background py-12">
+      <main className="flex-1 py-12 md:py-24">
         <div className="container max-w-3xl">
           <Link 
-            to={localePath("/")} 
-            className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors"
+            to="/dashboard" 
+            className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+            <ArrowLeft className="h-4 w-4" /> Return to Blueprint
           </Link>
 
           <motion.article 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="prose-validzen"
+            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground prose-h2:mt-12 prose-h2:mb-6"
           >
-            <h1 className="mb-6 text-3xl font-bold text-title md:text-4xl">Termos de Uso</h1>
+            <h1 className="mb-10 text-4xl font-black text-title italic tracking-tight md:text-5xl">Terms of Use</h1>
             
-            <p>
-              Estes termos de serviço regulam o uso deste site. Ao acessá-lo você concorda com estes termos. 
-              Por favor, consulte regularmente os nossos termos de serviço.
+            <p className="text-lg leading-relaxed">
+              These terms of service regulate the use of this site and all Discovery Journeys. By accessing them, you agree to these terms. 
+              Please regularly check our terms of service for updates as we evolve our methodology.
             </p>
 
-            <h2>Acesso ao site</h2>
-            <p>
-              Para acessar o conteúdo deste site poder ser solicitado ao usuário algumas informações pessoais 
-              como nome, e-mail e outros. Se acharmos que as informações não são corretas ou verdadeiras, temos 
-              o direito de recusar e/ou cancelar o acesso a qualquer tempo, sem notificação prévia.
+            <h2 className="text-2xl font-black italic">Site Access</h2>
+            <p className="text-lg leading-relaxed">
+              To embark on our Journeys, the user may be asked for some personal information 
+              such as name, email, and others. If we believe the information is not correct or true, we have 
+              the right to refuse and/or archive access at any time without prior notice to preserve the integrity of our data.
             </p>
 
-            <h2>Restrições ao uso</h2>
-            <p>
-              Você só poderá usar este site para propósitos permitidos por nós. Você não poderá usá-lo em 
-              qualquer outro objetivo, especialmente comercial, sem o nosso consentimento prévio. Não associe 
-              nossas marcas a nenhuma outra. Não exponha nosso nome, logotipo, logomarca entre outros, 
-              indevidamente e de forma a causar confusão.
+            <h2 className="text-2xl font-black italic">Restrictions on Use</h2>
+            <p className="text-lg leading-relaxed">
+              You may only use this site for purposes permitted by us. You may not use it for 
+              any other purpose, especially commercial, without our prior consent. Do not associate 
+              our brands with any other. Do not expose our name, logo, or trademark improperly 
+              in a way that causes confusion regarding our clinical-grade insights.
             </p>
 
-            <h2>Propriedade da informação</h2>
-            <p>
-              O conteúdo do site não pode ser copiado, distribuído, publicado, carregado, postado ou 
-              transmitido por qualquer outro meio sem o nosso consentimento prévio, a não ser que a finalidade 
-              seja apenas a divulgação.
+            <h2 className="text-2xl font-black italic">Ownership of Information</h2>
+            <p className="text-lg leading-relaxed">
+              The content of the site and the Personal Blueprints cannot be copied, distributed, published, uploaded, posted, or 
+              transmitted by any other means without our prior consent, unless the purpose 
+              is solely for dissemination of your personal evolution.
             </p>
 
-            <h2>Hyperlinks</h2>
-            <p>
-              Este site pode conter links para outros websites que não são mantidos ou relacionados à nossa 
-              empresa. Não somos responsáveis pelo conteúdo destes links. O usuário assume completamente o 
-              risco ao acessar estes hyperlinks.
+            <h2 className="text-2xl font-black italic">Hyperlinks</h2>
+            <p className="text-lg leading-relaxed">
+              This site may contain links to other websites that are not maintained or related to our 
+              company. We are not responsible for the content of these links. The user completely 
+              assumes the risk of accessing these hyperlinks.
             </p>
 
-            <h2>Comentários</h2>
-            <p>
-              Ao postar algum comentário ou depoimento em nosso site você autoriza a publicação do mesmo em 
-              qualquer lugar que desejarmos, a fim de cooperar com a divulgação de nossos produtos.
+            <h2 className="text-2xl font-black italic">Comments & Testimonials</h2>
+            <p className="text-lg leading-relaxed">
+              By posting any comment or testimonial on our site, you authorize its publication in 
+              any place we desire, in order to cooperate with the dissemination of our self-mastery tools.
             </p>
 
-            <h2>Aviso legal</h2>
-            <p>
-              A informação obtida ao usar este site não é completa e não cobre todas as questões, tópicos ou 
-              fatos que possam ser relevantes para seus objetivos. O uso deste site é de sua total responsabilidade.
+            <h2 className="text-2xl font-black italic">Legal Disclaimer</h2>
+            <p className="text-lg leading-relaxed">
+              The information obtained when using our Journeys is not complete and does not cover all issues, topics, or 
+              facts that may be relevant to your clinical goals. Our Journeys are guided for self-reflection and do not replace professional medical advice.
             </p>
-            <p>
-              O conteúdo é oferecido como está e sem garantias de qualquer tipo, expressas ou implícitas. 
-              O conteúdo deste site não é palavra final sobre qualquer assunto, e podemos fazer melhorias a qualquer momento.
-            </p>
-            <p>
-              Você entende que nossa empresa não pode e não garante que arquivos disponíveis para download 
-              da Internet estejam livres de vírus, worms, cavalos de Tróia ou outro código que possa manifestar 
-              propriedades contaminadoras ou destrutivas.
+            <p className="text-lg leading-relaxed">
+              The content is provided "as is" and without warranties of any kind. 
+              The content of this site is not the final word on any subject, and we can make improvements to our interpretation logic at any time.
             </p>
 
-            <h2>Limitação de responsabilidade</h2>
-            <p className="text-xs uppercase font-bold">
-              A EMPRESA, SUAS FILIAIS, AFILIADOS, LICENCIANTES, PROVEDORES DE SERVIÇO, PROVEDORES DE CONTEÚDO, 
-              EMPREGADOS, AGENTES, ADMINISTRADORES E DIRETORES NÃO SERÃO RESPONSÁVEIS POR QUALQUER DANO EVENTUAL, 
-              DIRETO, INDIRETO, PUNITIVO, REAL, CONSEQUENTE, ESPECIAL, EXEMPLAR OU DE QUALQUER OUTRO TIPO...
+            <h2 className="text-2xl font-black italic">Limitation of Liability</h2>
+            <p className="text-[10px] uppercase font-black tracking-widest opacity-60 leading-relaxed">
+              THE COMPANY, ITS BRANCHES, AFFILIATES, LICENSORS, SERVICE PROVIDERS, CONTENT PROVIDERS, 
+              EMPLOYEES, AGENTS, ADMINISTRATORS, AND DIRECTORS SHALL NOT BE LIABLE FOR ANY INCIDENTAL, 
+              DIRECT, INDIRECT, PUNITIVE, ACTUAL, CONSEQUENTIAL, SPECIAL, EXEMPLARY, OR ANY OTHER TYPE OF DAMAGE...
             </p>
 
-            <div className="mt-10 pt-10 border-t border-border text-xs text-muted-foreground">
-              <p>ZGC Media Services</p>
-              <p>CNPJ: 51.186.693/0001-90</p>
-              <p>Contato: atendimento@educta.com.br</p>
-              <p>Esta política é efetiva a partir de 15 de Março 2026.</p>
+            <div className="mt-16 pt-10 border-t border-border text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+              <p>ZGC Media Services — ValidZen Global</p>
+              <p>Contact: continentemedia@gmail.com</p>
+              <p>This policy is effective as of April 22, 2026.</p>
             </div>
           </motion.article>
         </div>

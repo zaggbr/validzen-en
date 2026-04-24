@@ -182,16 +182,16 @@ const AdminPage = () => {
                     </TableCell>
                     <TableCell>
                       {user.subscribed_at
-                        ? new Date(user.subscribed_at).toLocaleDateString("pt-BR")
+                        ? new Date(user.subscribed_at).toLocaleDateString("en-US")
                         : "-"}
                     </TableCell>
                     <TableCell>
                       {user.premium_until
-                        ? new Date(user.premium_until).toLocaleDateString("pt-BR")
+                        ? new Date(user.premium_until).toLocaleDateString("en-US")
                         : "-"}
                     </TableCell>
                     <TableCell>
-                      {new Date(user.created_at).toLocaleDateString("pt-BR")}
+                      {new Date(user.created_at).toLocaleDateString("en-US")}
                     </TableCell>
                   </TableRow>
                 ))

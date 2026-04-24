@@ -7,8 +7,6 @@ import QuizProgress from "@/components/quiz/QuizProgress";
 import QuizQuestionCard from "@/components/quiz/QuizQuestionCard";
 import { useQuizBySlug, useQuizQuestions, calculateScores, useSubmitQuizResult } from "@/hooks/useQuiz";
 import { useAuth } from "@/contexts/AuthContext";
-import { useI18n } from "@/i18n/I18nContext";
-import { getSpecificQuizCountToday, incrementSpecificQuizCount } from "@/lib/subscription";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,22 +15,17 @@ import { Crown, ArrowLeft, UserPlus } from "lucide-react";
 type Phase = "intro" | "questions" | "result";
 
 const QuizPage = () => {
-  const { slug = "geral" } = useParams<{ slug: string }>();
+  const { slug = "general" } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user, isPremium, userUsage, incrementQuizCompletion } = useAuth();
-  const { t, locale, localePath } = useI18n();
 
-  const isGlobal = slug === "geral" || slug === "general";
+  const isGlobal = slug === "general";
 
-  // New tiered rules:
-  // 1. Guest -> 0 quizzes
   const showLoginGate = !user;
-
-  // 2. Logged Free -> 5 simple quizzes
   const showUpgradeGate = !!user && !isPremium && (isGlobal || userUsage.quizzesDone >= 3);
 
-  const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug, locale);
-  const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug, locale);
+  const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug, "en");
+  const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug, "en");
   const submitResult = useSubmitQuizResult();
 
   const [phase, setPhase] = useState<Phase>("intro");
@@ -63,7 +56,7 @@ const QuizPage = () => {
       try {
         const canSubmit = await incrementQuizCompletion(quizSlug);
         if (!canSubmit) {
-          navigate(localePath("/pro"));
+          navigate("/pro");
           return;
         }
 
@@ -71,14 +64,14 @@ const QuizPage = () => {
           quizSlug,
           answers,
           scores,
-          locale,
+          locale: "en",
         });
-        navigate(localePath(`/resultado/${resultId}`));
+        navigate(`/result/${resultId}`);
       } catch {
         // Error handled in hook via toast
       }
     }
-  }, [currentIdx, questions, answers, quiz, slug, locale, localePath, navigate, submitResult, incrementQuizCompletion]);
+  }, [currentIdx, questions, answers, quiz, slug, navigate, submitResult, incrementQuizCompletion]);
 
   const handleBack = useCallback(() => {
     if (currentIdx > 0) {
@@ -92,11 +85,10 @@ const QuizPage = () => {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex flex-1 flex-col items-center justify-center py-8">
-          <div className="w-full max-w-xl px-4 space-y-4">
-            <Skeleton className="mx-auto h-12 w-12 rounded-full" />
-            <Skeleton className="mx-auto h-8 w-64" />
-            <Skeleton className="mx-auto h-4 w-48" />
-            <Skeleton className="mx-auto h-12 w-40" />
+          <div className="w-full max-w-xl px-4 space-y-6">
+            <Skeleton className="mx-auto h-16 w-16 rounded-[1.25rem]" />
+            <Skeleton className="mx-auto h-10 w-64" />
+            <Skeleton className="mx-auto h-20 w-full rounded-2xl" />
           </div>
         </main>
         <Footer />
@@ -110,10 +102,10 @@ const QuizPage = () => {
         <Header />
         <main className="flex flex-1 flex-col items-center justify-center py-8">
           <div className="text-center">
-            <span className="text-5xl">🧭</span>
-            <h1 className="mt-4 text-2xl font-bold">{t("quiz.not_found") || "Quiz não encontrado"}</h1>
-            <Link to={localePath("/")} className="mt-4 inline-block text-sm text-secondary hover:underline">
-              {t("post.back_home")}
+            <span className="text-6xl">🧭</span>
+            <h1 className="mt-6 text-3xl font-black italic">Journey Not Found</h1>
+            <Link to="/dashboard" className="mt-4 inline-block text-xs font-black uppercase tracking-widest text-secondary hover:underline">
+              Return to Dashboard
             </Link>
           </div>
         </main>
@@ -125,8 +117,8 @@ const QuizPage = () => {
   const quizIntroData = {
     id: quiz.id,
     slug: quiz.slug,
-    title: quiz.title,
-    subtitle: quiz.description,
+    title: quiz.title_en || quiz.title,
+    subtitle: quiz.description_en || quiz.description,
     questionCount: quiz.question_count || questions.length,
     estimatedMinutes: quiz.estimated_time || Math.max(1, Math.round(questions.length * 0.25)),
   };
@@ -134,65 +126,62 @@ const QuizPage = () => {
   const currentQuestion = questions[currentIdx] || null;
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex flex-1 flex-col items-center justify-center py-8">
+      <main className="flex flex-1 flex-col items-center justify-center py-12">
         {phase === "intro" && (
           <Link
-            to={localePath("/")}
-            className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-secondary transition-colors"
+            to="/quizzes"
+            className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" /> {t("quiz.back")}
+            <ArrowLeft className="h-4 w-4" /> Back to Journeys
           </Link>
         )}
         {phase === "intro" && !showUpgradeGate && !showLoginGate && (
           <QuizIntro quiz={quizIntroData} onStart={handleStart} />
         )}
 
-        {/* Logged-in user without PRO but limit reached or global quiz → upgrade */}
         {phase === "intro" && showUpgradeGate && user && (
-          <Card className="mx-4 max-w-md text-center">
-            <CardContent className="flex flex-col items-center p-8">
-              <Crown className="mb-4 h-12 w-12 text-secondary" />
-              <h2 className="mb-2 text-xl font-bold text-title">
-                {t("pro.unlock_title")}
+          <Card className="mx-4 max-w-md text-center border-secondary/20 bg-secondary/5 rounded-[2.5rem] p-10 shadow-xl shadow-secondary/5">
+            <CardContent className="flex flex-col items-center p-0">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary text-white shadow-lg shadow-secondary/20">
+                <Crown className="h-8 w-8" />
+              </div>
+              <h2 className="mb-3 text-3xl font-black text-title italic tracking-tight">
+                Unlock Full Access
               </h2>
-              <p className="mb-6 text-sm text-muted-foreground">
-                {isGlobal ? t("pro.global_quiz_locked") : t("pro.quiz_limit_desc")}
+              <p className="mb-10 text-md text-muted-foreground italic leading-relaxed">
+                {isGlobal 
+                  ? "Your Core Blueprint is a premium insight. Upgrade to PRO to reveal your deep results and unlock all discovery journeys." 
+                  : "You've reached your free discovery limit. Subscribe to PRO for unlimited clinical-grade self-mastery journeys."}
               </p>
-              <div className="flex flex-col gap-3 w-full">
-                <Button variant="hero" size="lg" asChild>
-                  <Link to={localePath("/pro")}>{t("pro.upgrade_cta")}</Link>
+              <div className="flex flex-col gap-4 w-full">
+                <Button variant="hero" size="lg" className="py-8 text-xl font-black uppercase tracking-widest rounded-full shadow-2xl shadow-secondary/20" asChild>
+                  <Link to="/pro">Upgrade to PRO</Link>
                 </Button>
-                {!user && (
-                  <Button variant="outline" size="lg" asChild>
-                    <Link to={localePath("/login")}>{t("nav.login")}</Link>
-                  </Button>
-                )}
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Guest user → invite to login */}
         {phase === "intro" && showLoginGate && (
-          <Card className="mx-4 max-w-md text-center">
-            <CardContent className="flex flex-col items-center p-8">
-              <UserPlus className="mb-4 h-12 w-12 text-secondary" />
-              <h2 className="mb-2 text-xl font-bold text-title">
-                {locale === "pt" ? "Crie sua conta gratuita" : "Create your free account"}
+          <Card className="mx-4 max-w-md text-center border-border bg-card rounded-[2.5rem] p-10 shadow-lg">
+            <CardContent className="flex flex-col items-center p-0">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
+                <UserPlus className="h-8 w-8" />
+              </div>
+              <h2 className="mb-3 text-3xl font-black text-title italic tracking-tight">
+                Begin Your Journey
               </h2>
-              <p className="mb-6 text-sm text-muted-foreground">
-                {locale === "pt" 
-                  ? "Para realizar nossos quizzes e assessments, você precisa estar logado na plataforma." 
-                  : "To take our quizzes and assessments, you need to be logged into the platform."}
+              <p className="mb-10 text-md text-muted-foreground italic leading-relaxed">
+                To embark on our self-mastery journeys and preserve your blueprints, we invite you to create a free account.
               </p>
-              <div className="flex flex-col gap-3 w-full">
-                <Button variant="hero" size="lg" asChild>
-                  <Link to={localePath("/login")}>{t("result.create_account")}</Link>
+              <div className="flex flex-col gap-4 w-full">
+                <Button variant="hero" size="lg" className="py-8 text-xl font-black uppercase tracking-widest rounded-full shadow-2xl shadow-primary/10" asChild>
+                  <Link to="/login">Join ValidZen for Free</Link>
                 </Button>
-                <p className="text-xs text-muted-foreground">
-                   {locale === "pt" ? "Visitantes podem ler até 3 textos gratuitos." : "Visitors can read up to 3 free articles."}
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                   Free members explore up to 3 core journeys.
                 </p>
               </div>
             </CardContent>
@@ -200,7 +189,7 @@ const QuizPage = () => {
         )}
 
         {phase === "questions" && currentQuestion && (
-          <div className="w-full max-w-xl px-4">
+          <div className="w-full max-w-xl px-4 animate-in fade-in zoom-in duration-500">
             <QuizProgress current={currentIdx + 1} total={questions.length} />
             <QuizQuestionCard
               question={currentQuestion}
