@@ -20,7 +20,7 @@ const Footer = () => {
           </div>
 
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Discovery Map</span>
+            <span className="text-xs font-bold uppercase tracking-[0.3em] text-foreground">Discovery Map</span>
             <nav className="flex flex-col gap-3">
               <Link to="/about" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Our Methodology</Link>
               <Link to="/quizzes" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Core Journeys</Link>
@@ -30,24 +30,24 @@ const Footer = () => {
           </div>
 
           <div className="flex flex-col gap-4">
-            <span className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Important</span>
+            <span className="text-xs font-bold uppercase tracking-[0.3em] text-foreground">Important</span>
             <nav className="flex flex-col gap-3">
               <Link to="/terms" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Terms of Service</Link>
               <Link to="/privacy" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Privacy Policy</Link>
               <div className="mt-2 space-y-4">
                  <p className="text-[10px] text-muted-foreground leading-relaxed opacity-70">Our blueprints are for educational discovery. They do not replace clinical diagnosis.</p>
-                 <p className="text-[10px] font-black uppercase tracking-widest text-secondary leading-relaxed">In emergency, please contact your local crisis hotline.</p>
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-secondary leading-relaxed">In emergency, please contact your local crisis hotline.</p>
               </div>
             </nav>
           </div>
         </div>
 
         <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-border pt-10 md:flex-row">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground opacity-50">
             © {new Date().getFullYear()} ValidZen Global. All rights reserved.
           </p>
           <div className="flex gap-6">
-             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40">English-First (v2.0)</span>
+             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-40">English-First (v2.0)</span>
           </div>
         </div>
       </div>

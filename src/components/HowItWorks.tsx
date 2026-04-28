@@ -34,7 +34,7 @@ const HowItWorks = () => {
           viewport={{ once: true }}
           className="mb-20 text-center"
         >
-          <h2 className="mb-4 text-3xl font-black text-title tracking-tight md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold text-title tracking-tight md:text-4xl">
             The Discovery Path
           </h2>
           <p className="mx-auto max-w-lg text-lg text-muted-foreground leading-relaxed">
@@ -55,10 +55,10 @@ const HowItWorks = () => {
               <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-[2rem] bg-secondary/10 text-secondary shadow-lg shadow-secondary/5 transition-all group-hover:scale-110 group-hover:bg-secondary group-hover:text-white">
                 <step.icon className="h-8 w-8" />
               </div>
-              <span className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-secondary/60">
+              <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.3em] text-secondary/60">
                 Phase {i + 1}
               </span>
-              <h3 className="mb-4 text-xl font-black text-title">{step.title}</h3>
+              <h3 className="mb-4 text-xl font-bold text-title">{step.title}</h3>
               <p className="text-md text-muted-foreground leading-relaxed">{step.description}</p>
             </motion.div>
           ))}

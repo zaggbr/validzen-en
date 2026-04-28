@@ -98,7 +98,7 @@ const ProPage = () => {
       <Header />
       <main className="flex-1">
         <div className="container py-12 md:py-20">
-          <Link to="/quizzes" className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
+          <Link to="/quizzes" className="mb-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
             <ArrowLeft className="h-4 w-4" /> Back to Journeys
           </Link>
 
@@ -111,7 +111,7 @@ const ProPage = () => {
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-secondary/10 text-secondary shadow-lg shadow-secondary/10">
               <Crown className="h-8 w-8" />
             </div>
-            <h1 className="mb-4 text-4xl font-black text-title md:text-6xl tracking-tight">
+            <h1 className="mb-4 text-4xl font-bold text-title md:text-6xl tracking-tight">
               Reclaim Your Self-Mastery
             </h1>
             <p className="mx-auto max-w-lg text-lg text-muted-foreground leading-relaxed">
@@ -125,8 +125,8 @@ const ProPage = () => {
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
               <Card className="h-full border-border/50 shadow-sm hover:shadow-xl transition-all rounded-[2rem]">
                 <CardContent className="p-10 flex flex-col h-full">
-                  <h2 className="mb-2 text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">Core Access</h2>
-                  <p className="mb-8 text-5xl font-black text-foreground">
+                  <h2 className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">Core Access</h2>
+                  <p className="mb-8 text-5xl font-bold text-foreground">
                     Free
                   </p>
                   <ul className="mb-10 space-y-4 flex-1">
@@ -143,7 +143,7 @@ const ProPage = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button variant="outline" className="w-full py-7 rounded-xl font-black uppercase text-[10px] tracking-widest border-border hover:bg-secondary/5" asChild>
+                  <Button variant="outline" className="w-full py-7 rounded-xl font-bold uppercase text-[10px] tracking-widest border-border hover:bg-secondary/5" asChild>
                     <Link to="/quizzes">
                       Start Core Journey <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -155,17 +155,17 @@ const ProPage = () => {
             {/* PRO */}
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
               <Card className="relative h-full border-secondary/30 shadow-2xl shadow-secondary/5 rounded-[2.5rem] bg-gradient-to-br from-card to-secondary/5">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-secondary-foreground shadow-xl">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-secondary px-6 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-secondary-foreground shadow-xl">
                   UNLIMITED MASTERY
                 </div>
                 <CardContent className="p-10 flex flex-col h-full">
-                  <h2 className="mb-2 flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-secondary">
+                  <h2 className="mb-2 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.3em] text-secondary">
                     <Zap className="h-4 w-4" /> PRO Blueprint
                   </h2>
 
                   <div className="mb-8 space-y-2">
-                    <p className="text-5xl font-black text-foreground">
-                      $2.99<span className="text-sm font-black uppercase tracking-widest text-muted-foreground not-italic"> / month</span>
+                    <p className="text-5xl font-bold text-foreground">
+                      $2.99<span className="text-sm font-bold uppercase tracking-widest text-muted-foreground not-italic"> / month</span>
                     </p>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                       or $14.99 for 6 months{" "}
@@ -183,7 +183,7 @@ const ProPage = () => {
                   </ul>
 
                   {isPremium ? (
-                    <Button onClick={handleManage} variant="outline" className="w-full py-7 rounded-xl font-black uppercase text-[10px] tracking-widest border-secondary/20 hover:bg-secondary/10 text-secondary">
+                    <Button onClick={handleManage} variant="outline" className="w-full py-7 rounded-xl font-bold uppercase text-[10px] tracking-widest border-secondary/20 hover:bg-secondary/10 text-secondary">
                       Manage My Blueprint
                     </Button>
                   ) : (
@@ -191,7 +191,7 @@ const ProPage = () => {
                       <Button
                         onClick={() => handleCheckout("promo6")}
                         variant="hero"
-                        className="w-full py-8 rounded-full font-black uppercase tracking-widest text-md shadow-2xl shadow-secondary/30 transition-transform hover:scale-105 active:scale-95"
+                        className="w-full py-8 rounded-full font-bold uppercase tracking-widest text-md shadow-2xl shadow-secondary/30 transition-transform hover:scale-105 active:scale-95"
                         disabled={!!loading}
                       >
                         {loading === "promo6" ? "Initializing Discovery..." : "Unlock 6-Month Mastery"}
@@ -199,12 +199,12 @@ const ProPage = () => {
                       <Button
                         onClick={() => handleCheckout("monthly")}
                         variant="outline"
-                        className="w-full py-7 rounded-full font-black uppercase text-[10px] tracking-widest border-secondary/20 hover:bg-secondary/10 text-secondary"
+                        className="w-full py-7 rounded-full font-bold uppercase text-[10px] tracking-widest border-secondary/20 hover:bg-secondary/10 text-secondary"
                         disabled={!!loading}
                       >
                         {loading === "monthly" ? "Gathering Insights..." : "Begin Monthly Journey"}
                       </Button>
-                      <p className="text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                      <p className="text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">
                         7-day self-mastery guarantee
                       </p>
                     </div>
@@ -216,7 +216,7 @@ const ProPage = () => {
 
           {/* FAQ */}
           <div className="mx-auto max-w-3xl">
-            <h2 className="mb-10 text-center text-3xl font-black text-title">
+            <h2 className="mb-10 text-center text-3xl font-bold text-title">
               Discovery FAQ
             </h2>
             <Accordion type="single" collapsible className="w-full space-y-4">

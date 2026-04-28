@@ -143,11 +143,11 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
         <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
           <span className="text-5xl">🧪</span>
           <div className="flex-1">
-            <h3 className="text-xl font-black text-title tracking-tight">
+            <h3 className="text-xl font-bold text-title tracking-tight">
               {title ?? `What is your ${quizSlug} level?`}
             </h3>
             {subtitle && <p className="mt-2 text-md text-muted-foreground leading-relaxed">{subtitle}</p>}
-            <div className="mt-4 flex gap-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">
+            <div className="mt-4 flex gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70">
               <span className="flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5 text-secondary" />
                 {Math.max(1, Math.round(questions.length * 0.4))} Min
@@ -159,14 +159,14 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
             </div>
           </div>
           {isGuest ? (
-            <Button asChild variant="hero" size="lg" className="rounded-full px-8 py-7 font-black uppercase tracking-widest shadow-xl shadow-primary/10">
+            <Button asChild variant="hero" size="lg" className="rounded-full px-8 py-7 font-bold uppercase tracking-widest shadow-xl shadow-primary/10">
               <Link to="/login">
                 <UserPlus className="mr-2 h-4 w-4" />
                 Join to Start
               </Link>
             </Button>
           ) : (
-            <Button onClick={() => setPhase("active")} variant="hero" size="lg" className="rounded-full px-8 py-7 font-black uppercase tracking-widest shadow-xl shadow-secondary/10">
+            <Button onClick={() => setPhase("active")} variant="hero" size="lg" className="rounded-full px-8 py-7 font-bold uppercase tracking-widest shadow-xl shadow-secondary/10">
               Start Journey <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           )}
@@ -182,7 +182,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
         className="my-10 overflow-hidden rounded-[1.5rem] border border-secondary/20 bg-gradient-to-br from-secondary/5 to-background p-8 md:p-10 shadow-lg"
       >
         <div className="mb-8">
-          <div className="mb-2 flex justify-between text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground">
+          <div className="mb-2 flex justify-between text-[10px] uppercase font-bold tracking-[0.2em] text-muted-foreground">
             <span>Discovery {idx + 1} of {questions.length}</span>
             <span className="text-secondary">{pct}%</span>
           </div>
@@ -191,7 +191,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
 
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div key={q.id} custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }}>
-            <p className="mb-10 text-center text-lg font-black text-title md:text-2xl leading-relaxed">
+            <p className="mb-10 text-center text-lg font-bold text-title md:text-2xl leading-relaxed">
               {q.question_text}
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -200,7 +200,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
                   key={opt.value}
                   onClick={() => handleSelect(opt.value)}
                   className={cn(
-                    "flex-1 rounded-xl border-2 px-4 py-4 text-sm font-black transition-all duration-200 uppercase tracking-widest",
+                    "flex-1 rounded-xl border-2 px-4 py-4 text-sm font-bold transition-all duration-200 uppercase tracking-widest",
                     answers[q.id] === opt.value
                       ? "border-secondary bg-secondary text-white shadow-xl shadow-secondary/20"
                       : "border-border bg-card text-foreground hover:border-secondary/30"
@@ -214,10 +214,10 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
         </AnimatePresence>
 
         <div className="mt-10 flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={handleBack} disabled={idx === 0} className="font-black uppercase tracking-widest text-[10px] text-muted-foreground">
+          <Button variant="ghost" size="sm" onClick={handleBack} disabled={idx === 0} className="font-bold uppercase tracking-widest text-[10px] text-muted-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" /> Previous
           </Button>
-          <Button onClick={handleNext} disabled={answers[q.id] == null} variant="hero" size="default" className="rounded-full px-8 py-6 font-black uppercase tracking-widest">
+          <Button onClick={handleNext} disabled={answers[q.id] == null} variant="hero" size="default" className="rounded-full px-8 py-6 font-bold uppercase tracking-widest">
             {idx === questions.length - 1 ? "Reveal Blueprint" : "Next Discovery"}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
@@ -235,7 +235,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       animate={{ opacity: 1, y: 0 }}
       className="my-10 overflow-hidden rounded-[2rem] border border-secondary/20 bg-gradient-to-br from-secondary/5 to-background p-8 md:p-12 shadow-2xl shadow-secondary/5"
     >
-      <h3 className="mb-8 text-center text-2xl font-black text-title tracking-tight">
+      <h3 className="mb-8 text-center text-2xl font-bold text-title tracking-tight">
         🗺️ Your Core Blueprint
       </h3>
 
@@ -251,11 +251,11 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
               </div>
               <div className="p-6 text-center">
                 <span className="text-3xl">{item.emoji}</span>
-                <h4 className="mt-2 text-md font-black text-title">{item.label}</h4>
+                <h4 className="mt-2 text-md font-bold text-title">{item.label}</h4>
                 <div className="mt-2 flex items-baseline justify-center gap-1.5">
-                  <span className="text-3xl font-black text-foreground">{item.score}%</span>
+                  <span className="text-3xl font-bold text-foreground">{item.score}%</span>
                 </div>
-                <Badge className={cn("mt-4 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em]", item.severityColor)}>
+                <Badge className={cn("mt-4 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.2em]", item.severityColor)}>
                   {item.severity}
                 </Badge>
               </div>
@@ -267,18 +267,18 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       <div className="mt-10 flex flex-col items-center justify-center gap-6">
         {resultId ? (
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Button asChild variant="hero" size="lg" className="rounded-full px-10 py-8 text-lg font-black uppercase tracking-widest shadow-2xl shadow-secondary/30">
+            <Button asChild variant="hero" size="lg" className="rounded-full px-10 py-8 text-lg font-bold uppercase tracking-widest shadow-2xl shadow-secondary/30">
               <Link to={`/result/${resultId}`}>
                 View Full Blueprint <ArrowRight className="ml-3 h-6 w-6" />
               </Link>
             </Button>
-            <Button onClick={handleRedo} variant="outline" size="lg" className="rounded-full px-8 py-7 font-black uppercase text-[10px] tracking-[0.2em] border-secondary/20 hover:bg-secondary/10 text-secondary">
+            <Button onClick={handleRedo} variant="outline" size="lg" className="rounded-full px-8 py-7 font-bold uppercase text-[10px] tracking-[0.2em] border-secondary/20 hover:bg-secondary/10 text-secondary">
               <RotateCcw className="mr-2 h-4 w-4" />
               Restart Journey
             </Button>
           </div>
         ) : (
-          <Button asChild variant="hero" size="lg" className="rounded-full px-10 py-8 text-lg font-black uppercase tracking-widest shadow-2xl shadow-primary/20">
+          <Button asChild variant="hero" size="lg" className="rounded-full px-10 py-8 text-lg font-bold uppercase tracking-widest shadow-2xl shadow-primary/20">
             <Link to="/dashboard">
               Return to Blueprint <ArrowRight className="ml-3 h-6 w-6" />
             </Link>

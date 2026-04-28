@@ -83,10 +83,10 @@ const LoginPage = () => {
     <div className="flex min-h-screen bg-background">
       <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
-          <Link to="/dashboard" className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
+          <Link to="/dashboard" className="mb-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
             <ArrowLeft className="h-4 w-4" /> Dashboard
           </Link>
-          <h1 className="mb-2 text-3xl font-black text-title">
+          <h1 className="mb-2 text-3xl font-bold text-title">
             valid<span className="text-secondary">zen</span>.
           </h1>
           <p className="mb-10 text-sm text-muted-foreground">Your journey to emotional self-mastery starts here.</p>
@@ -105,7 +105,7 @@ const LoginPage = () => {
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-border" />
             </div>
-            <div className="relative flex justify-center text-[10px] font-black uppercase tracking-[0.2em]">
+            <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-[0.2em]">
               <span className="bg-background px-4 text-muted-foreground">or use your email</span>
             </div>
           </div>
@@ -119,14 +119,14 @@ const LoginPage = () => {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-xs font-black uppercase tracking-widest opacity-70">Email Address</Label>
+                  <Label htmlFor="login-email" className="text-xs font-bold uppercase tracking-widest opacity-70">Email Address</Label>
                   <Input id="login-email" type="email" placeholder="Please share your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password" title="Your private key" className="text-xs font-black uppercase tracking-widest opacity-70">Password</Label>
+                  <Label htmlFor="login-password" title="Your private key" className="text-xs font-bold uppercase tracking-widest opacity-70">Password</Label>
                   <Input id="login-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl" />
                 </div>
-                <Button type="submit" className="w-full py-7 rounded-xl font-black uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
+                <Button type="submit" className="w-full py-7 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
                   {loading ? "Gathering Insights..." : "Continue My Journey"}
                 </Button>
               </form>
@@ -135,18 +135,18 @@ const LoginPage = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name" className="text-xs font-black uppercase tracking-widest opacity-70">Full Name</Label>
+                  <Label htmlFor="signup-name" className="text-xs font-bold uppercase tracking-widest opacity-70">Full Name</Label>
                   <Input id="signup-name" type="text" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} required className="h-12 rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-xs font-black uppercase tracking-widest opacity-70">Email Address</Label>
+                  <Label htmlFor="signup-email" className="text-xs font-bold uppercase tracking-widest opacity-70">Email Address</Label>
                   <Input id="signup-email" type="email" placeholder="Please share your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" title="Must be at least 6 characters" className="text-xs font-black uppercase tracking-widest opacity-70">Password</Label>
+                  <Label htmlFor="signup-password" title="Must be at least 6 characters" className="text-xs font-bold uppercase tracking-widest opacity-70">Password</Label>
                   <Input id="signup-password" type="password" placeholder="Choose a strong password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl" />
                 </div>
-                <Button type="submit" className="w-full py-7 rounded-xl font-black uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
+                <Button type="submit" className="w-full py-7 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
                   {loading ? "Initializing..." : "Begin My Discovery Journey"}
                 </Button>
               </form>
@@ -158,7 +158,7 @@ const LoginPage = () => {
       <div className="hidden flex-1 flex-col items-center justify-center bg-primary p-16 lg:flex relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-secondary/20" />
         <div className="relative z-10 max-w-md">
-          <h2 className="mb-3 text-4xl font-black text-primary-foreground tracking-tight">Your Internal Agency</h2>
+          <h2 className="mb-3 text-4xl font-bold text-primary-foreground tracking-tight">Your Internal Agency</h2>
           <p className="mb-10 text-md text-primary-foreground/80 leading-relaxed">We’ve gathered thousands of seekers to map their unique patterns and find clarity in a complex world.</p>
           <ul className="space-y-6">
             {benefits.map((b) => (
@@ -172,7 +172,7 @@ const LoginPage = () => {
           </ul>
           <div className="mt-12 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm shadow-2xl">
             <p className="text-md text-white/70 leading-relaxed">"ValidZen helped me understand patterns I've been carrying for years. It's more than a journey, it's a mirror for the soul."</p>
-            <p className="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/90">— Sarah J., Member since 2023</p>
+            <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/90">— Sarah J., Member since 2023</p>
           </div>
         </div>
       </div>

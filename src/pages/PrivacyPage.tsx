@@ -17,7 +17,7 @@ const PrivacyPage = () => {
         <div className="container max-w-3xl">
           <Link 
             to="/dashboard" 
-            className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
+            className="mb-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Return to Blueprint
           </Link>
@@ -25,9 +25,9 @@ const PrivacyPage = () => {
           <motion.article 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground prose-li:text-muted-foreground prose-li:italic"
+            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground prose-li:text-muted-foreground prose-li:italic"
           >
-            <h1 className="mb-10 text-4xl font-black text-title tracking-tight md:text-5xl">Privacy Policy</h1>
+            <h1 className="mb-10 text-4xl font-bold text-title tracking-tight md:text-5xl">Privacy Policy</h1>
             
             <p className="text-lg leading-relaxed">
               Your privacy is fundamental to our mission. It is the policy of <strong>ZGC Media Services</strong> to respect 
@@ -46,7 +46,7 @@ const PrivacyPage = () => {
               We don’t share any personally identifying information publicly or with third-parties, except when required to by law or to process your premium membership features.
             </p>
 
-            <h2 className="text-2xl font-black mt-12 mb-6">User Commitment</h2>
+            <h2 className="text-2xl font-bold mt-12 mb-6">User Commitment</h2>
             <p className="text-lg leading-relaxed">
               As a member of our community, you undertake to make appropriate use of the contents and information that 
               ZGC Media Services offers on the site:
@@ -57,12 +57,12 @@ const PrivacyPage = () => {
               <li>Not to cause damage to the physical (hardware) and logical (software) systems of the site.</li>
             </ul>
 
-            <h2 className="text-2xl font-black mt-12 mb-6">More information</h2>
+            <h2 className="text-2xl font-bold mt-12 mb-6">More information</h2>
             <p className="text-lg leading-relaxed">
               We hope this clarifies our stance on your internal agency and data privacy. If there is something that you aren't sure whether you need or not, it's usually safer to leave cookies enabled in case it does interact with one of the features you use on our site to track your evolution.
             </p>
 
-            <div className="mt-16 pt-10 border-t border-border text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+            <div className="mt-16 pt-10 border-t border-border text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">
               <p>ZGC Media Services — ValidZen Global</p>
               <p>Contact: continentemedia@gmail.com</p>
               <p>This policy is effective as of April 22, 2026.</p>

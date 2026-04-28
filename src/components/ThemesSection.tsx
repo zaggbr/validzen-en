@@ -34,7 +34,7 @@ const ThemesSection = () => {
           viewport={{ once: true }}
           className="mb-16 text-center"
         >
-          <h2 className="mb-3 text-3xl font-black text-title tracking-tight md:text-4xl">
+          <h2 className="mb-3 text-3xl font-bold text-title tracking-tight md:text-4xl">
             Discovery Territories
           </h2>
           <p className="mx-auto max-w-lg text-base text-muted-foreground leading-relaxed">

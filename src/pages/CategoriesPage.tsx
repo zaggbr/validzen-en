@@ -39,7 +39,7 @@ const CategoriesPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-12"
           >
-            <h1 className="mb-3 text-3xl font-black text-title md:text-5xl tracking-tight">Discovery Themes</h1>
+            <h1 className="mb-3 text-3xl font-bold text-title md:text-5xl tracking-tight">Discovery Themes</h1>
             <p className="text-md text-muted-foreground">Browse our collection of self-mastery insights and guided emotional blueprints.</p>
           </motion.div>
 

@@ -17,7 +17,7 @@ const AboutPage = () => {
         <div className="container max-w-3xl">
           <Link 
             to="/dashboard" 
-            className="mb-12 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
+            className="mb-12 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Return to Blueprint
           </Link>
@@ -25,9 +25,9 @@ const AboutPage = () => {
           <motion.article 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground"
+            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground"
           >
-            <h1 className="mb-10 text-4xl font-black text-title tracking-tight md:text-5xl">Our Methodology</h1>
+            <h1 className="mb-10 text-4xl font-bold text-title tracking-tight md:text-5xl">Our Methodology</h1>
             
             <p className="text-lg leading-relaxed">
               ValidZen is a project by an independent publishing house dedicated to curating high-quality content 

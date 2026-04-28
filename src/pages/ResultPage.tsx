@@ -111,15 +111,15 @@ const ResultPage = () => {
       <main className="flex-1">
         <div className="container py-10 md:py-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12 text-center">
-            <Link to="/dashboard" className="mb-8 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
+            <Link to="/dashboard" className="mb-8 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
               <ArrowLeft className="h-4 w-4" /> Back to Dashboard
             </Link>
             <br />
             <div className="mx-auto mt-6 mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-secondary/10 text-4xl shadow-inner">
               🧭
             </div>
-            <h1 className="mb-2 text-4xl font-black tracking-tight text-title md:text-6xl">Your Discoveries</h1>
-            <p className="mb-8 text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">
+            <h1 className="mb-2 text-4xl font-bold tracking-tight text-title md:text-6xl">Your Discoveries</h1>
+            <p className="mb-8 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em]">
               Blueprint mapped on {completedDate}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
@@ -157,14 +157,14 @@ const ResultPage = () => {
                       <div className="p-8">
                         <div className="mb-6 flex items-center justify-between">
                           <span className="text-4xl">{item.emoji}</span>
-                          <Badge className={cn("rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest", item.severityColor)}>
+                          <Badge className={cn("rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest", item.severityColor)}>
                             {item.severity}
                           </Badge>
                         </div>
-                        <h3 className="mb-2 text-2xl font-black text-title">{item.label}</h3>
+                        <h3 className="mb-2 text-2xl font-bold text-title">{item.label}</h3>
                         <div className="mb-6 flex items-baseline gap-1.5">
-                          <span className="text-4xl font-black text-foreground">{item.score}%</span>
-                          <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">Intensity</span>
+                          <span className="text-4xl font-bold text-foreground">{item.score}%</span>
+                          <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Intensity</span>
                         </div>
                         <p className="text-sm leading-relaxed text-muted-foreground opacity-90">
                           "{item.interpretation}"
@@ -193,7 +193,7 @@ const ResultPage = () => {
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 text-secondary shadow-lg shadow-secondary/10">
                     <Sparkles className="h-7 w-7" />
                   </div>
-                  <h2 className="text-3xl font-black tracking-tight text-title">Blueprint Interpretation</h2>
+                  <h2 className="text-3xl font-bold tracking-tight text-title">Blueprint Interpretation</h2>
                 </div>
                 
                 <div className="prose prose-sm max-w-none text-muted-foreground leading-relaxed text-lg">
@@ -206,13 +206,13 @@ const ResultPage = () => {
 
                 {isPremium && (
                    <div className="mt-12 pt-10 border-t border-secondary/10">
-                      <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary mb-5">
+                      <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-secondary mb-5">
                         PRO Self-Mastery Insights
                       </h4>
                       <p className="text-md text-muted-foreground mb-8 leading-relaxed">
                         Based on your <strong>{topDimension?.label}</strong> profile, we recommend focusing on restoring your internal agency through focused grounding and psychological reframing...
                       </p>
-                      <Button variant="link" className="p-0 h-auto text-secondary font-black text-xs uppercase tracking-[0.2em] group">
+                      <Button variant="link" className="p-0 h-auto text-secondary font-bold text-xs uppercase tracking-[0.2em] group">
                          Access Complete Growth Plan <ChevronRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-1.5" />
                       </Button>
                    </div>
@@ -224,8 +224,8 @@ const ResultPage = () => {
           {recommendedPosts.length > 0 && (
             <div className="mx-auto mb-20 max-w-4xl">
               <div className="mb-10 flex items-center justify-between">
-                <h2 className="text-3xl font-black tracking-tight text-title">📚 Guided Wisdom</h2>
-                <Button variant="link" asChild className="text-secondary font-black uppercase text-[10px] tracking-widest">
+                <h2 className="text-3xl font-bold tracking-tight text-title">📚 Guided Wisdom</h2>
+                <Button variant="link" asChild className="text-secondary font-bold uppercase text-[10px] tracking-widest">
                    <Link to="/quizzes">Explore More Journeys</Link>
                 </Button>
               </div>
@@ -244,13 +244,13 @@ const ResultPage = () => {
               <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
               <div className="relative z-10">
                 <span className="mb-6 inline-block text-5xl">🧪</span>
-                <h3 className="mb-4 text-3xl font-black">
+                <h3 className="mb-4 text-3xl font-bold">
                   Deepen Your {topDimension.label} Journey
                 </h3>
                 <p className="mb-10 text-white/90 text-lg leading-relaxed">
                   Ready to reclaim your self-mastery? Embark on our advanced analysis for a clinical-level understanding of your unique psychological patterns.
                 </p>
-                <Button asChild variant="hero" size="lg" className="bg-white text-secondary hover:bg-white/90 px-12 py-8 text-xl rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95 font-black uppercase tracking-widest">
+                <Button asChild variant="hero" size="lg" className="bg-white text-secondary hover:bg-white/90 px-12 py-8 text-xl rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95 font-bold uppercase tracking-widest">
                   <Link to={`/quiz/${topDimension.dimension}`}>
                     Start Deep Journey <ArrowRight className="ml-2 h-6 w-6" />
                   </Link>
@@ -264,11 +264,11 @@ const ResultPage = () => {
               <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-secondary/10 text-secondary">
                 <UserPlus className="h-10 w-10" />
               </div>
-              <h3 className="mb-3 text-3xl font-black text-title">Save Your Discoveries</h3>
+              <h3 className="mb-3 text-3xl font-bold text-title">Save Your Discoveries</h3>
               <p className="mb-10 text-muted-foreground leading-relaxed text-lg">
                 Create a free account to preserve your blueprints, monitor your evolution, and access personalized self-mastery content.
               </p>
-              <Button asChild variant="hero" size="lg" className="px-12 py-8 text-xl rounded-full shadow-2xl shadow-primary/20 font-black uppercase tracking-widest">
+              <Button asChild variant="hero" size="lg" className="px-12 py-8 text-xl rounded-full shadow-2xl shadow-primary/20 font-bold uppercase tracking-widest">
                 <Link to="/login">
                   Begin My Journey <ArrowRight className="ml-2 h-6 w-6" />
                 </Link>

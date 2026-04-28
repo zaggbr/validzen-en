@@ -53,9 +53,9 @@ const CategoryPage = () => {
         <main className="flex flex-1 items-center justify-center">
           <div className="text-center">
             <span className="text-6xl">📂</span>
-            <h1 className="mt-6 text-3xl font-black">Discovery Theme Not Found</h1>
+            <h1 className="mt-6 text-3xl font-bold">Discovery Theme Not Found</h1>
             <p className="mt-2 text-muted-foreground">This territory hasn't been mapped yet or is currently under curation.</p>
-            <Link to="/categories" className="mt-8 inline-block text-xs font-black uppercase tracking-widest text-secondary hover:underline">
+            <Link to="/categories" className="mt-8 inline-block text-xs font-bold uppercase tracking-widest text-secondary hover:underline">
               Browse All Discovery Themes
             </Link>
           </div>
@@ -70,7 +70,7 @@ const CategoryPage = () => {
       <Header />
       <main className="flex-1">
         <div className="container py-12 md:py-20">
-          <Link to="/categories" className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
+          <Link to="/categories" className="mb-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
             <ArrowLeft className="h-4 w-4" /> All Discovery Themes
           </Link>
 
@@ -79,7 +79,7 @@ const CategoryPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-12"
           >
-              <h1 className="text-3xl font-black text-title md:text-5xl tracking-tight">{stripEmojis(categoryName)}</h1>
+              <h1 className="text-3xl font-bold text-title md:text-5xl tracking-tight">{stripEmojis(categoryName)}</h1>
               {category && (
                 <p className="mt-3 text-lg text-muted-foreground max-w-2xl leading-relaxed">
                   {stripEmojis(category.description_en)}
@@ -90,7 +90,7 @@ const CategoryPage = () => {
           <div className="mb-10 flex gap-4">
             <button
               onClick={() => setSort("recent")}
-              className={`rounded-full px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all ${
+              className={`rounded-full px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all ${
                 sort === "recent" ? "bg-secondary text-white shadow-lg shadow-secondary/20" : "bg-muted/50 text-muted-foreground hover:bg-muted"
               }`}
             >
@@ -98,7 +98,7 @@ const CategoryPage = () => {
             </button>
             <button
               onClick={() => setSort("popular")}
-              className={`rounded-full px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all ${
+              className={`rounded-full px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all ${
                 sort === "popular" ? "bg-secondary text-white shadow-lg shadow-secondary/20" : "bg-muted/50 text-muted-foreground hover:bg-muted"
               }`}
             >

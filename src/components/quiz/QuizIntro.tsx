@@ -22,12 +22,12 @@ const QuizIntro = ({ quiz, onStart }: QuizIntroProps) => {
       className="mx-auto flex max-w-lg flex-col items-center px-4 py-8 text-center"
     >
       <span className="mb-6 text-6xl">🧭</span>
-      <h1 className="mb-4 text-4xl font-black text-title md:text-5xl tracking-tight">
+      <h1 className="mb-4 text-4xl font-bold text-title md:text-5xl tracking-tight">
         {quiz.title}
       </h1>
       <p className="mb-10 text-lg text-muted-foreground leading-relaxed">{quiz.subtitle}</p>
 
-      <div className="mb-10 flex gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+      <div className="mb-10 flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
         <span className="flex items-center gap-2">
           <HelpCircle className="h-4 w-4 text-secondary" />
           {quiz.questionCount} Discoveries
@@ -38,12 +38,12 @@ const QuizIntro = ({ quiz, onStart }: QuizIntroProps) => {
         </span>
       </div>
 
-      <Button onClick={onStart} variant="hero" size="xl" className="px-12 py-8 text-xl font-black uppercase tracking-widest rounded-full shadow-2xl shadow-secondary/20 transition-all hover:scale-105 active:scale-95">
+      <Button onClick={onStart} variant="hero" size="xl" className="px-12 py-8 text-xl font-bold uppercase tracking-widest rounded-full shadow-2xl shadow-secondary/20 transition-all hover:scale-105 active:scale-95">
         Begin Journey <ArrowRight className="ml-3 h-6 w-6" />
       </Button>
 
       <div className="mt-12 max-w-sm rounded-2xl border border-border bg-muted/20 p-4">
-        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black opacity-60 leading-relaxed">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold opacity-60 leading-relaxed">
           ⚠️ Guided for self-reflection. This is not a clinical diagnosis. Use these insights for your personal growth journey.
         </p>
       </div>

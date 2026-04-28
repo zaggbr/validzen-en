@@ -43,7 +43,7 @@ const Header = () => {
             <Link
               key={link.href}
               to={link.href}
-              className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground transition-all hover:text-secondary"
+              className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground transition-all hover:text-secondary"
             >
               {link.label}
             </Link>
@@ -62,7 +62,7 @@ const Header = () => {
           {user ? (
             <div className="flex items-center gap-4">
               {!isPremium && (
-                <Button size="sm" variant="hero" asChild className="h-8 px-4 text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-secondary/20">
+                <Button size="sm" variant="hero" asChild className="h-8 px-4 text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg shadow-secondary/20">
                   <Link to="/pro"><Crown className="mr-1.5 h-3 w-3" /> Upgrade</Link>
                 </Button>
               )}
@@ -71,7 +71,7 @@ const Header = () => {
               </Button>
             </div>
           ) : (
-            <Button size="sm" variant="hero" asChild className="h-9 px-6 text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-primary/20">
+            <Button size="sm" variant="hero" asChild className="h-9 px-6 text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg shadow-primary/20">
               <Link to="/login">Begin Journey</Link>
             </Button>
           )}
@@ -93,7 +93,7 @@ const Header = () => {
               <Link
                 key={link.href}
                 to={link.href}
-                className="rounded-xl px-4 py-3 text-sm font-black uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:bg-secondary/10 hover:text-secondary"
+                className="rounded-xl px-4 py-3 text-sm font-bold uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:bg-secondary/10 hover:text-secondary"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
@@ -103,16 +103,16 @@ const Header = () => {
               {user ? (
                 <div className="space-y-4">
                    {!isPremium && (
-                    <Button size="lg" variant="hero" asChild className="w-full font-black uppercase tracking-widest">
+                    <Button size="lg" variant="hero" asChild className="w-full font-bold uppercase tracking-widest">
                       <Link to="/pro" onClick={() => setMobileOpen(false)}>Upgrade to PRO</Link>
                     </Button>
                   )}
-                  <Button size="lg" variant="outline" className="w-full font-black uppercase tracking-widest border-border" onClick={handleSignOut}>
+                  <Button size="lg" variant="outline" className="w-full font-bold uppercase tracking-widest border-border" onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" /> Sign Out
                   </Button>
                 </div>
               ) : (
-                <Button size="lg" variant="hero" className="w-full font-black uppercase tracking-widest" asChild>
+                <Button size="lg" variant="hero" className="w-full font-bold uppercase tracking-widest" asChild>
                   <Link to="/login" onClick={() => setMobileOpen(false)}>Begin Journey</Link>
                 </Button>
               )}

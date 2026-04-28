@@ -175,7 +175,7 @@ const DashboardPage = () => {
             <Link to="/quizzes" className="mb-8 inline-flex items-center gap-1.5 text-sm font-bold text-muted-foreground hover:text-secondary transition-colors uppercase tracking-widest">
               <ArrowLeft className="h-4 w-4" /> Back to Journeys
             </Link>
-            <h1 className="mt-4 mb-1 text-3xl font-black text-title md:text-5xl tracking-tight">Your Personal Blueprint</h1>
+            <h1 className="mt-4 mb-1 text-3xl font-bold text-title md:text-5xl tracking-tight">Your Personal Blueprint</h1>
             <p className="text-md text-muted-foreground">We’ve gathered your insights to help you track your psychological agency.</p>
           </motion.div>
 
@@ -202,14 +202,14 @@ const DashboardPage = () => {
 
           {isPremium && (
             <div className="mb-16">
-              <h2 className="mb-8 text-2xl font-black text-title flex items-center gap-3">
+              <h2 className="mb-8 text-2xl font-bold text-title flex items-center gap-3">
                 <Crown className="h-7 w-7 text-secondary" /> 
                 Your Deep Patterns
               </h2>
               
               {!premiumResults || premiumResults.length === 0 ? (
                 <div className="rounded-3xl border border-secondary/20 bg-secondary/5 p-10 text-center max-w-2xl mx-auto shadow-inner">
-                  <h3 className="text-2xl font-black text-title mb-4">
+                  <h3 className="text-2xl font-bold text-title mb-4">
                     Deep Journey Pending
                   </h3>
                   <p className="text-muted-foreground mb-8 text-balance leading-relaxed">
@@ -247,16 +247,16 @@ const DashboardPage = () => {
                             <div className="h-12 w-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-secondary">
                               <Crown className="h-6 w-6" />
                             </div>
-                            <Badge variant="secondary" className="bg-secondary text-white uppercase text-[10px] font-black tracking-widest px-3 py-1">
+                            <Badge variant="secondary" className="bg-secondary text-white uppercase text-[10px] font-bold tracking-widest px-3 py-1">
                               PRO ANALYSIS
                             </Badge>
                           </div>
                           
-                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary/60 mb-2">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary/60 mb-2">
                             Deep Pattern Analysis
                           </p>
 
-                          <h3 className="text-xl font-black text-title mb-3">
+                          <h3 className="text-xl font-bold text-title mb-3">
                             {p.interpretation?.profile_name || "Pattern Archetype"}
                           </h3>
                           <p className="text-sm text-muted-foreground mb-6 line-clamp-3 leading-relaxed">
@@ -264,7 +264,7 @@ const DashboardPage = () => {
                           </p>
                           
                           <div className="flex items-center justify-between mt-auto pt-6 border-t border-secondary/10">
-                            <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">
+                            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
                               {new Date(p.completed_at).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
                             </span>
                             <Button asChild variant="link" size="sm" className="p-0 h-auto text-secondary font-bold text-xs uppercase tracking-wider">
@@ -282,9 +282,9 @@ const DashboardPage = () => {
 
           <div className="mb-16">
             <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-3xl font-black text-title">Your Discovery Map</h2>
+              <h2 className="text-3xl font-bold text-title">Your Discovery Map</h2>
               {isSimulacrum && (
-                <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/20 font-black uppercase text-[10px] tracking-[0.2em] px-4 py-1.5">
+                <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/20 font-bold uppercase text-[10px] tracking-[0.2em] px-4 py-1.5">
                   Simulation Mode
                 </Badge>
               )}
@@ -313,7 +313,7 @@ const DashboardPage = () => {
                         <div className="mb-6 flex items-center justify-between">
                           <span className="text-4xl">{item.emoji}</span>
                           <div className="flex items-center gap-3">
-                            <span className={cn("rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest", (item as any).severityColor || "bg-muted text-muted-foreground")}>
+                            <span className={cn("rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest", (item as any).severityColor || "bg-muted text-muted-foreground")}>
                               {item.severity}
                             </span>
                             {!isSimulacrum && (
@@ -331,10 +331,10 @@ const DashboardPage = () => {
                             )}
                           </div>
                         </div>
-                        <h3 className="mb-2 text-xl font-black text-title">{item.label}</h3>
+                        <h3 className="mb-2 text-xl font-bold text-title">{item.label}</h3>
                         <div className="mb-6 flex items-baseline gap-1.5">
-                          <span className="text-4xl font-black text-foreground">{item.score}%</span>
-                          <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">Intensity</span>
+                          <span className="text-4xl font-bold text-foreground">{item.score}%</span>
+                          <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Intensity</span>
                         </div>
                         <p className="text-sm leading-relaxed text-muted-foreground opacity-90">
                           "{item.interpretation}"
@@ -348,7 +348,7 @@ const DashboardPage = () => {
           </div>
 
           <div className="mb-16">
-            <h2 className="mb-6 text-2xl font-black text-title flex items-center gap-3">
+            <h2 className="mb-6 text-2xl font-bold text-title flex items-center gap-3">
               <HistoryIcon className="h-7 w-7 text-secondary" /> History of Your Journeys
             </h2>
             <Card className={cn("overflow-hidden border-border shadow-sm", isSimulacrum && "opacity-60 pointer-events-none")}>
@@ -365,9 +365,9 @@ const DashboardPage = () => {
                     <table className="w-full text-left">
                       <thead className="bg-muted/30 border-b border-border">
                         <tr>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Journey</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Date Completed</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground text-right">Action</th>
+                          <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Journey</th>
+                          <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Date Completed</th>
+                          <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground text-right">Action</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
@@ -375,7 +375,7 @@ const DashboardPage = () => {
                           <tr key={r.id} className="hover:bg-muted/10 transition-colors">
                             <td className="px-8 py-6">
                               <div className="flex items-center gap-4">
-                                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-xs font-black text-primary">
+                                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                                   {(r.quiz_slug || 'J').charAt(0).toUpperCase()}
                                 </div>
                                 <span className="text-md font-bold text-title">
@@ -405,7 +405,7 @@ const DashboardPage = () => {
 
           {recommendedPosts.length > 0 && (
             <div className="mb-16">
-              <h2 className="mb-6 text-2xl font-black text-title flex items-center gap-3">📚 Guided Wisdom</h2>
+              <h2 className="mb-6 text-2xl font-bold text-title flex items-center gap-3">📚 Guided Wisdom</h2>
               <div className="grid gap-6 sm:grid-cols-2">
                 {recommendedPosts.map((post) =>
                   post ? <PostCard key={post.slug} title={post.title} excerpt={post.excerpt} category={post.category} readTime={`${post.reading_time}`} slug={post.slug} /> : null
@@ -417,7 +417,7 @@ const DashboardPage = () => {
           <PremiumGate>
             <div className="mb-16 space-y-12 rounded-3xl border border-secondary/20 bg-gradient-to-br from-card to-secondary/5 p-10 shadow-sm">
               <div>
-                <h2 className="mb-8 flex items-center gap-3 text-2xl font-black text-title">
+                <h2 className="mb-8 flex items-center gap-3 text-2xl font-bold text-title">
                   <TrendingUp className="h-7 w-7 text-secondary" /> Your Psychological Evolution
                 </h2>
                 <div className="h-80">
@@ -455,7 +455,7 @@ const DashboardPage = () => {
               </div>
 
               <div>
-                <h2 className="mb-6 text-xl font-black text-title flex items-center gap-3">
+                <h2 className="mb-6 text-xl font-bold text-title flex items-center gap-3">
                   <Sparkles className="h-6 w-6 text-secondary" /> Personal Insights
                 </h2>
                 <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -463,7 +463,7 @@ const DashboardPage = () => {
                     <Card key={dim.slug} className="bg-card/50 border-border/50 hover:border-secondary/30 transition-all">
                       <CardContent className="p-6">
                         <span className="text-3xl mb-4 block">{dim.icon}</span>
-                        <h4 className="text-md font-black text-title mb-2">{dim.name_en}</h4>
+                        <h4 className="text-md font-bold text-title mb-2">{dim.name_en}</h4>
                         <p className="text-xs text-muted-foreground leading-relaxed">Deep analysis of your internal agency in this dimension.</p>
                       </CardContent>
                     </Card>
@@ -477,7 +477,7 @@ const DashboardPage = () => {
                     <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 text-secondary transition-all group-hover:scale-110">
                        <span className="text-3xl">📄</span>
                     </div>
-                    <h4 className="text-lg font-black text-title mb-2">Export Personal Blueprint</h4>
+                    <h4 className="text-lg font-bold text-title mb-2">Export Personal Blueprint</h4>
                     <p className="text-xs text-muted-foreground leading-relaxed">Download your complete clinical-grade analysis in PDF format.</p>
                   </CardContent>
                 </Card>
@@ -486,7 +486,7 @@ const DashboardPage = () => {
                     <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 text-secondary transition-all group-hover:scale-110">
                        <span className="text-3xl">📅</span>
                     </div>
-                    <h4 className="text-lg font-black text-title mb-2">30-Day Growth Plan</h4>
+                    <h4 className="text-lg font-bold text-title mb-2">30-Day Growth Plan</h4>
                     <p className="text-xs text-muted-foreground leading-relaxed">A personalized daily guide designed to restore your self-mastery.</p>
                   </CardContent>
                 </Card>
@@ -496,7 +496,7 @@ const DashboardPage = () => {
 
           {isPremium && (
             <div className="mt-16 flex flex-col items-center border-t border-border pt-16 pb-8">
-               <h3 className="text-xl font-black text-title mb-3">
+               <h3 className="text-xl font-bold text-title mb-3">
                  Seeking a fresh perspective?
                </h3>
                <p className="text-sm text-muted-foreground mb-8 text-center max-w-md leading-relaxed">
@@ -505,7 +505,7 @@ const DashboardPage = () => {
                <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-destructive border-destructive/20 hover:bg-destructive/10 px-10 py-7 font-black uppercase tracking-[0.2em] text-[10px]"
+                className="text-destructive border-destructive/20 hover:bg-destructive/10 px-10 py-7 font-bold uppercase tracking-[0.2em] text-[10px]"
                 onClick={() => {
                   if (window.confirm("Attention: This will permanently archive all your progress. This action cannot be undone. Continue?")) {
                     resetMap.mutate();

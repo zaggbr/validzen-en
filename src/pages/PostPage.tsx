@@ -76,8 +76,8 @@ const PostPage = () => {
         <main className="flex flex-1 items-center justify-center">
           <div className="text-center">
             <span className="text-6xl">📄</span>
-            <h1 className="mt-6 text-3xl font-black">Insight Territory Not Found</h1>
-            <Link to="/dashboard" className="mt-4 inline-block text-xs font-black uppercase tracking-widest text-secondary hover:underline">
+            <h1 className="mt-6 text-3xl font-bold">Insight Territory Not Found</h1>
+            <Link to="/dashboard" className="mt-4 inline-block text-xs font-bold uppercase tracking-widest text-secondary hover:underline">
               Return to Blueprint
             </Link>
           </div>
@@ -118,11 +118,11 @@ const PostPage = () => {
       <Header />
       <main className="flex-1 relative">
         <article className="container py-12 md:py-20">
-          <Link to="/dashboard" className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
+          <Link to="/dashboard" className="mb-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
             <ArrowLeft className="h-4 w-4" /> Return to Blueprint
           </Link>
 
-          <nav className="mb-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground" aria-label="Breadcrumb">
+          <nav className="mb-8 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground" aria-label="Breadcrumb">
             <Link to="/" className="hover:text-secondary transition-colors">Home</Link>
             <ChevronRight className="h-3 w-3 opacity-30" />
             <Link to={`/category/${post.category}`} className="hover:text-secondary transition-colors text-secondary">
@@ -135,13 +135,13 @@ const PostPage = () => {
           <header className="mb-12 max-w-4xl">
             <div className="mb-6 flex flex-wrap gap-2">
               {post.tags.map((tag) => (
-                <span key={tag} className="rounded-full bg-secondary/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-secondary">
+                <span key={tag} className="rounded-full bg-secondary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-secondary">
                   {tag}
                 </span>
               ))}
             </div>
-            <h1 className="text-3xl font-black leading-tight md:text-5xl tracking-tight text-title">{post.title}</h1>
-            <div className="mt-6 flex flex-wrap items-center gap-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">
+            <h1 className="text-3xl font-bold leading-tight md:text-5xl tracking-tight text-title">{post.title}</h1>
+            <div className="mt-6 flex flex-wrap items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70">
               <span className="italic">By {post.author_name || "ValidZen Intelligence"}</span>
               <span className="flex items-center gap-1.5">
                 <Calendar className="h-3.5 w-3.5" />
@@ -176,7 +176,7 @@ const PostPage = () => {
 
               {showGate ? (
                 <div className="relative">
-                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border blur-sm select-none pointer-events-none opacity-40">
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border blur-sm select-none pointer-events-none opacity-40">
                     {sections.length > 0 ? (
                        <section className="mb-8">{sections[0].body.substring(0, 400)}...</section>
                     ) : (
@@ -189,14 +189,14 @@ const PostPage = () => {
                   <div key={section.id}>
                     <section id={section.id} className="mb-12 scroll-mt-24">
                       {section.heading && (
-                        <h2 className="mb-6 text-2xl font-black text-title md:text-3xl tracking-tight">{section.heading}</h2>
+                        <h2 className="mb-6 text-2xl font-bold text-title md:text-3xl tracking-tight">{section.heading}</h2>
                       )}
                       {isMarkdown ? (
-                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border">
+                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border">
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.body}</ReactMarkdown>
                         </div>
                       ) : (
-                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border" dangerouslySetInnerHTML={{ __html: section.body }} />
+                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border" dangerouslySetInnerHTML={{ __html: section.body }} />
                       )}
                     </section>
 
@@ -211,11 +211,11 @@ const PostPage = () => {
                 ))
               ) : (
                 isMarkdown ? (
-                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border mb-12">
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border mb-12">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
                   </div>
                 ) : (
-                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border mb-12" dangerouslySetInnerHTML={{ __html: post.content }} />
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border mb-12" dangerouslySetInnerHTML={{ __html: post.content }} />
                 )
               )}
 
@@ -227,7 +227,7 @@ const PostPage = () => {
 
               {post.video_url && (
                 <section className="my-16 border-t border-border pt-12">
-                  <h2 className="mb-6 text-2xl font-black text-title">Guided Self-Mastery Video</h2>
+                  <h2 className="mb-6 text-2xl font-bold text-title">Guided Self-Mastery Video</h2>
                   <div className="aspect-video overflow-hidden rounded-[2rem] border border-border shadow-2xl">
                     <iframe
                       src={post.video_url}
@@ -248,7 +248,7 @@ const PostPage = () => {
 
               {related.length > 0 && (
                 <section className="my-16 border-t border-border pt-12">
-                  <h2 className="mb-10 text-2xl font-black text-title tracking-tight">Deepen Your Discovery</h2>
+                  <h2 className="mb-10 text-2xl font-bold text-title tracking-tight">Deepen Your Discovery</h2>
                   <div className="grid gap-8 sm:grid-cols-2">
                     {related.slice(0, 2).map((rp) => (
                       <PostCard
@@ -288,7 +288,7 @@ const PostPage = () => {
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
                 <Lock className="h-8 w-8" />
               </div>
-              <h2 className="text-3xl font-black text-title mb-4 tracking-tight">
+              <h2 className="text-3xl font-bold text-title mb-4 tracking-tight">
                 Expand Your Internal Agency
               </h2>
               <p className="text-muted-foreground mb-10 text-md leading-relaxed">
@@ -298,15 +298,15 @@ const PostPage = () => {
               </p>
               <div className="flex flex-col gap-4">
                 {post.is_premium && !user ? (
-                   <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-black uppercase tracking-widest text-lg shadow-xl shadow-secondary/20">
+                   <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-bold uppercase tracking-widest text-lg shadow-xl shadow-secondary/20">
                     <Link to="/login">Join ValidZen Free</Link>
                   </Button>
                 ) : (post.is_premium && user) ? (
-                  <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-black uppercase tracking-widest text-lg shadow-xl shadow-secondary/20">
+                  <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-bold uppercase tracking-widest text-lg shadow-xl shadow-secondary/20">
                     <Link to="/pro">Upgrade to PRO</Link>
                   </Button>
                 ) : (
-                  <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-black uppercase tracking-widest text-lg shadow-xl shadow-primary/20">
+                  <Button asChild size="lg" variant="hero" className="rounded-full py-8 font-bold uppercase tracking-widest text-lg shadow-xl shadow-primary/20">
                     <Link to="/login">Create Free Account</Link>
                   </Button>
                 )}

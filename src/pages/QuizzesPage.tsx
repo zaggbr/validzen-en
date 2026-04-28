@@ -250,11 +250,11 @@ const QuizzesPage = () => {
               animate={{ opacity: 1, y: 0 }}
               className="mx-auto max-w-3xl text-center"
             >
-              <Badge variant="outline" className="mb-6 border-secondary/30 text-secondary bg-secondary/5 px-4 py-1 font-black uppercase tracking-[0.2em] text-[10px]">
+              <Badge variant="outline" className="mb-6 border-secondary/30 text-secondary bg-secondary/5 px-4 py-1 font-bold uppercase tracking-[0.2em] text-[10px]">
                 <Sparkles className="mr-2 h-3.5 w-3.5" />
                 Step 1: Map Your Emotions
               </Badge>
-              <h1 className="mb-6 text-4xl font-black tracking-tight text-title md:text-7xl">
+              <h1 className="mb-6 text-4xl font-bold tracking-tight text-title md:text-7xl">
                 Discovery Directory
               </h1>
               <p className="mb-10 text-lg text-muted-foreground md:text-xl">
@@ -281,7 +281,7 @@ const QuizzesPage = () => {
                 <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
                   <Lock className="h-8 w-8" />
                 </div>
-                <h2 className="text-3xl font-black mb-4">{lockType === "login" ? "Unlock Your Directory" : "Discovery Limit Reached"}</h2>
+                <h2 className="text-3xl font-bold mb-4">{lockType === "login" ? "Unlock Your Directory" : "Discovery Limit Reached"}</h2>
                 <p className="text-muted-foreground mb-10 text-lg leading-relaxed">
                   {lockType === "login" 
                     ? "We’ve gathered these insights for members. Create your free account or unlock PRO for clinical-grade diagnostics."
@@ -289,7 +289,7 @@ const QuizzesPage = () => {
                   }
                 </p>
                 <div className="flex flex-col gap-4">
-                  <Button asChild size="lg" variant="hero" className="py-8 text-xl shadow-2xl shadow-secondary/20 font-black uppercase tracking-widest rounded-full">
+                  <Button asChild size="lg" variant="hero" className="py-8 text-xl shadow-2xl shadow-secondary/20 font-bold uppercase tracking-widest rounded-full">
                     <Link to={user ? "/pro" : "/login"}>
                       {user ? "Upgrade to PRO" : "Begin Free Journey"}
                     </Link>
@@ -334,8 +334,8 @@ const QuizzesPage = () => {
                           {theme.icon}
                         </div>
                         <div>
-                          <h2 className="text-3xl font-black tracking-tight text-title">{theme.name}</h2>
-                          <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-70">
+                          <h2 className="text-3xl font-bold tracking-tight text-title">{theme.name}</h2>
+                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-70">
                             {themeQuizzes.length} Pathways Available
                           </p>
                         </div>
@@ -351,15 +351,15 @@ const QuizzesPage = () => {
                           >
                             <CardContent className="p-8">
                               <div className="mb-4 flex items-center justify-between">
-                                 <Badge variant="secondary" className="bg-muted/50 text-muted-foreground text-[10px] font-black uppercase tracking-widest px-3 py-1">
+                                 <Badge variant="secondary" className="bg-muted/50 text-muted-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1">
                                    Core Insight
                                  </Badge>
-                                 <span className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                                 <span className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                    <Clock className="h-3.5 w-3.5" />
                                    {quiz.estimated_time} Min
                                  </span>
                               </div>
-                              <h3 className="mb-3 text-xl font-black text-title group-hover:text-secondary transition-colors">
+                              <h3 className="mb-3 text-xl font-bold text-title group-hover:text-secondary transition-colors">
                                 {quiz.title}
                               </h3>
                               <p className="mb-8 text-sm text-balance text-muted-foreground line-clamp-2 opacity-80 leading-relaxed">
@@ -368,7 +368,7 @@ const QuizzesPage = () => {
                               <Button 
                                 variant="ghost" 
                                 size="sm"
-                                className="w-full justify-between bg-muted/20 group-hover:bg-secondary group-hover:text-white transition-all py-6 px-6 font-black uppercase text-[10px] tracking-widest rounded-xl"
+                                className="w-full justify-between bg-muted/20 group-hover:bg-secondary group-hover:text-white transition-all py-6 px-6 font-bold uppercase text-[10px] tracking-widest rounded-xl"
                                 onClick={() => handleStart(quiz)}
                               >
                                 Begin Journey
@@ -390,15 +390,15 @@ const QuizzesPage = () => {
                             
                             <div className="flex-1 text-center lg:text-left">
                               <div className="mb-4 flex flex-wrap items-center justify-center lg:justify-start gap-5">
-                                <Badge variant="secondary" className="bg-secondary text-white border-none text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5">
+                                <Badge variant="secondary" className="bg-secondary text-white border-none text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-1.5">
                                   PRO Blueprint
                                 </Badge>
-                                <span className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] flex items-center gap-2">
                                   <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
                                   Deep Pattern Analysis
                                 </span>
                               </div>
-                              <h3 className="mb-3 text-3xl font-black tracking-tight text-title">
+                              <h3 className="mb-3 text-3xl font-bold tracking-tight text-title">
                                 {deepOne.title}
                               </h3>
                               <p className="max-w-2xl text-md leading-relaxed text-muted-foreground">
@@ -408,17 +408,17 @@ const QuizzesPage = () => {
  
                             <div className="flex flex-col gap-6 min-w-[240px] w-full lg:w-auto">
                               <div className="flex items-center justify-center lg:justify-start gap-8">
-                                <div className="flex items-center gap-2.5 text-[10px] font-black uppercase tracking-widest text-title">
+                                <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest text-title">
                                   <Clock className="h-4 w-4 text-secondary" />
                                   <span>{deepOne.estimated_time} Min</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-[10px] font-black uppercase tracking-widest text-title">
+                                <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest text-title">
                                   <Lock className="h-4 w-4 text-secondary" />
                                   <span>Clinical</span>
                                 </div>
                               </div>
                               <Button 
-                                className="w-full bg-secondary text-white shadow-2xl shadow-secondary/30 hover:bg-secondary/90 hover:scale-105 transition-all transform active:scale-95 py-8 font-black text-lg uppercase tracking-widest rounded-full"
+                                className="w-full bg-secondary text-white shadow-2xl shadow-secondary/30 hover:bg-secondary/90 hover:scale-105 transition-all transform active:scale-95 py-8 font-bold text-lg uppercase tracking-widest rounded-full"
                                 onClick={() => handleStart(deepOne)}
                               >
                                 Embark Now
@@ -438,13 +438,13 @@ const QuizzesPage = () => {
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-muted">
                     <Search className="h-10 w-10 text-muted-foreground" />
                   </div>
-                  <h3 className="text-2xl font-black text-title">
+                  <h3 className="text-2xl font-bold text-title">
                     Discovery not found
                   </h3>
                   <p className="text-muted-foreground">
                     Try searching for different terms or pathways.
                   </p>
-                  <Button variant="link" onClick={() => setSearch("")} className="mt-4 text-secondary font-black uppercase text-[10px] tracking-widest">
+                  <Button variant="link" onClick={() => setSearch("")} className="mt-4 text-secondary font-bold uppercase text-[10px] tracking-widest">
                     Clear Search
                   </Button>
                 </div>
@@ -459,7 +459,7 @@ const QuizzesPage = () => {
         >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem]">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black">{activeDeepAssessment?.title}</DialogTitle>
+              <DialogTitle className="text-2xl font-bold">{activeDeepAssessment?.title}</DialogTitle>
               <DialogDescription className="italic text-md">{activeDeepAssessment?.description}</DialogDescription>
             </DialogHeader>
             {activeDeepAssessment && (

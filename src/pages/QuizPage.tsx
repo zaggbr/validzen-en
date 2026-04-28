@@ -103,8 +103,8 @@ const QuizPage = () => {
         <main className="flex flex-1 flex-col items-center justify-center py-8">
           <div className="text-center">
             <span className="text-6xl">🧭</span>
-            <h1 className="mt-6 text-3xl font-black">Journey Not Found</h1>
-            <Link to="/dashboard" className="mt-4 inline-block text-xs font-black uppercase tracking-widest text-secondary hover:underline">
+            <h1 className="mt-6 text-3xl font-bold">Journey Not Found</h1>
+            <Link to="/dashboard" className="mt-4 inline-block text-xs font-bold uppercase tracking-widest text-secondary hover:underline">
               Return to Dashboard
             </Link>
           </div>
@@ -132,7 +132,7 @@ const QuizPage = () => {
         {phase === "intro" && (
           <Link
             to="/quizzes"
-            className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
+            className="mb-10 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Journeys
           </Link>
@@ -147,7 +147,7 @@ const QuizPage = () => {
               <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary text-white shadow-lg shadow-secondary/20">
                 <Crown className="h-8 w-8" />
               </div>
-              <h2 className="mb-3 text-3xl font-black text-title tracking-tight">
+              <h2 className="mb-3 text-3xl font-bold text-title tracking-tight">
                 Unlock Full Access
               </h2>
               <p className="mb-10 text-md text-muted-foreground leading-relaxed">
@@ -156,7 +156,7 @@ const QuizPage = () => {
                   : "You've reached your free discovery limit. Subscribe to PRO for unlimited clinical-grade self-mastery journeys."}
               </p>
               <div className="flex flex-col gap-4 w-full">
-                <Button variant="hero" size="lg" className="py-8 text-xl font-black uppercase tracking-widest rounded-full shadow-2xl shadow-secondary/20" asChild>
+                <Button variant="hero" size="lg" className="py-8 text-xl font-bold uppercase tracking-widest rounded-full shadow-2xl shadow-secondary/20" asChild>
                   <Link to="/pro">Upgrade to PRO</Link>
                 </Button>
               </div>
@@ -170,17 +170,17 @@ const QuizPage = () => {
               <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
                 <UserPlus className="h-8 w-8" />
               </div>
-              <h2 className="mb-3 text-3xl font-black text-title tracking-tight">
+              <h2 className="mb-3 text-3xl font-bold text-title tracking-tight">
                 Begin Your Journey
               </h2>
               <p className="mb-10 text-md text-muted-foreground leading-relaxed">
                 To embark on our self-mastery journeys and preserve your blueprints, we invite you to create a free account.
               </p>
               <div className="flex flex-col gap-4 w-full">
-                <Button variant="hero" size="lg" className="py-8 text-xl font-black uppercase tracking-widest rounded-full shadow-2xl shadow-primary/10" asChild>
+                <Button variant="hero" size="lg" className="py-8 text-xl font-bold uppercase tracking-widest rounded-full shadow-2xl shadow-primary/10" asChild>
                   <Link to="/login">Join ValidZen for Free</Link>
                 </Button>
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">
                    Free members explore up to 3 core journeys.
                 </p>
               </div>

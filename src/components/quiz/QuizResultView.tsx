@@ -61,7 +61,7 @@ const QuizResultView = ({ result, onRetry }: Props) => {
                   <span className="text-xl">{emoji}</span>
                   {name}
                 </span>
-                <span className={cn("text-xs font-black uppercase tracking-wider", color)}>
+                <span className={cn("text-xs font-bold uppercase tracking-wider", color)}>
                   {score}% — {label}
                 </span>
               </div>

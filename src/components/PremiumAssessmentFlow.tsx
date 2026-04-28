@@ -122,16 +122,16 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary shadow-lg shadow-secondary/20">
              <Crown className="h-8 w-8 text-white" />
           </div>
-          <h3 className="mb-3 text-2xl font-black text-title tracking-tight">Reveal My Insight Blueprint</h3>
+          <h3 className="mb-3 text-2xl font-bold text-title tracking-tight">Reveal My Insight Blueprint</h3>
           <p className="mb-10 text-md text-muted-foreground leading-relaxed text-balance">
             This is a deep-pattern discovery journey. To reveal your detailed psychological profile and tailored self-mastery path, please upgrade to PRO.
           </p>
           <div className="flex flex-col gap-4">
-            <Button asChild variant="hero" className="rounded-full py-8 text-lg font-black uppercase tracking-widest shadow-2xl shadow-secondary/20">
+            <Button asChild variant="hero" className="rounded-full py-8 text-lg font-bold uppercase tracking-widest shadow-2xl shadow-secondary/20">
               <Link to="/pro">Upgrade to PRO</Link>
             </Button>
             {!user && (
-              <Button asChild variant="outline" className="rounded-full py-6 font-black uppercase tracking-widest text-[10px] border-border hover:bg-secondary/5">
+              <Button asChild variant="outline" className="rounded-full py-6 font-bold uppercase tracking-widest text-[10px] border-border hover:bg-secondary/5">
                 <Link to="/login">Sign In to Continue</Link>
               </Button>
             )}
@@ -160,8 +160,8 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-secondary/10 shadow-lg shadow-secondary/5">
             <CheckCircle2 className="h-10 w-10 text-secondary" />
           </div>
-          <h3 className="text-3xl font-black text-title tracking-tight">{result.profile_name}</h3>
-          <p className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-70">
+          <h3 className="text-3xl font-bold text-title tracking-tight">{result.profile_name}</h3>
+          <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-70">
             Your Dominant Discovery Pattern
           </p>
         </div>
@@ -173,7 +173,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
             const isTop = pattern === result.dominant_pattern;
             return (
               <div key={pattern} className="group">
-                <div className="mb-2 flex justify-between text-[10px] font-black uppercase tracking-widest">
+                <div className="mb-2 flex justify-between text-[10px] font-bold uppercase tracking-widest">
                   <span className={cn("transition-colors", isTop ? "text-secondary" : "text-muted-foreground")}>{label}</span>
                   <span className="text-foreground/40">{score}% Match</span>
                 </div>
@@ -193,7 +193,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
         </div>
 
         <div className="text-center pt-6">
-          <Button variant="hero" size="lg" onClick={onComplete} className="rounded-full px-10 py-8 text-lg font-black uppercase tracking-widest shadow-2xl shadow-secondary/20">
+          <Button variant="hero" size="lg" onClick={onComplete} className="rounded-full px-10 py-8 text-lg font-bold uppercase tracking-widest shadow-2xl shadow-secondary/20">
             Return to Blueprint
             <ArrowRight className="ml-3 h-6 w-6" />
           </Button>
@@ -210,7 +210,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
   return (
     <div className="space-y-10 p-4">
       <div>
-        <div className="mb-3 flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="mb-3 flex justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
           <span>
             Discovery {idx + 1} of {questions.length}
           </span>
@@ -230,16 +230,16 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           {q.section && (
-            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-secondary">{q.section}</p>
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.3em] text-secondary">{q.section}</p>
           )}
-          <p className="mb-8 text-2xl font-black text-title tracking-tight leading-snug">{questionText}</p>
+          <p className="mb-8 text-2xl font-bold text-title tracking-tight leading-snug">{questionText}</p>
           <div className="flex flex-col gap-3">
             {options.map((opt, optIdx) => (
               <button
                 key={optIdx}
                 onClick={() => handleSelect(optIdx)}
                 className={cn(
-                  "rounded-2xl border-2 px-6 py-5 text-left text-md font-black transition-all duration-200",
+                  "rounded-2xl border-2 px-6 py-5 text-left text-md font-bold transition-all duration-200",
                   answers[q.id] === optIdx
                     ? "border-secondary bg-secondary/5 text-title shadow-sm"
                     : "border-border bg-card text-foreground hover:border-secondary/20"
@@ -253,7 +253,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
       </AnimatePresence>
 
       <div className="flex items-center justify-between border-t border-border pt-8">
-        <Button variant="ghost" size="sm" onClick={handleBack} disabled={idx === 0} className="font-black uppercase tracking-[0.2em] text-[10px] text-muted-foreground hover:text-secondary">
+        <Button variant="ghost" size="sm" onClick={handleBack} disabled={idx === 0} className="font-bold uppercase tracking-[0.2em] text-[10px] text-muted-foreground hover:text-secondary">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Previous
         </Button>
@@ -262,7 +262,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
           disabled={answers[q.id] == null}
           variant="hero"
           size="default"
-          className="rounded-full px-8 py-6 font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-secondary/10"
+          className="rounded-full px-8 py-6 font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-secondary/10"
         >
           {idx === questions.length - 1 ? "Reveal Blueprint" : "Next Discovery"}
           <ArrowRight className="ml-2 h-4 w-4" />
