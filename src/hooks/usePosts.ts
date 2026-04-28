@@ -35,7 +35,7 @@ export function usePosts(categorySlug?: string, layer?: number) {
       console.log("[usePosts] result:", { count: data?.length ?? 0, error: error?.message });
 
       if (error) {
-        toast({ title: "Erro ao carregar posts", description: error.message, variant: "destructive" });
+        toast({ title: "Error loading content", description: error.message, variant: "destructive" });
         throw error;
       }
       return (data || []).map(mapRow);
@@ -57,7 +57,7 @@ export function usePostBySlug(slug: string | undefined) {
         .maybeSingle();
 
       if (error) {
-        toast({ title: "Erro ao carregar post", description: error.message, variant: "destructive" });
+        toast({ title: "Error loading article", description: error.message, variant: "destructive" });
         throw error;
       }
       return data ? mapRow(data) : null;

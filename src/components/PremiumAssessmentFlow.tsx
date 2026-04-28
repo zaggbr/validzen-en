@@ -28,7 +28,7 @@ const slideVariants = {
 
 const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessmentFlowProps) => {
   const { user, isPremium } = useAuth();
-  const { data: questions = [], isLoading } = usePremiumAssessmentQuestions(assessmentSlug, "en");
+  const { data: questions = [], isLoading } = usePremiumAssessmentQuestions(assessmentSlug);
   const submitResult = useSubmitPremiumResult();
 
   const [idx, setIdx] = useState(0);
@@ -72,7 +72,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
       setDir(1);
       setIdx((i) => i + 1);
     } else {
-      const res = calculatePatternScores(questions, answers, "en");
+      const res = calculatePatternScores(questions, answers);
       setResult(res);
 
       try {

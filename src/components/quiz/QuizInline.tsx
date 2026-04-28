@@ -30,7 +30,7 @@ const slideVariants = {
 
 const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
   const { user, isPremium, incrementQuizCompletion } = useAuth();
-  const { data: questions = [], isLoading } = useQuizQuestions(quizSlug, "en");
+  const { data: questions = [], isLoading } = useQuizQuestions(quizSlug);
   const { data: dimensions = [] } = useDimensions();
   const { data: results = [] } = useUserResults();
   const submitResult = useSubmitQuizResult();

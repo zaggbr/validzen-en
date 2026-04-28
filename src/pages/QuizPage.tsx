@@ -24,8 +24,8 @@ const QuizPage = () => {
   const showLoginGate = !user;
   const showUpgradeGate = !!user && !isPremium && (isGlobal || userUsage.quizzesDone >= 3);
 
-  const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug, "en");
-  const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug, "en");
+  const { data: quiz, isLoading: quizLoading } = useQuizBySlug(slug);
+  const { data: questions = [], isLoading: questionsLoading } = useQuizQuestions(slug);
   const submitResult = useSubmitQuizResult();
 
   const [phase, setPhase] = useState<Phase>("intro");

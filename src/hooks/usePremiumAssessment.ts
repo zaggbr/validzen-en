@@ -11,11 +11,16 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { getOrCreateSessionId } from "@/lib/anonymousSession";
 
-function mapQuestion(row: any, locale: string): PremiumAssessmentQuestion {
+function mapQuestion(row: any): PremiumAssessmentQuestion {
   return {
     ...row,
-    options_pt: Array.isArray(row.options_pt) ? row.options_pt : [],
+    // Always use _en columns — this is an English-only product
+    question_text: row.question_text_en || row.question_text_pt || "",
+    options: Array.isArray(row.options_en) && row.options_en.length > 0
+      ? row.options_en
+      : (Array.isArray(row.options_pt) ? row.options_pt : []),
     options_en: Array.isArray(row.options_en) ? row.options_en : [],
+    options_pt: Array.isArray(row.options_pt) ? row.options_pt : [],
   } as PremiumAssessmentQuestion;
 }
 
@@ -70,11 +75,10 @@ export function usePremiumAssessmentBySlug(slug: string | undefined) {
 
 /** Fetch questions for a premium assessment */
 export function usePremiumAssessmentQuestions(
-  assessmentSlug: string | undefined,
-  locale: string = "en"
+  assessmentSlug: string | undefined
 ) {
   return useQuery({
-    queryKey: ["premium-assessment-questions", assessmentSlug, locale],
+    queryKey: ["premium-assessment-questions", assessmentSlug],
     queryFn: async (): Promise<PremiumAssessmentQuestion[]> => {
       if (!assessmentSlug) return [];
       const { data, error } = await supabase
@@ -84,7 +88,7 @@ export function usePremiumAssessmentQuestions(
         .order("order_num", { ascending: true });
 
       if (error) throw error;
-      return ((data as any[]) || []).map((r) => mapQuestion(r, locale));
+      return ((data as any[]) || []).map((r) => mapQuestion(r));
     },
     enabled: !!assessmentSlug,
   });
@@ -93,8 +97,7 @@ export function usePremiumAssessmentQuestions(
 /** Calculate pattern scores from answers (narrative 4-option style) */
 export function calculatePatternScores(
   questions: PremiumAssessmentQuestion[],
-  answers: Record<string, number>,
-  locale: string = "en"
+  answers: Record<string, number>
 ): {
   scores: Record<string, number>;
   dominant_pattern: string;
@@ -135,7 +138,7 @@ export function calculatePatternScores(
   const overall_score = scores[dominant_pattern] || 0;
   const profile_slug = dominant_pattern;
   const profile = PATTERN_PROFILES[dominant_pattern];
-  const profile_name = profile ? (locale === "en" ? profile.en : profile.pt) : dominant_pattern;
+  const profile_name = profile ? profile.en : dominant_pattern;
 
   return { scores, dominant_pattern, secondary_pattern, profile_name, profile_slug, overall_score };
 }
