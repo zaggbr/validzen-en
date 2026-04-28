@@ -3,32 +3,41 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Quiz, QuizQuestion, QuizOption } from "@/types/database";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { getOrCreateSessionId } from "@/lib/anonymousSession";
+import { getOrCreateSessionId, getSessionId } from "@/lib/anonymousSession";
+
+// ─── Mappers (always English-first, _pt as safety fallback) ──────────────────
 
 function mapQuizRow(row: any): Quiz {
   return {
     ...row,
-    title: row.title_en || row.title,
-    description: row.description_en || row.description,
+    // quizzes table has title_en, title_pt AND a plain 'title' column
+    title: row.title_en || row.title_pt || row.title || "",
+    description: row.description_en || row.description_pt || row.description || "",
     is_active: row.is_active ?? true,
   } as Quiz;
 }
 
 function mapQuestionRow(row: any): QuizQuestion {
-  // Always prefer _en columns; fall back to generic column
-  const options =
-    Array.isArray(row.options_en) && row.options_en.length > 0
-      ? row.options_en
-      : row.options ?? [];
+  // quiz_questions has: question_text (plain), question_text_en, question_text_pt
+  const questionText =
+    row.question_text_en || row.question_text_pt || row.question_text || "";
 
-  const questionText = row.question_text_en || row.question_text || "";
+  // quiz_questions has: options (plain), options_en, options_pt
+  const options =
+    (Array.isArray(row.options_en) && row.options_en.length > 0)
+      ? row.options_en
+      : (Array.isArray(row.options_pt) && row.options_pt.length > 0)
+        ? row.options_pt
+        : (Array.isArray(row.options) ? row.options : []);
 
   return {
     ...row,
     question_text: questionText,
-    options: Array.isArray(options) ? (options as QuizOption[]) : [],
+    options: options as QuizOption[],
   } as QuizQuestion;
 }
+
+// ─── Hooks ───────────────────────────────────────────────────────────────────
 
 export function useQuizBySlug(slug: string | undefined) {
   const { toast } = useToast();
@@ -37,16 +46,24 @@ export function useQuizBySlug(slug: string | undefined) {
     queryKey: ["quiz", slug],
     queryFn: async (): Promise<Quiz | null> => {
       if (!slug) return null;
-      const { data, error } = await supabase
+      console.log("[useQuizBySlug] fetching slug:", slug);
+
+      // NOTE: NOT filtering by is_active to diagnose data availability
+      const { data, error, status } = await supabase
         .from("quizzes")
         .select("*")
         .eq("slug", slug)
         .maybeSingle();
 
       if (error) {
-        toast({ title: "Error loading journey", description: error.message, variant: "destructive" });
+        console.error("[useQuizBySlug] Supabase error:", {
+          code: error.code, message: error.message,
+          details: error.details, hint: error.hint, httpStatus: status,
+        });
+        toast({ title: "Error loading journey", description: `[${status}] ${error.message}`, variant: "destructive" });
         throw error;
       }
+      console.log("[useQuizBySlug] result:", data ? { slug: data.slug, title: data.title, title_en: data.title_en } : "NOT FOUND");
       return data ? mapQuizRow(data) : null;
     },
     enabled: !!slug,
@@ -60,21 +77,30 @@ export function useQuizQuestions(quizSlug: string | undefined) {
     queryKey: ["quiz-questions", quizSlug],
     queryFn: async (): Promise<QuizQuestion[]> => {
       if (!quizSlug) return [];
-      const { data, error } = await supabase
+      console.log("[useQuizQuestions] fetching for quiz_slug:", quizSlug);
+
+      const { data, error, status } = await supabase
         .from("quiz_questions")
         .select("*")
         .eq("quiz_slug", quizSlug)
         .order("order_num", { ascending: true });
 
       if (error) {
-        toast({ title: "Error loading discovery steps", description: error.message, variant: "destructive" });
+        console.error("[useQuizQuestions] Supabase error:", {
+          code: error.code, message: error.message,
+          details: error.details, hint: error.hint, httpStatus: status,
+        });
+        toast({ title: "Error loading discovery steps", description: `[${status}] ${error.message}`, variant: "destructive" });
         throw error;
       }
+      console.log("[useQuizQuestions] count:", data?.length ?? 0, "first sample:", data?.[0] ?? "NONE");
       return (data || []).map((r) => mapQuestionRow(r));
     },
     enabled: !!quizSlug,
   });
 }
+
+// ─── Score Calculation ────────────────────────────────────────────────────────
 
 export function calculateScores(
   questions: QuizQuestion[],
@@ -102,6 +128,8 @@ export function calculateScores(
   return scores;
 }
 
+// ─── Mutations ───────────────────────────────────────────────────────────────
+
 export function useSubmitQuizResult() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -121,7 +149,6 @@ export function useSubmitQuizResult() {
         : 0;
       const severity = overall <= 33 ? "mild" : overall <= 66 ? "moderate" : "intense";
 
-      // Get top 3 dimensions
       const topDimensions = Object.entries(scores)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 3)
@@ -151,11 +178,11 @@ export function useSubmitQuizResult() {
         .single();
 
       if (error) {
+        console.error("[useSubmitQuizResult] error:", error);
         toast({ title: "Error saving discovery", description: error.message, variant: "destructive" });
         throw error;
       }
 
-      // Backup to localStorage
       try {
         const existing = JSON.parse(localStorage.getItem("validzen_quiz_results") || "[]");
         existing.push({ id: data.id, quizId: quizSlug, completedAt: insertData.completed_at, answers, scores });
@@ -181,7 +208,6 @@ export function useResetQuizMap() {
     mutationFn: async () => {
       if (!user) throw new Error("User not authenticated");
 
-      // Delete results from both tables
       const deleteResults = supabase
         .from("quiz_results")
         .delete()
@@ -197,9 +223,7 @@ export function useResetQuizMap() {
       if (res1.error) throw res1.error;
       if (res2.error) throw res2.error;
 
-      // Limpar localStorage
       localStorage.removeItem("validzen_quiz_results");
-
       return true;
     },
     onSuccess: () => {
@@ -207,8 +231,8 @@ export function useResetQuizMap() {
       queryClient.invalidateQueries({ queryKey: ["user-quizzes"] });
       queryClient.invalidateQueries({ queryKey: ["latest-result"] });
       queryClient.invalidateQueries({ queryKey: ["premium-results"] });
-      toast({ 
-        title: "Blueprint Reset", 
+      toast({
+        title: "Blueprint Reset",
         description: "All journey progress has been cleared successfully.",
       });
     },
@@ -223,7 +247,7 @@ export function useDeleteQuizResult() {
   return useMutation({
     mutationFn: async (quizSlug: string) => {
       let query = supabase.from("quiz_results").delete().eq("quiz_slug", quizSlug);
-      
+
       if (user) {
         query = query.eq("user_id", user.id);
       } else {
@@ -234,33 +258,26 @@ export function useDeleteQuizResult() {
       const { error } = await query;
 
       if (error) {
+        console.error("[useDeleteQuizResult] error:", error);
         toast({ title: "Error removing journey", description: error.message, variant: "destructive" });
         throw error;
       }
       return quizSlug;
     },
     onMutate: async (quizSlug: string) => {
-      // Cancel any in-flight re-fetches
       await queryClient.cancelQueries({ queryKey: ["user-results"] });
-
-      // Snapshot current data for rollback
       const previousResults = queryClient.getQueryData(["user-results", user?.id]);
-
-      // Optimistically remove from cache immediately
       queryClient.setQueryData(["user-results", user?.id], (old: any) =>
         Array.isArray(old) ? old.filter((r: any) => r.quiz_slug !== quizSlug) : old
       );
-
       return { previousResults };
     },
     onError: (_err, _quizSlug, context) => {
-      // Rollback on error
       if (context?.previousResults !== undefined) {
         queryClient.setQueryData(["user-results", user?.id], context.previousResults);
       }
     },
     onSettled: () => {
-      // Always re-sync with server
       queryClient.invalidateQueries({ queryKey: ["user-results"] });
       queryClient.invalidateQueries({ queryKey: ["user-quizzes"] });
       queryClient.invalidateQueries({ queryKey: ["latest-result"] });
