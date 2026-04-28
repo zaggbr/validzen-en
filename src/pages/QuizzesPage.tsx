@@ -117,8 +117,9 @@ const QuizzesPage = () => {
             unified.push({
               id: q.id,
               slug: q.slug,
-              title: REFINED_TITLES[q.slug] || q.title_en || q.title,
-              description: q.description_en || q.description,
+              // quizzes table: only title_en / title_pt (no plain title)
+              title: REFINED_TITLES[q.slug] || q.title_en || q.title_pt || "",
+              description: q.description_en || q.description_pt || "",
               estimated_time: q.estimated_time || 1,
               is_premium: false,
               type: "simple",
