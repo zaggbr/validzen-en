@@ -15,7 +15,7 @@ const HeroSection = () => {
           transition={{ duration: 0.5 }}
           className="mb-6"
         >
-          <span className="text-4xl font-semibold tracking-tight text-title md:text-7xl">
+          <span className="text-4xl font-bold tracking-tight text-title md:text-7xl">
             valid<span className="text-secondary">zen</span>.
           </span>
         </motion.div>

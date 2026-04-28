@@ -33,7 +33,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-1">
-          <span className="text-xl font-semibold tracking-tight text-title">
+          <span className="text-xl font-bold tracking-tight text-title">
             valid<span className="text-secondary">zen</span>.
           </span>
         </Link>
