@@ -143,10 +143,10 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
         <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
           <span className="text-5xl">🧪</span>
           <div className="flex-1">
-            <h3 className="text-xl font-black text-title italic tracking-tight">
+            <h3 className="text-xl font-black text-title tracking-tight">
               {title ?? `What is your ${quizSlug} level?`}
             </h3>
-            {subtitle && <p className="mt-2 text-md text-muted-foreground italic leading-relaxed">{subtitle}</p>}
+            {subtitle && <p className="mt-2 text-md text-muted-foreground leading-relaxed">{subtitle}</p>}
             <div className="mt-4 flex gap-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">
               <span className="flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5 text-secondary" />
@@ -191,7 +191,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
 
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div key={q.id} custom={dir} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }}>
-            <p className="mb-10 text-center text-lg font-black text-title md:text-2xl italic leading-relaxed">
+            <p className="mb-10 text-center text-lg font-black text-title md:text-2xl leading-relaxed">
               {q.question_text}
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -200,7 +200,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
                   key={opt.value}
                   onClick={() => handleSelect(opt.value)}
                   className={cn(
-                    "flex-1 rounded-xl border-2 px-4 py-4 text-sm font-black italic transition-all duration-200 uppercase tracking-widest",
+                    "flex-1 rounded-xl border-2 px-4 py-4 text-sm font-black transition-all duration-200 uppercase tracking-widest",
                     answers[q.id] === opt.value
                       ? "border-secondary bg-secondary text-white shadow-xl shadow-secondary/20"
                       : "border-border bg-card text-foreground hover:border-secondary/30"
@@ -235,7 +235,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
       animate={{ opacity: 1, y: 0 }}
       className="my-10 overflow-hidden rounded-[2rem] border border-secondary/20 bg-gradient-to-br from-secondary/5 to-background p-8 md:p-12 shadow-2xl shadow-secondary/5"
     >
-      <h3 className="mb-8 text-center text-2xl font-black text-title italic tracking-tight">
+      <h3 className="mb-8 text-center text-2xl font-black text-title tracking-tight">
         🗺️ Your Core Blueprint
       </h3>
 
@@ -251,7 +251,7 @@ const QuizInline = ({ quizSlug, title, subtitle }: QuizInlineProps) => {
               </div>
               <div className="p-6 text-center">
                 <span className="text-3xl">{item.emoji}</span>
-                <h4 className="mt-2 text-md font-black text-title italic">{item.label}</h4>
+                <h4 className="mt-2 text-md font-black text-title">{item.label}</h4>
                 <div className="mt-2 flex items-baseline justify-center gap-1.5">
                   <span className="text-3xl font-black text-foreground">{item.score}%</span>
                 </div>

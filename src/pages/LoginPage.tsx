@@ -86,10 +86,10 @@ const LoginPage = () => {
           <Link to="/dashboard" className="mb-10 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-secondary transition-colors">
             <ArrowLeft className="h-4 w-4" /> Dashboard
           </Link>
-          <h1 className="mb-2 text-3xl font-black text-title italic">
+          <h1 className="mb-2 text-3xl font-black text-title">
             valid<span className="text-secondary">zen</span>.
           </h1>
-          <p className="mb-10 text-sm text-muted-foreground italic">Your journey to emotional self-mastery starts here.</p>
+          <p className="mb-10 text-sm text-muted-foreground">Your journey to emotional self-mastery starts here.</p>
 
           <Button variant="outline" className="mb-8 w-full gap-3 py-6 rounded-xl border-border/50 hover:bg-secondary/5 transition-all font-bold" onClick={handleGoogleLogin}>
             <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -158,11 +158,11 @@ const LoginPage = () => {
       <div className="hidden flex-1 flex-col items-center justify-center bg-primary p-16 lg:flex relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-secondary/20" />
         <div className="relative z-10 max-w-md">
-          <h2 className="mb-3 text-4xl font-black text-primary-foreground italic tracking-tight">Your Internal Agency</h2>
-          <p className="mb-10 text-md text-primary-foreground/80 leading-relaxed italic">We’ve gathered thousands of seekers to map their unique patterns and find clarity in a complex world.</p>
+          <h2 className="mb-3 text-4xl font-black text-primary-foreground tracking-tight">Your Internal Agency</h2>
+          <p className="mb-10 text-md text-primary-foreground/80 leading-relaxed">We’ve gathered thousands of seekers to map their unique patterns and find clarity in a complex world.</p>
           <ul className="space-y-6">
             {benefits.map((b) => (
-              <li key={b} className="flex items-start gap-4 text-sm text-primary-foreground font-bold italic">
+              <li key={b} className="flex items-start gap-4 text-sm text-primary-foreground font-bold">
                 <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-secondary/20">
                   <Check className="h-3 w-3 text-secondary" />
                 </div>
@@ -171,7 +171,7 @@ const LoginPage = () => {
             ))}
           </ul>
           <div className="mt-12 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm shadow-2xl">
-            <p className="text-md italic text-white/70 leading-relaxed">"ValidZen helped me understand patterns I've been carrying for years. It's more than a journey, it's a mirror for the soul."</p>
+            <p className="text-md text-white/70 leading-relaxed">"ValidZen helped me understand patterns I've been carrying for years. It's more than a journey, it's a mirror for the soul."</p>
             <p className="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/90">— Sarah J., Member since 2023</p>
           </div>
         </div>

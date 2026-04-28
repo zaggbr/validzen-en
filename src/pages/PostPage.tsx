@@ -76,7 +76,7 @@ const PostPage = () => {
         <main className="flex flex-1 items-center justify-center">
           <div className="text-center">
             <span className="text-6xl">📄</span>
-            <h1 className="mt-6 text-3xl font-black italic">Insight Territory Not Found</h1>
+            <h1 className="mt-6 text-3xl font-black">Insight Territory Not Found</h1>
             <Link to="/dashboard" className="mt-4 inline-block text-xs font-black uppercase tracking-widest text-secondary hover:underline">
               Return to Blueprint
             </Link>
@@ -125,7 +125,7 @@ const PostPage = () => {
           <nav className="mb-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground" aria-label="Breadcrumb">
             <Link to="/" className="hover:text-secondary transition-colors">Home</Link>
             <ChevronRight className="h-3 w-3 opacity-30" />
-            <Link to={`/category/${post.category}`} className="hover:text-secondary transition-colors text-secondary italic">
+            <Link to={`/category/${post.category}`} className="hover:text-secondary transition-colors text-secondary">
               {post.category}
             </Link>
             <ChevronRight className="h-3 w-3 opacity-30" />
@@ -135,24 +135,24 @@ const PostPage = () => {
           <header className="mb-12 max-w-4xl">
             <div className="mb-6 flex flex-wrap gap-2">
               {post.tags.map((tag) => (
-                <span key={tag} className="rounded-full bg-secondary/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-secondary italic">
+                <span key={tag} className="rounded-full bg-secondary/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-secondary">
                   {tag}
                 </span>
               ))}
             </div>
-            <h1 className="text-3xl font-black leading-tight md:text-5xl italic tracking-tight text-title">{post.title}</h1>
+            <h1 className="text-3xl font-black leading-tight md:text-5xl tracking-tight text-title">{post.title}</h1>
             <div className="mt-6 flex flex-wrap items-center gap-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">
               <span className="italic">By {post.author_name || "ValidZen Intelligence"}</span>
-              <span className="flex items-center gap-1.5 italic">
+              <span className="flex items-center gap-1.5">
                 <Calendar className="h-3.5 w-3.5" />
                 Updated {post.updated_at ? new Date(post.updated_at).toLocaleDateString("en-US", { month: 'long', day: 'numeric', year: 'numeric' }) : ""}
               </span>
-              <span className="flex items-center gap-1.5 italic">
+              <span className="flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5" />
                 {(post.reading_time || 5)} Min Journey
               </span>
               {post.is_premium && (
-                <span className="flex items-center gap-1 text-secondary italic">
+                <span className="flex items-center gap-1 text-secondary">
                   <Crown className="h-3.5 w-3.5" /> PRO BLUEPRINT
                 </span>
               )}
@@ -163,7 +163,7 @@ const PostPage = () => {
           </header>
 
           <div className="mb-12 max-w-4xl rounded-[2rem] border border-secondary/20 bg-secondary/5 p-8 md:p-10 shadow-sm">
-            <p className="text-lg leading-relaxed text-title italic font-medium">{post.excerpt}</p>
+            <p className="text-lg leading-relaxed text-title font-medium">{post.excerpt}</p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-16">
@@ -189,7 +189,7 @@ const PostPage = () => {
                   <div key={section.id}>
                     <section id={section.id} className="mb-12 scroll-mt-24">
                       {section.heading && (
-                        <h2 className="mb-6 text-2xl font-black text-title italic md:text-3xl tracking-tight">{section.heading}</h2>
+                        <h2 className="mb-6 text-2xl font-black text-title md:text-3xl tracking-tight">{section.heading}</h2>
                       )}
                       {isMarkdown ? (
                         <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground">
@@ -227,7 +227,7 @@ const PostPage = () => {
 
               {post.video_url && (
                 <section className="my-16 border-t border-border pt-12">
-                  <h2 className="mb-6 text-2xl font-black text-title italic">Guided Self-Mastery Video</h2>
+                  <h2 className="mb-6 text-2xl font-black text-title">Guided Self-Mastery Video</h2>
                   <div className="aspect-video overflow-hidden rounded-[2rem] border border-border shadow-2xl">
                     <iframe
                       src={post.video_url}
@@ -248,7 +248,7 @@ const PostPage = () => {
 
               {related.length > 0 && (
                 <section className="my-16 border-t border-border pt-12">
-                  <h2 className="mb-10 text-2xl font-black text-title italic tracking-tight">Deepen Your Discovery</h2>
+                  <h2 className="mb-10 text-2xl font-black text-title tracking-tight">Deepen Your Discovery</h2>
                   <div className="grid gap-8 sm:grid-cols-2">
                     {related.slice(0, 2).map((rp) => (
                       <PostCard
@@ -288,10 +288,10 @@ const PostPage = () => {
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
                 <Lock className="h-8 w-8" />
               </div>
-              <h2 className="text-3xl font-black text-title italic mb-4 tracking-tight">
+              <h2 className="text-3xl font-black text-title mb-4 tracking-tight">
                 Expand Your Internal Agency
               </h2>
-              <p className="text-muted-foreground mb-10 text-md italic leading-relaxed">
+              <p className="text-muted-foreground mb-10 text-md leading-relaxed">
                 {post.is_premium 
                   ? "This deep blueprint is exclusive to PRO seekers. Subscribe to unlock clinical-grade insights and advanced self-mastery journeys."
                   : "You've reached your free insight limit for today. Create a free account to continue your journey or upgrade for unlimited mastery."}

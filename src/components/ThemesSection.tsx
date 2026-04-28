@@ -34,10 +34,10 @@ const ThemesSection = () => {
           viewport={{ once: true }}
           className="mb-16 text-center"
         >
-          <h2 className="mb-4 text-4xl font-black text-title italic tracking-tight md:text-5xl">
+          <h2 className="mb-3 text-3xl font-black text-title tracking-tight md:text-4xl">
             Discovery Territories
           </h2>
-          <p className="mx-auto max-w-lg text-lg text-muted-foreground italic leading-relaxed">
+          <p className="mx-auto max-w-lg text-base text-muted-foreground leading-relaxed">
             Dive deep into specific areas of self-mastery and guided emotional discovery.
           </p>
         </motion.div>

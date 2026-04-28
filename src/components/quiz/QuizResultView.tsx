@@ -37,7 +37,7 @@ const QuizResultView = ({ result, onRetry }: Props) => {
         <h1 className="mb-2 text-3xl font-bold text-title">
           Your Emotional Map
         </h1>
-        <p className="text-sm text-muted-foreground italic">
+        <p className="text-sm text-muted-foreground">
           Here are your results across the psychological dimensions we analyzed.
         </p>
       </div>

@@ -122,8 +122,8 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary shadow-lg shadow-secondary/20">
              <Crown className="h-8 w-8 text-white" />
           </div>
-          <h3 className="mb-3 text-2xl font-black text-title italic tracking-tight">Reveal My Insight Blueprint</h3>
-          <p className="mb-10 text-md text-muted-foreground italic leading-relaxed text-balance">
+          <h3 className="mb-3 text-2xl font-black text-title tracking-tight">Reveal My Insight Blueprint</h3>
+          <p className="mb-10 text-md text-muted-foreground leading-relaxed text-balance">
             This is a deep-pattern discovery journey. To reveal your detailed psychological profile and tailored self-mastery path, please upgrade to PRO.
           </p>
           <div className="flex flex-col gap-4">
@@ -144,7 +144,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
   if (questions.length === 0) {
     return (
       <div className="p-8 text-center bg-muted/20 rounded-2xl border border-dashed border-border">
-         <p className="text-md italic text-muted-foreground">
+         <p className="text-md text-muted-foreground">
           No discovery questions available at the moment.
         </p>
       </div>
@@ -160,8 +160,8 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-secondary/10 shadow-lg shadow-secondary/5">
             <CheckCircle2 className="h-10 w-10 text-secondary" />
           </div>
-          <h3 className="text-3xl font-black text-title italic tracking-tight">{result.profile_name}</h3>
-          <p className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground italic opacity-70">
+          <h3 className="text-3xl font-black text-title tracking-tight">{result.profile_name}</h3>
+          <p className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-70">
             Your Dominant Discovery Pattern
           </p>
         </div>
@@ -210,7 +210,7 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
   return (
     <div className="space-y-10 p-4">
       <div>
-        <div className="mb-3 flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">
+        <div className="mb-3 flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
           <span>
             Discovery {idx + 1} of {questions.length}
           </span>
@@ -230,16 +230,16 @@ const PremiumAssessmentFlow = ({ assessmentSlug, onComplete }: PremiumAssessment
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           {q.section && (
-            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-secondary italic">{q.section}</p>
+            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-secondary">{q.section}</p>
           )}
-          <p className="mb-8 text-2xl font-black text-title italic tracking-tight leading-snug">{questionText}</p>
+          <p className="mb-8 text-2xl font-black text-title tracking-tight leading-snug">{questionText}</p>
           <div className="flex flex-col gap-3">
             {options.map((opt, optIdx) => (
               <button
                 key={optIdx}
                 onClick={() => handleSelect(optIdx)}
                 className={cn(
-                  "rounded-2xl border-2 px-6 py-5 text-left text-md font-black italic transition-all duration-200",
+                  "rounded-2xl border-2 px-6 py-5 text-left text-md font-black transition-all duration-200",
                   answers[q.id] === optIdx
                     ? "border-secondary bg-secondary/5 text-title shadow-sm"
                     : "border-border bg-card text-foreground hover:border-secondary/20"

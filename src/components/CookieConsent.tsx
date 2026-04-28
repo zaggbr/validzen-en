@@ -28,7 +28,7 @@ const CookieConsent = () => {
           className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl"
         >
           <div className="flex flex-col items-center justify-between gap-4 rounded-xl border border-border bg-background/80 p-4 shadow-lg backdrop-blur-md md:flex-row md:py-3">
-            <p className="text-center text-xs text-muted-foreground md:text-left italic">
+            <p className="text-center text-xs text-muted-foreground md:text-left">
               We use cookies to enhance your experience and analyze our traffic. We respect your privacy and never sell your data.
             </p>
             <Button 

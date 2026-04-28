@@ -36,8 +36,8 @@ const PopularPosts = () => {
           viewport={{ once: true }}
           className="mb-16"
         >
-          <h2 className="mb-4 text-4xl font-black text-title italic tracking-tight md:text-5xl">Trending Insights</h2>
-          <p className="text-lg text-muted-foreground italic max-w-2xl">
+          <h2 className="mb-4 text-3xl font-black text-title tracking-tight md:text-4xl">Trending Insights</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl">
             Explore our latest blueprints and guided reflections for a clearer mind.
           </p>
         </motion.div>

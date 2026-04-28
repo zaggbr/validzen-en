@@ -37,7 +37,7 @@ const TableOfContents = ({ sections }: TableOfContentsProps) => {
               <button
                 key={s.id}
                 onClick={() => scrollTo(s.id)}
-                className="text-left text-sm text-muted-foreground hover:text-secondary transition-colors italic"
+                className="text-left text-sm text-muted-foreground hover:text-secondary transition-colors"
               >
                 {s.heading}
               </button>
@@ -55,7 +55,7 @@ const TableOfContents = ({ sections }: TableOfContentsProps) => {
             <button
               key={s.id}
               onClick={() => scrollTo(s.id)}
-              className="text-left text-sm text-muted-foreground hover:text-secondary transition-colors italic"
+              className="text-left text-sm text-muted-foreground hover:text-secondary transition-colors"
             >
               {s.heading}
             </button>

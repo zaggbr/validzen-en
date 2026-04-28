@@ -103,7 +103,7 @@ const QuizPage = () => {
         <main className="flex flex-1 flex-col items-center justify-center py-8">
           <div className="text-center">
             <span className="text-6xl">🧭</span>
-            <h1 className="mt-6 text-3xl font-black italic">Journey Not Found</h1>
+            <h1 className="mt-6 text-3xl font-black">Journey Not Found</h1>
             <Link to="/dashboard" className="mt-4 inline-block text-xs font-black uppercase tracking-widest text-secondary hover:underline">
               Return to Dashboard
             </Link>
@@ -147,10 +147,10 @@ const QuizPage = () => {
               <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary text-white shadow-lg shadow-secondary/20">
                 <Crown className="h-8 w-8" />
               </div>
-              <h2 className="mb-3 text-3xl font-black text-title italic tracking-tight">
+              <h2 className="mb-3 text-3xl font-black text-title tracking-tight">
                 Unlock Full Access
               </h2>
-              <p className="mb-10 text-md text-muted-foreground italic leading-relaxed">
+              <p className="mb-10 text-md text-muted-foreground leading-relaxed">
                 {isGlobal 
                   ? "Your Core Blueprint is a premium insight. Upgrade to PRO to reveal your deep results and unlock all discovery journeys." 
                   : "You've reached your free discovery limit. Subscribe to PRO for unlimited clinical-grade self-mastery journeys."}
@@ -170,10 +170,10 @@ const QuizPage = () => {
               <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
                 <UserPlus className="h-8 w-8" />
               </div>
-              <h2 className="mb-3 text-3xl font-black text-title italic tracking-tight">
+              <h2 className="mb-3 text-3xl font-black text-title tracking-tight">
                 Begin Your Journey
               </h2>
-              <p className="mb-10 text-md text-muted-foreground italic leading-relaxed">
+              <p className="mb-10 text-md text-muted-foreground leading-relaxed">
                 To embark on our self-mastery journeys and preserve your blueprints, we invite you to create a free account.
               </p>
               <div className="flex flex-col gap-4 w-full">

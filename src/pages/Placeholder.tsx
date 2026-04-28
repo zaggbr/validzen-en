@@ -16,8 +16,8 @@ const Placeholder = () => {
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
           <Construction className="h-8 w-8" />
         </div>
-        <h1 className="mb-4 text-3xl font-black text-title italic tracking-tight">Expanding Discovery</h1>
-        <p className="mb-10 max-w-md text-md text-muted-foreground italic leading-relaxed">
+        <h1 className="mb-4 text-3xl font-black text-title tracking-tight">Expanding Discovery</h1>
+        <p className="mb-10 max-w-md text-md text-muted-foreground leading-relaxed">
           The territory <code className="rounded bg-muted/50 px-2 py-0.5 text-xs not-italic font-mono text-secondary">{pathname}</code> is currently being mapped by our curators. Return soon to explore new insights.
         </p>
         <Button asChild variant="hero" className="rounded-full px-8 py-7 font-black uppercase tracking-widest text-[10px] shadow-xl shadow-secondary/20">

@@ -7,10 +7,10 @@ const Footer = () => {
       <div className="container py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <span className="text-2xl font-black text-title italic tracking-tight">
+            <span className="text-2xl font-black text-title tracking-tight">
               valid<span className="text-secondary">zen</span>.
             </span>
-            <p className="mt-4 max-w-sm text-md text-muted-foreground italic leading-relaxed">Meaningful self-mastery for a clearer mind. We help you navigate your unique psychological patterns.</p>
+            <p className="mt-4 max-w-sm text-md text-muted-foreground leading-relaxed">Meaningful self-mastery for a clearer mind. We help you navigate your unique psychological patterns.</p>
             <p className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">The Meaning Crisis Project — Insights for the modern soul.</p>
             <div className="mt-6 flex gap-4">
               <a href="https://instagram.com/validzen" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/50 text-muted-foreground hover:bg-secondary hover:text-white transition-all">
@@ -22,20 +22,20 @@ const Footer = () => {
           <div className="flex flex-col gap-4">
             <span className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Discovery Map</span>
             <nav className="flex flex-col gap-3">
-              <Link to="/about" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors italic">Our Methodology</Link>
-              <Link to="/quizzes" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors italic">Core Journeys</Link>
-              <Link to="/pro" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors italic">ValidZen PRO</Link>
-              <a href="mailto:info@validzen.com" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors italic">Contact Support</a>
+              <Link to="/about" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Our Methodology</Link>
+              <Link to="/quizzes" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Core Journeys</Link>
+              <Link to="/pro" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">ValidZen PRO</Link>
+              <a href="mailto:info@validzen.com" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Contact Support</a>
             </nav>
           </div>
 
           <div className="flex flex-col gap-4">
             <span className="text-xs font-black uppercase tracking-[0.3em] text-foreground">Important</span>
             <nav className="flex flex-col gap-3">
-              <Link to="/terms" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors italic">Terms of Service</Link>
-              <Link to="/privacy" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors italic">Privacy Policy</Link>
+              <Link to="/terms" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Terms of Service</Link>
+              <Link to="/privacy" className="text-sm font-bold text-muted-foreground hover:text-secondary transition-colors">Privacy Policy</Link>
               <div className="mt-2 space-y-4">
-                 <p className="text-[10px] text-muted-foreground leading-relaxed italic opacity-70">Our blueprints are for educational discovery. They do not replace clinical diagnosis.</p>
+                 <p className="text-[10px] text-muted-foreground leading-relaxed opacity-70">Our blueprints are for educational discovery. They do not replace clinical diagnosis.</p>
                  <p className="text-[10px] font-black uppercase tracking-widest text-secondary leading-relaxed">In emergency, please contact your local crisis hotline.</p>
               </div>
             </nav>

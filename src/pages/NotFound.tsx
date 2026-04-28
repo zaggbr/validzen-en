@@ -19,8 +19,8 @@ const NotFound = () => {
       <Header />
       <main className="flex flex-1 flex-col items-center justify-center px-6 py-24 text-center">
         <span className="mb-6 text-7xl">🔮</span>
-        <h1 className="mb-4 text-5xl font-black text-title italic tracking-tight md:text-6xl">404</h1>
-        <p className="mb-10 max-w-md text-lg text-muted-foreground italic leading-relaxed">
+        <h1 className="mb-4 text-5xl font-black text-title tracking-tight md:text-6xl">404</h1>
+        <p className="mb-10 max-w-md text-lg text-muted-foreground leading-relaxed">
           This discovery path doesn't exist or has been archived. Let's return to your core blueprint and explore new territories.
         </p>
         <div className="flex gap-4">

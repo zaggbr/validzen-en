@@ -175,8 +175,8 @@ const DashboardPage = () => {
             <Link to="/quizzes" className="mb-8 inline-flex items-center gap-1.5 text-sm font-bold text-muted-foreground hover:text-secondary transition-colors uppercase tracking-widest">
               <ArrowLeft className="h-4 w-4" /> Back to Journeys
             </Link>
-            <h1 className="mt-4 mb-1 text-3xl font-black text-title md:text-5xl italic tracking-tight">Your Personal Blueprint</h1>
-            <p className="text-md text-muted-foreground italic">We’ve gathered your insights to help you track your psychological agency.</p>
+            <h1 className="mt-4 mb-1 text-3xl font-black text-title md:text-5xl tracking-tight">Your Personal Blueprint</h1>
+            <p className="text-md text-muted-foreground">We’ve gathered your insights to help you track your psychological agency.</p>
           </motion.div>
 
           {!isPremium && (
@@ -185,7 +185,7 @@ const DashboardPage = () => {
                 <Lock className="h-6 w-6" />
               </div>
               <div className="flex-1 text-center sm:text-left">
-                <p className="font-bold text-title text-lg italic">
+                <p className="font-bold text-title text-lg">
                   This is a demonstration of your Insight Blueprint
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -202,14 +202,14 @@ const DashboardPage = () => {
 
           {isPremium && (
             <div className="mb-16">
-              <h2 className="mb-8 text-2xl font-black text-title flex items-center gap-3 italic">
+              <h2 className="mb-8 text-2xl font-black text-title flex items-center gap-3">
                 <Crown className="h-7 w-7 text-secondary" /> 
                 Your Deep Patterns
               </h2>
               
               {!premiumResults || premiumResults.length === 0 ? (
                 <div className="rounded-3xl border border-secondary/20 bg-secondary/5 p-10 text-center max-w-2xl mx-auto shadow-inner">
-                  <h3 className="text-2xl font-black text-title mb-4 italic">
+                  <h3 className="text-2xl font-black text-title mb-4">
                     Deep Journey Pending
                   </h3>
                   <p className="text-muted-foreground mb-8 text-balance leading-relaxed">
@@ -256,10 +256,10 @@ const DashboardPage = () => {
                             Deep Pattern Analysis
                           </p>
 
-                          <h3 className="text-xl font-black text-title mb-3 italic">
+                          <h3 className="text-xl font-black text-title mb-3">
                             {p.interpretation?.profile_name || "Pattern Archetype"}
                           </h3>
-                          <p className="text-sm text-muted-foreground mb-6 line-clamp-3 italic leading-relaxed">
+                          <p className="text-sm text-muted-foreground mb-6 line-clamp-3 leading-relaxed">
                             {p.summary || "A comprehensive analysis of your character traits and psychological agency."}
                           </p>
                           
@@ -282,7 +282,7 @@ const DashboardPage = () => {
 
           <div className="mb-16">
             <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-3xl font-black text-title italic">Your Discovery Map</h2>
+              <h2 className="text-3xl font-black text-title">Your Discovery Map</h2>
               {isSimulacrum && (
                 <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/20 font-black uppercase text-[10px] tracking-[0.2em] px-4 py-1.5">
                   Simulation Mode
@@ -331,12 +331,12 @@ const DashboardPage = () => {
                             )}
                           </div>
                         </div>
-                        <h3 className="mb-2 text-xl font-black text-title italic">{item.label}</h3>
+                        <h3 className="mb-2 text-xl font-black text-title">{item.label}</h3>
                         <div className="mb-6 flex items-baseline gap-1.5">
                           <span className="text-4xl font-black text-foreground">{item.score}%</span>
                           <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">Intensity</span>
                         </div>
-                        <p className="text-sm leading-relaxed text-muted-foreground italic opacity-90">
+                        <p className="text-sm leading-relaxed text-muted-foreground opacity-90">
                           "{item.interpretation}"
                         </p>
                       </div>
@@ -348,14 +348,14 @@ const DashboardPage = () => {
           </div>
 
           <div className="mb-16">
-            <h2 className="mb-6 text-2xl font-black text-title flex items-center gap-3 italic">
+            <h2 className="mb-6 text-2xl font-black text-title flex items-center gap-3">
               <HistoryIcon className="h-7 w-7 text-secondary" /> History of Your Journeys
             </h2>
             <Card className={cn("overflow-hidden border-border shadow-sm", isSimulacrum && "opacity-60 pointer-events-none")}>
               <CardContent className="p-0">
                 {!displayResults || displayResults.length === 0 ? (
                    <div className="py-16 text-center">
-                     <p className="text-md text-muted-foreground italic mb-4">You haven't started any journeys yet.</p>
+                     <p className="text-md text-muted-foreground mb-4">You haven't started any journeys yet.</p>
                      <Button variant="hero" asChild>
                         <Link to="/quizzes">Begin My First Journey</Link>
                      </Button>
@@ -378,12 +378,12 @@ const DashboardPage = () => {
                                 <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-xs font-black text-primary">
                                   {(r.quiz_slug || 'J').charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-md font-bold text-title italic">
+                                <span className="text-md font-bold text-title">
                                   {r.quiz_slug === "general" ? "Your Core Journey" : r.quiz_slug.replace(/-/g, ' ')}
                                 </span>
                               </div>
                             </td>
-                            <td className="px-8 py-6 text-sm text-muted-foreground italic">
+                            <td className="px-8 py-6 text-sm text-muted-foreground">
                               {new Date(r.completed_at).toLocaleDateString("en-US", { month: 'long', day: 'numeric', year: 'numeric' })}
                             </td>
                             <td className="px-8 py-6 text-right">
@@ -405,7 +405,7 @@ const DashboardPage = () => {
 
           {recommendedPosts.length > 0 && (
             <div className="mb-16">
-              <h2 className="mb-6 text-2xl font-black text-title flex items-center gap-3 italic">📚 Guided Wisdom</h2>
+              <h2 className="mb-6 text-2xl font-black text-title flex items-center gap-3">📚 Guided Wisdom</h2>
               <div className="grid gap-6 sm:grid-cols-2">
                 {recommendedPosts.map((post) =>
                   post ? <PostCard key={post.slug} title={post.title} excerpt={post.excerpt} category={post.category} readTime={`${post.reading_time}`} slug={post.slug} /> : null
@@ -417,7 +417,7 @@ const DashboardPage = () => {
           <PremiumGate>
             <div className="mb-16 space-y-12 rounded-3xl border border-secondary/20 bg-gradient-to-br from-card to-secondary/5 p-10 shadow-sm">
               <div>
-                <h2 className="mb-8 flex items-center gap-3 text-2xl font-black text-title italic">
+                <h2 className="mb-8 flex items-center gap-3 text-2xl font-black text-title">
                   <TrendingUp className="h-7 w-7 text-secondary" /> Your Psychological Evolution
                 </h2>
                 <div className="h-80">
@@ -448,14 +448,14 @@ const DashboardPage = () => {
                     </ResponsiveContainer>
                   ) : (
                     <div className="flex h-full items-center justify-center border-2 border-dashed border-border rounded-2xl">
-                       <p className="text-sm text-muted-foreground italic">Embark on more Journeys to visualize your evolution chart.</p>
+                       <p className="text-sm text-muted-foreground">Embark on more Journeys to visualize your evolution chart.</p>
                     </div>
                   )}
                 </div>
               </div>
 
               <div>
-                <h2 className="mb-6 text-xl font-black text-title flex items-center gap-3 italic">
+                <h2 className="mb-6 text-xl font-black text-title flex items-center gap-3">
                   <Sparkles className="h-6 w-6 text-secondary" /> Personal Insights
                 </h2>
                 <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -463,8 +463,8 @@ const DashboardPage = () => {
                     <Card key={dim.slug} className="bg-card/50 border-border/50 hover:border-secondary/30 transition-all">
                       <CardContent className="p-6">
                         <span className="text-3xl mb-4 block">{dim.icon}</span>
-                        <h4 className="text-md font-black text-title mb-2 italic">{dim.name_en}</h4>
-                        <p className="text-xs text-muted-foreground leading-relaxed italic">Deep analysis of your internal agency in this dimension.</p>
+                        <h4 className="text-md font-black text-title mb-2">{dim.name_en}</h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">Deep analysis of your internal agency in this dimension.</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -477,8 +477,8 @@ const DashboardPage = () => {
                     <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 text-secondary transition-all group-hover:scale-110">
                        <span className="text-3xl">📄</span>
                     </div>
-                    <h4 className="text-lg font-black text-title mb-2 italic">Export Personal Blueprint</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed italic">Download your complete clinical-grade analysis in PDF format.</p>
+                    <h4 className="text-lg font-black text-title mb-2">Export Personal Blueprint</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">Download your complete clinical-grade analysis in PDF format.</p>
                   </CardContent>
                 </Card>
                 <Card className="flex-1 transition-all hover:border-secondary/40 group cursor-pointer shadow-sm hover:shadow-xl">
@@ -486,8 +486,8 @@ const DashboardPage = () => {
                     <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 text-secondary transition-all group-hover:scale-110">
                        <span className="text-3xl">📅</span>
                     </div>
-                    <h4 className="text-lg font-black text-title mb-2 italic">30-Day Growth Plan</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed italic">A personalized daily guide designed to restore your self-mastery.</p>
+                    <h4 className="text-lg font-black text-title mb-2">30-Day Growth Plan</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">A personalized daily guide designed to restore your self-mastery.</p>
                   </CardContent>
                 </Card>
               </div>
@@ -496,10 +496,10 @@ const DashboardPage = () => {
 
           {isPremium && (
             <div className="mt-16 flex flex-col items-center border-t border-border pt-16 pb-8">
-               <h3 className="text-xl font-black text-title mb-3 italic">
+               <h3 className="text-xl font-black text-title mb-3">
                  Seeking a fresh perspective?
                </h3>
-               <p className="text-sm text-muted-foreground mb-8 text-center max-w-md italic leading-relaxed">
+               <p className="text-sm text-muted-foreground mb-8 text-center max-w-md leading-relaxed">
                  Resetting will permanently archive all your progress, including journey history and deep pattern blueprints.
                </p>
                <Button 

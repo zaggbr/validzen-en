@@ -20,7 +20,7 @@ const QuizCTA = ({ theme, quizSlug }: QuizCTAProps) => {
     <Link
       to={`/quiz/${quizSlug}`}
       onClick={handleClick}
-      className="my-10 flex items-center justify-between rounded-2xl border border-secondary/20 bg-secondary/5 px-6 py-5 text-sm font-black italic text-foreground transition-all hover:bg-secondary/10 hover:shadow-lg shadow-secondary/5 group"
+      className="my-10 flex items-center justify-between rounded-2xl border border-secondary/20 bg-secondary/5 px-6 py-5 text-sm font-black text-foreground transition-all hover:bg-secondary/10 hover:shadow-lg shadow-secondary/5 group"
     >
       <span className="flex items-center gap-3">
         <span className="text-2xl">📊</span>

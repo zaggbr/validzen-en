@@ -32,7 +32,7 @@ const FaqSection = ({ items }: FaqSectionProps) => {
             </button>
             {openIndex === i && (
               <div className="border-t border-border px-5 py-4">
-                <p className="text-sm text-muted-foreground leading-relaxed italic">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                    {item.answer}
                 </p>
               </div>

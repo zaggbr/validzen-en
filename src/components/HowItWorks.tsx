@@ -34,10 +34,10 @@ const HowItWorks = () => {
           viewport={{ once: true }}
           className="mb-20 text-center"
         >
-          <h2 className="mb-4 text-4xl font-black text-title italic tracking-tight md:text-5xl">
+          <h2 className="mb-4 text-3xl font-black text-title tracking-tight md:text-4xl">
             The Discovery Path
           </h2>
-          <p className="mx-auto max-w-lg text-lg text-muted-foreground italic leading-relaxed">
+          <p className="mx-auto max-w-lg text-lg text-muted-foreground leading-relaxed">
             A structured, human-centric journey to self-mastery and clarity in a complex world.
           </p>
         </motion.div>
@@ -58,8 +58,8 @@ const HowItWorks = () => {
               <span className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-secondary/60">
                 Phase {i + 1}
               </span>
-              <h3 className="mb-4 text-xl font-black text-title italic">{step.title}</h3>
-              <p className="text-md text-muted-foreground italic leading-relaxed">{step.description}</p>
+              <h3 className="mb-4 text-xl font-black text-title">{step.title}</h3>
+              <p className="text-md text-muted-foreground leading-relaxed">{step.description}</p>
             </motion.div>
           ))}
         </div>

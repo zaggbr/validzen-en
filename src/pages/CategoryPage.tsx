@@ -53,8 +53,8 @@ const CategoryPage = () => {
         <main className="flex flex-1 items-center justify-center">
           <div className="text-center">
             <span className="text-6xl">📂</span>
-            <h1 className="mt-6 text-3xl font-black italic">Discovery Theme Not Found</h1>
-            <p className="mt-2 text-muted-foreground italic">This territory hasn't been mapped yet or is currently under curation.</p>
+            <h1 className="mt-6 text-3xl font-black">Discovery Theme Not Found</h1>
+            <p className="mt-2 text-muted-foreground">This territory hasn't been mapped yet or is currently under curation.</p>
             <Link to="/categories" className="mt-8 inline-block text-xs font-black uppercase tracking-widest text-secondary hover:underline">
               Browse All Discovery Themes
             </Link>
@@ -79,9 +79,9 @@ const CategoryPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-12"
           >
-              <h1 className="text-3xl font-black text-title md:text-5xl italic tracking-tight">{stripEmojis(categoryName)}</h1>
+              <h1 className="text-3xl font-black text-title md:text-5xl tracking-tight">{stripEmojis(categoryName)}</h1>
               {category && (
-                <p className="mt-3 text-lg text-muted-foreground italic max-w-2xl leading-relaxed">
+                <p className="mt-3 text-lg text-muted-foreground max-w-2xl leading-relaxed">
                   {stripEmojis(category.description_en)}
                 </p>
               )}

@@ -32,18 +32,18 @@ const PremiumAssessmentCTA = ({ postSlug }: PremiumAssessmentCTAProps) => {
           </div>
           <div className="flex-1">
             <div className="mb-3 flex flex-wrap items-center gap-3">
-              <h3 className="text-xl font-black text-title italic tracking-tight">{title}</h3>
-              <Badge variant="secondary" className="bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 italic">
+              <h3 className="text-xl font-black text-title tracking-tight">{title}</h3>
+              <Badge variant="secondary" className="bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1">
                 PRO Discovery
               </Badge>
             </div>
-            <p className="mb-6 text-md text-muted-foreground italic leading-relaxed">{description}</p>
+            <p className="mb-6 text-md text-muted-foreground leading-relaxed">{description}</p>
             <div className="flex gap-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">
-              <span className="flex items-center gap-1.5 italic">
+              <span className="flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5 text-secondary" />
                 {assessment.estimated_time} Min
               </span>
-              <span className="flex items-center gap-1.5 italic">
+              <span className="flex items-center gap-1.5">
                 <Lock className="h-3.5 w-3.5 text-secondary" />
                 Clinical-Grade Blueprint
               </span>
@@ -59,8 +59,8 @@ const PremiumAssessmentCTA = ({ postSlug }: PremiumAssessmentCTAProps) => {
       <Dialog open={showFlow} onOpenChange={setShowFlow}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] border-secondary/20 shadow-2xl">
           <DialogHeader className="mb-6">
-            <DialogTitle className="text-3xl font-black text-title italic tracking-tight">{title}</DialogTitle>
-            <DialogDescription className="text-md italic text-muted-foreground leading-relaxed pt-2">
+            <DialogTitle className="text-3xl font-black text-title tracking-tight">{title}</DialogTitle>
+            <DialogDescription className="text-md text-muted-foreground leading-relaxed pt-2">
               {description}
             </DialogDescription>
           </DialogHeader>

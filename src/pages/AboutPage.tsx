@@ -27,7 +27,7 @@ const AboutPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground"
           >
-            <h1 className="mb-10 text-4xl font-black text-title italic tracking-tight md:text-5xl">Our Methodology</h1>
+            <h1 className="mb-10 text-4xl font-black text-title tracking-tight md:text-5xl">Our Methodology</h1>
             
             <p className="text-lg leading-relaxed">
               ValidZen is a project by an independent publishing house dedicated to curating high-quality content 

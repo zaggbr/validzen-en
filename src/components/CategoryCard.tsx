@@ -13,10 +13,10 @@ const CategoryCard = ({ name, slug, postCount }: CategoryCardProps) => {
       to={`/category/${slug}`}
       className="group flex flex-col items-center gap-4 rounded-[1.5rem] border border-border bg-card/50 p-8 text-center shadow-sm transition-all duration-300 hover:border-secondary/40 hover:shadow-xl hover:-translate-y-1"
     >
-      <span className="text-md font-black text-title italic tracking-tight group-hover:text-secondary transition-colors">
+      <span className="text-md font-bold text-title tracking-tight group-hover:text-secondary transition-colors">
         {stripEmojis(name)}
       </span>
-      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 italic">
+      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-60">
         {postCount} {postCount === 1 ? 'Insight' : 'Insights'}
       </span>
     </Link>

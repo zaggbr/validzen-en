@@ -27,7 +27,7 @@ const PrivacyPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground prose-li:text-muted-foreground prose-li:italic"
           >
-            <h1 className="mb-10 text-4xl font-black text-title italic tracking-tight md:text-5xl">Privacy Policy</h1>
+            <h1 className="mb-10 text-4xl font-black text-title tracking-tight md:text-5xl">Privacy Policy</h1>
             
             <p className="text-lg leading-relaxed">
               Your privacy is fundamental to our mission. It is the policy of <strong>ZGC Media Services</strong> to respect 
@@ -46,7 +46,7 @@ const PrivacyPage = () => {
               We don’t share any personally identifying information publicly or with third-parties, except when required to by law or to process your premium membership features.
             </p>
 
-            <h2 className="text-2xl font-black italic mt-12 mb-6">User Commitment</h2>
+            <h2 className="text-2xl font-black mt-12 mb-6">User Commitment</h2>
             <p className="text-lg leading-relaxed">
               As a member of our community, you undertake to make appropriate use of the contents and information that 
               ZGC Media Services offers on the site:
@@ -57,7 +57,7 @@ const PrivacyPage = () => {
               <li>Not to cause damage to the physical (hardware) and logical (software) systems of the site.</li>
             </ul>
 
-            <h2 className="text-2xl font-black italic mt-12 mb-6">More information</h2>
+            <h2 className="text-2xl font-black mt-12 mb-6">More information</h2>
             <p className="text-lg leading-relaxed">
               We hope this clarifies our stance on your internal agency and data privacy. If there is something that you aren't sure whether you need or not, it's usually safer to leave cookies enabled in case it does interact with one of the features you use on our site to track your evolution.
             </p>

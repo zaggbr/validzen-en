@@ -22,10 +22,10 @@ const QuizIntro = ({ quiz, onStart }: QuizIntroProps) => {
       className="mx-auto flex max-w-lg flex-col items-center px-4 py-8 text-center"
     >
       <span className="mb-6 text-6xl">🧭</span>
-      <h1 className="mb-4 text-4xl font-black text-title md:text-5xl italic tracking-tight">
+      <h1 className="mb-4 text-4xl font-black text-title md:text-5xl tracking-tight">
         {quiz.title}
       </h1>
-      <p className="mb-10 text-lg text-muted-foreground italic leading-relaxed">{quiz.subtitle}</p>
+      <p className="mb-10 text-lg text-muted-foreground leading-relaxed">{quiz.subtitle}</p>
 
       <div className="mb-10 flex gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
         <span className="flex items-center gap-2">

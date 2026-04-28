@@ -111,10 +111,10 @@ const ProPage = () => {
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-secondary/10 text-secondary shadow-lg shadow-secondary/10">
               <Crown className="h-8 w-8" />
             </div>
-            <h1 className="mb-4 text-4xl font-black text-title md:text-6xl italic tracking-tight">
+            <h1 className="mb-4 text-4xl font-black text-title md:text-6xl tracking-tight">
               Reclaim Your Self-Mastery
             </h1>
-            <p className="mx-auto max-w-lg text-lg text-muted-foreground italic leading-relaxed">
+            <p className="mx-auto max-w-lg text-lg text-muted-foreground leading-relaxed">
               Deepen your journey of self-discovery with ValidZen PRO. We’ve gathered the most advanced tools to map your internal agency.
             </p>
           </motion.div>
@@ -126,12 +126,12 @@ const ProPage = () => {
               <Card className="h-full border-border/50 shadow-sm hover:shadow-xl transition-all rounded-[2rem]">
                 <CardContent className="p-10 flex flex-col h-full">
                   <h2 className="mb-2 text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">Core Access</h2>
-                  <p className="mb-8 text-5xl font-black text-foreground italic">
+                  <p className="mb-8 text-5xl font-black text-foreground">
                     Free
                   </p>
                   <ul className="mb-10 space-y-4 flex-1">
                     {freeFeatures.map((f, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm font-bold italic">
+                      <li key={i} className="flex items-start gap-3 text-sm font-bold">
                         {f.included ? (
                           <Check className="mt-1 h-4 w-4 shrink-0 text-accent" />
                         ) : (
@@ -164,7 +164,7 @@ const ProPage = () => {
                   </h2>
 
                   <div className="mb-8 space-y-2">
-                    <p className="text-5xl font-black text-foreground italic">
+                    <p className="text-5xl font-black text-foreground">
                       $2.99<span className="text-sm font-black uppercase tracking-widest text-muted-foreground not-italic"> / month</span>
                     </p>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
@@ -175,7 +175,7 @@ const ProPage = () => {
 
                   <ul className="mb-10 space-y-4 flex-1">
                     {proFeatures.map((f, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm font-bold text-title italic">
+                      <li key={i} className="flex items-start gap-3 text-sm font-bold text-title">
                         <Check className="mt-1 h-4 w-4 shrink-0 text-secondary" />
                         {f}
                       </li>
@@ -216,7 +216,7 @@ const ProPage = () => {
 
           {/* FAQ */}
           <div className="mx-auto max-w-3xl">
-            <h2 className="mb-10 text-center text-3xl font-black text-title italic">
+            <h2 className="mb-10 text-center text-3xl font-black text-title">
               Discovery FAQ
             </h2>
             <Accordion type="single" collapsible className="w-full space-y-4">
@@ -225,7 +225,7 @@ const ProPage = () => {
                   <AccordionTrigger className="text-left text-sm font-bold uppercase tracking-widest hover:no-underline py-6">
                     {item.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-md text-muted-foreground italic leading-relaxed pb-6">
+                  <AccordionContent className="text-md text-muted-foreground leading-relaxed pb-6">
                     {item.a}
                   </AccordionContent>
                 </AccordionItem>
