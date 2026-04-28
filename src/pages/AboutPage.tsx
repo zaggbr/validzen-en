@@ -25,7 +25,7 @@ const AboutPage = () => {
           <motion.article 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground"
+            className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-bold prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground"
           >
             <h1 className="mb-10 text-4xl font-bold text-title tracking-tight md:text-5xl">Our Methodology</h1>
             

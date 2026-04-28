@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <span className="text-2xl font-semibold text-title tracking-tight">
+            <span className="text-2xl font-bold text-title tracking-tight">
               valid<span className="text-secondary">zen</span>.
             </span>
             <p className="mt-4 max-w-sm text-md text-muted-foreground leading-relaxed">Meaningful self-mastery for a clearer mind. We help you navigate your unique psychological patterns.</p>
