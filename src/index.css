@@ -110,6 +110,33 @@
   }
 }
 
+/* ── Prose: table rendering (Tailwind Typography doesn't add borders by default) ── */
+.prose table {
+  @apply mb-6 w-full overflow-hidden rounded-lg border border-border text-sm;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.prose thead {
+  @apply bg-muted/70;
+}
+.prose th {
+  @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-foreground;
+  border-bottom: 2px solid hsl(var(--border));
+}
+.prose td {
+  @apply px-4 py-2.5 text-sm text-muted-foreground;
+  border-bottom: 1px solid hsl(var(--border));
+}
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+.prose tbody tr:nth-child(even) {
+  @apply bg-muted/20;
+}
+.prose tbody tr:hover {
+  @apply bg-secondary/5;
+}
+
 /* Prose styles for blog content */
 .prose-validzen p {
   @apply mb-4 text-sm leading-relaxed text-foreground md:text-base;

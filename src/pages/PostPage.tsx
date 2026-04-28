@@ -176,7 +176,7 @@ const PostPage = () => {
 
               {showGate ? (
                 <div className="relative">
-                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic blur-sm select-none pointer-events-none opacity-40">
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border blur-sm select-none pointer-events-none opacity-40">
                     {sections.length > 0 ? (
                        <section className="mb-8">{sections[0].body.substring(0, 400)}...</section>
                     ) : (
@@ -192,11 +192,11 @@ const PostPage = () => {
                         <h2 className="mb-6 text-2xl font-black text-title md:text-3xl tracking-tight">{section.heading}</h2>
                       )}
                       {isMarkdown ? (
-                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground">
+                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border">
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.body}</ReactMarkdown>
                         </div>
                       ) : (
-                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: section.body }} />
+                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border" dangerouslySetInnerHTML={{ __html: section.body }} />
                       )}
                     </section>
 
@@ -211,11 +211,11 @@ const PostPage = () => {
                 ))
               ) : (
                 isMarkdown ? (
-                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground mb-12">
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border mb-12">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
                   </div>
                 ) : (
-                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:italic prose-p:text-muted-foreground prose-p:italic prose-strong:text-foreground mb-12" dangerouslySetInnerHTML={{ __html: post.content }} />
+                  <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-title prose-headings:font-black prose-headings:not-italic prose-p:text-muted-foreground prose-p:not-italic prose-strong:text-foreground prose-table:w-full prose-th:bg-muted prose-th:font-semibold prose-td:border-t prose-td:border-border mb-12" dangerouslySetInnerHTML={{ __html: post.content }} />
                 )
               )}
 
