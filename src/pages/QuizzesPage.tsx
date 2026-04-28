@@ -69,18 +69,62 @@ const REFINED_TITLES: Record<string, string> = {
 };
 
 const SIMPLE_QUIZ_THEME_MAP: Record<string, string> = {
-  "luto-civilizatorio-futuro": "society",
-  "teste-crise-reprodutiva": "relationships",
-  "teste-anemoia": "purpose",
+  // Generic / multi-theme
+  "mapa-emocional-generico":           "emotions",
+  "geral":                             "emotions",
+  // Anxiety
+  "teste-ansiedade-gad7":              "anxiety",
+  "teste-panico":                      "anxiety",
+  "teste-fobia-social":                "anxiety",
+  "teste-eco-ansiedade":               "anxiety",
   "teste-perfeccionismo-procrastinacao": "anxiety",
-  "teste-luto-nao-reconhecido": "society",
-  "teste-fawning-people-pleasing": "relationships",
-  "teste-dismorfia-temporal": "burnout",
-  "teste-embotamento-emocional": "emotions",
-  "teste-alexitimia": "emotions",
-  "teste-vergonha-cronica": "identity",
-  "teste-raiva-reprimida": "emotions",
-  "general": "emotions",
+  // Burnout / productivity
+  "teste-sinais-burnout":              "burnout",
+  "teste-produtividade-toxica":         "burnout",
+  "teste-fadiga-compaixao":             "burnout",
+  "teste-dismorfia-temporal":           "burnout",
+  "teste-revenge-bedtime":              "burnout",
+  "teste-insonia-isi":                  "burnout",
+  // Emotions
+  "teste-depressao-phq9":              "emotions",
+  "teste-embotamento-emocional":        "emotions",
+  "teste-alexitimia":                   "emotions",
+  "teste-raiva-reprimida":              "emotions",
+  "teste-fome-emocional":               "emotions",
+  "teste-languishing":                  "emotions",
+  // Relationships
+  "teste-relacionamento-toxico":        "relationships",
+  "teste-fawning-people-pleasing":      "relationships",
+  "teste-crise-reprodutiva":            "relationships",
+  "teste-matrescencia":                 "relationships",
+  "teste-solidao-estrutural":           "relationships",
+  // Identity
+  "teste-tdah-adultos":                "identity",
+  "teste-autoestima-rosenberg":         "identity",
+  "teste-vergonha-cronica":             "identity",
+  "teste-parentificacao":               "identity",
+  "teste-luto-nao-reconhecido":         "identity",
+  // Purpose / Meaning
+  "teste-crise-sentido":               "purpose",
+  "teste-anemoia":                      "purpose",
+  "teste-luto-civilizatorio":           "purpose",
+  // Society / Technology
+  "teste-fobo":                        "society",
+  "teste-identidade-algoritmica":       "society",
+  "teste-fadiga-democratica":           "society",
+  "teste-policrise":                    "society",
+};
+
+// Map premium_assessments.theme (stored in PT) → THEMES slug (EN)
+const PT_THEME_TO_EN: Record<string, string> = {
+  "ansiedade":  "anxiety",
+  "burnout":    "burnout",
+  "emocoes":    "emotions",
+  "relacoes":   "relationships",
+  "identidade": "identity",
+  "sentido":    "purpose",
+  "ia_futuro":  "society",
+  "sociedade":  "society",
 };
 
 const QuizzesPage = () => {
@@ -130,15 +174,17 @@ const QuizzesPage = () => {
 
         if (deepData) {
           deepData.forEach((q: any) => {
+            // premium_assessments.theme is in Portuguese — map to EN theme slug
+            const enTheme = PT_THEME_TO_EN[q.theme] || "emotions";
             unified.push({
               id: q.id,
               slug: q.slug,
-              title: REFINED_TITLES[q.slug] || q.title_en || q.title_pt,
-              description: q.description_en || q.description_pt,
+              title: REFINED_TITLES[q.slug] || q.title_en || q.title_pt || "",
+              description: q.description_en || q.description_pt || "",
               estimated_time: q.estimated_time || 10,
               is_premium: true,
               type: "deep",
-              theme: q.theme || "emotions",
+              theme: enTheme,
             });
           });
         }
