@@ -7,11 +7,11 @@ const Footer = () => {
       <div className="container py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <span className="text-2xl font-black text-title tracking-tight">
+            <span className="text-2xl font-semibold text-title tracking-tight">
               valid<span className="text-secondary">zen</span>.
             </span>
             <p className="mt-4 max-w-sm text-md text-muted-foreground leading-relaxed">Meaningful self-mastery for a clearer mind. We help you navigate your unique psychological patterns.</p>
-            <p className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">The Meaning Crisis Project — Insights for the modern soul.</p>
+            <p className="mt-2 text-xs font-normal uppercase tracking-[0.2em] text-muted-foreground opacity-60">The Meaning Crisis Project — Insights for the modern soul.</p>
             <div className="mt-6 flex gap-4">
               <a href="https://instagram.com/validzen" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/50 text-muted-foreground hover:bg-secondary hover:text-white transition-all">
                 <Instagram className="h-5 w-5" />
