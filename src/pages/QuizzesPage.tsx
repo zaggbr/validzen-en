@@ -59,13 +59,14 @@ const REFINED_TITLES: Record<string, string> = {
   "relationships": "The Art of Connection",
   "meaning": "The Meaning Quest",
   "society": "Navigating Modern Chaos",
-  "deep-assessment-anxiety": "Deep Journey: Anxiety & Inner Clarity",
-  "deep-assessment-burnout": "Deep Journey: Sustainable Vitality",
-  "deep-assessment-emotions": "Deep Journey: The Science of Feeling",
-  "deep-assessment-relationships": "Deep Journey: The Art of Connection",
-  "deep-assessment-identity": "Deep Journey: The Autonomy Blueprint",
-  "deep-assessment-meaning": "Deep Journey: The Meaning Quest",
-  "deep-assessment-society": "Deep Journey: Navigating Modern Chaos",
+  "assessment-ansiedade-profundo": "Deep Journey: Anxiety & Inner Clarity",
+  "assessment-burnout-profundo": "Deep Journey: Sustainable Vitality",
+  "assessment-emocoes-profundo": "Deep Journey: The Science of Feeling",
+  "assessment-relacoes-profundo": "Deep Journey: The Art of Connection",
+  "assessment-identidade-profundo": "Deep Journey: The Autonomy Blueprint",
+  "assessment-sentido-profundo": "Deep Journey: The Meaning Quest",
+  "assessment-sociedade-profundo": "Deep Journey: Navigating Modern Chaos",
+  "assessment-ia-futuro-profundo": "Deep Journey: Futurism & Tech-Wellbeing",
 };
 
 const SIMPLE_QUIZ_THEME_MAP: Record<string, string> = {
@@ -312,134 +313,143 @@ const QuizzesPage = () => {
                   <Skeleton className="h-32 w-full rounded-2xl" />
                 </div>
               ))}
-            </div>
-          ) : (
-            <div className={cn("space-y-24 transition-all duration-700", isLocked && "pointer-events-none select-none blur-sm grayscale opacity-30")}>
-              {filteredThemes.map((theme, idx) => {
-                const themeQuizzes = quizzes.filter(q => q.theme === theme.slug);
-                const simpleOnes = themeQuizzes.filter(q => q.type === "simple");
-                const deepOne = themeQuizzes.find(q => q.type === "deep");
-
-                return (
-                  <motion.div
-                    key={theme.slug}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
-                  >
-                    <div className="mb-10 flex items-center justify-between">
-                      <div className="flex items-center gap-5">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-secondary/10 text-3xl shadow-inner">
-                          {theme.icon}
-                        </div>
-                        <div>
-                          <h2 className="text-3xl font-bold tracking-tight text-title">{theme.name}</h2>
-                          <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-70">
-                            {themeQuizzes.length} Pathways Available
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-8">
-                      <div className="grid gap-6 sm:grid-cols-2">
-                        {simpleOnes.map(quiz => (
-                          <Card 
-                            key={quiz.id} 
-                            className="group relative overflow-hidden border-border bg-card transition-all hover:border-secondary/30 hover:shadow-xl hover:-translate-y-1"
-                          >
-                            <CardContent className="p-8">
-                              <div className="mb-4 flex items-center justify-between">
-                                 <Badge variant="secondary" className="bg-muted/50 text-muted-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1">
-                                   Core Insight
-                                 </Badge>
-                                 <span className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                                   <Clock className="h-3.5 w-3.5" />
-                                   {quiz.estimated_time} Min
-                                 </span>
-                              </div>
-                              <h3 className="mb-3 text-xl font-bold text-title group-hover:text-secondary transition-colors">
-                                {quiz.title}
-                              </h3>
-                              <p className="mb-8 text-sm text-balance text-muted-foreground line-clamp-2 opacity-80 leading-relaxed">
-                                {quiz.description}
-                              </p>
-                              <Button 
-                                variant="ghost" 
-                                size="sm"
-                                className="w-full justify-between bg-muted/20 group-hover:bg-secondary group-hover:text-white transition-all py-6 px-6 font-bold uppercase text-[10px] tracking-widest rounded-xl"
-                                onClick={() => handleStart(quiz)}
-                              >
-                                Begin Journey
-                                <ChevronRight className="h-4 w-4" />
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-  
-                      {deepOne && (
-                        <Card 
-                          className="group relative overflow-hidden border-secondary/20 bg-gradient-to-r from-secondary/5 via-card to-background shadow-xl ring-1 ring-secondary/10 rounded-[2rem]"
-                        >
-                          <CardContent className="flex flex-col lg:flex-row p-10 items-center gap-10">
-                            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-[2rem] bg-secondary/10 text-secondary shadow-inner">
-                              <Crown className="h-12 w-12 text-secondary" />
-                            </div>
-                            
-                            <div className="flex-1 text-center lg:text-left">
-                              <div className="mb-4 flex flex-wrap items-center justify-center lg:justify-start gap-5">
-                                <Badge variant="secondary" className="bg-secondary text-white border-none text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-1.5">
-                                  PRO Blueprint
-                                </Badge>
-                                <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] flex items-center gap-2">
-                                  <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
-                                  Deep Pattern Analysis
-                                </span>
-                              </div>
-                              <h3 className="mb-3 text-3xl font-bold tracking-tight text-title">
-                                {deepOne.title}
-                              </h3>
-                              <p className="max-w-2xl text-md leading-relaxed text-muted-foreground">
-                                "{deepOne.description}"
-                              </p>
-                            </div>
- 
-                            <div className="flex flex-col gap-6 min-w-[240px] w-full lg:w-auto">
-                              <div className="flex items-center justify-center lg:justify-start gap-8">
-                                <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest text-title">
-                                  <Clock className="h-4 w-4 text-secondary" />
-                                  <span>{deepOne.estimated_time} Min</span>
-                                </div>
-                                <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest text-title">
-                                  <Lock className="h-4 w-4 text-secondary" />
-                                  <span>Clinical</span>
-                                </div>
-                              </div>
-                              <Button 
-                                className="w-full bg-secondary text-white shadow-2xl shadow-secondary/30 hover:bg-secondary/90 hover:scale-105 transition-all transform active:scale-95 py-8 font-bold text-lg uppercase tracking-widest rounded-full"
-                                onClick={() => handleStart(deepOne)}
-                              >
-                                Embark Now
-                                <ArrowRight className="ml-2 h-5 w-5" />
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )}
-                    </div>
-                  </motion.div>
-                );
-              })}
-
-              {!filteredThemes.length && (
+                      {(!loadingQuizzes && quizzes.length === 0) ? (
                 <div className="py-20 text-center">
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-muted">
                     <Search className="h-10 w-10 text-muted-foreground" />
                   </div>
                   <h3 className="text-2xl font-bold text-title">
-                    Discovery not found
+                    No discovery pathways found
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Our curators are currently updating the mapped territories. Please check back shortly.
+                  </p>
+                </div>
+              ) : filteredThemes.length > 0 ? (
+                filteredThemes.map((theme, idx) => {
+                  const themeQuizzes = quizzes.filter(q => q.theme === theme.slug);
+                  const simpleOnes = themeQuizzes.filter(q => q.type === "simple");
+                  const deepOne = themeQuizzes.find(q => q.type === "deep");
+
+                  return (
+                    <motion.div
+                      key={theme.slug}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1 }}
+                    >
+                      <div className="mb-10 flex items-center justify-between">
+                        <div className="flex items-center gap-5">
+                          <div className="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-secondary/10 text-3xl shadow-inner">
+                            {theme.icon}
+                          </div>
+                          <div>
+                            <h2 className="text-3xl font-bold tracking-tight text-title">{theme.name}</h2>
+                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-70">
+                              {themeQuizzes.length} Pathways Available
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-8">
+                        <div className="grid gap-6 sm:grid-cols-2">
+                          {simpleOnes.map(quiz => (
+                            <Card 
+                              key={quiz.id} 
+                              className="group relative overflow-hidden border-border bg-card transition-all hover:border-secondary/30 hover:shadow-xl hover:-translate-y-1"
+                            >
+                              <CardContent className="p-8">
+                                <div className="mb-4 flex items-center justify-between">
+                                   <Badge variant="secondary" className="bg-muted/50 text-muted-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1">
+                                     Core Insight
+                                   </Badge>
+                                   <span className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                                     <Clock className="h-3.5 w-3.5" />
+                                     {quiz.estimated_time} Min
+                                   </span>
+                                </div>
+                                <h3 className="mb-3 text-xl font-bold text-title group-hover:text-secondary transition-colors">
+                                  {quiz.title}
+                                </h3>
+                                <p className="mb-8 text-sm text-balance text-muted-foreground line-clamp-2 opacity-80 leading-relaxed">
+                                  {quiz.description}
+                                </p>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  className="w-full justify-between bg-muted/20 group-hover:bg-secondary group-hover:text-white transition-all py-6 px-6 font-bold uppercase text-[10px] tracking-widest rounded-xl"
+                                  onClick={() => handleStart(quiz)}
+                                >
+                                  Begin Journey
+                                  <ChevronRight className="h-4 w-4" />
+                                </Button>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+    
+                        {deepOne && (
+                          <Card 
+                            className="group relative overflow-hidden border-secondary/20 bg-gradient-to-r from-secondary/5 via-card to-background shadow-xl ring-1 ring-secondary/10 rounded-[2rem]"
+                          >
+                            <CardContent className="flex flex-col lg:flex-row p-10 items-center gap-10">
+                              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-[2rem] bg-secondary/10 text-secondary shadow-inner">
+                                <Crown className="h-12 w-12 text-secondary" />
+                              </div>
+                              
+                              <div className="flex-1 text-center lg:text-left">
+                                <div className="mb-4 flex flex-wrap items-center justify-center lg:justify-start gap-5">
+                                  <Badge variant="secondary" className="bg-secondary text-white border-none text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-1.5">
+                                    PRO Blueprint
+                                  </Badge>
+                                  <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] flex items-center gap-2">
+                                    <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
+                                    Deep Pattern Analysis
+                                  </span>
+                                </div>
+                                <h3 className="mb-3 text-3xl font-bold tracking-tight text-title">
+                                  {deepOne.title}
+                                </h3>
+                                <p className="max-w-2xl text-md leading-relaxed text-muted-foreground">
+                                  "{deepOne.description}"
+                                </p>
+                              </div>
+   
+                              <div className="flex flex-col gap-6 min-w-[240px] w-full lg:w-auto">
+                                <div className="flex items-center justify-center lg:justify-start gap-8">
+                                  <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest text-title">
+                                    <Clock className="h-4 w-4 text-secondary" />
+                                    <span>{deepOne.estimated_time} Min</span>
+                                  </div>
+                                  <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest text-title">
+                                    <Lock className="h-4 w-4 text-secondary" />
+                                    <span>Clinical</span>
+                                  </div>
+                                </div>
+                                <Button 
+                                  className="w-full bg-secondary text-white shadow-2xl shadow-secondary/30 hover:bg-secondary/90 hover:scale-105 transition-all transform active:scale-95 py-8 font-bold text-lg uppercase tracking-widest rounded-full"
+                                  onClick={() => handleStart(deepOne)}
+                                >
+                                  Embark Now
+                                  <ArrowRight className="ml-2 h-5 w-5" />
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })
+              ) : (
+                <div className="py-20 text-center">
+                  <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-muted">
+                    <Search className="h-10 w-10 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-title">
+                    No results for your search
                   </h3>
                   <p className="text-muted-foreground">
                     Try searching for different terms or pathways.
@@ -447,6 +457,7 @@ const QuizzesPage = () => {
                   <Button variant="link" onClick={() => setSearch("")} className="mt-4 text-secondary font-bold uppercase text-[10px] tracking-widest">
                     Clear Search
                   </Button>
+                </div>
                 </div>
               )}
             </div>
