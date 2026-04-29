@@ -27,6 +27,7 @@ const PostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isLoading } = usePostBySlug(slug);
   const { user, isPremium, incrementPostView } = useAuth();
+  const { data: categories = [] } = useCategories();
   const { data: related = [] } = useRelatedPosts(post?.related_post_slugs || []);
   const [showGate, setShowGate] = useState(false);
 
@@ -111,7 +112,7 @@ const PostPage = () => {
         faq={post.faq}
         breadcrumbs={[
           { name: "Home", url: window.location.origin },
-          { name: post.category, url: `${window.location.origin}/category/${post.category}` },
+          { name: categories.find(c => c.slug === post.category)?.name_en || post.category, url: `${window.location.origin}/category/${post.category}` },
           { name: post.title, url },
         ]}
       />
@@ -126,7 +127,7 @@ const PostPage = () => {
             <Link to="/" className="hover:text-secondary transition-colors">Home</Link>
             <ChevronRight className="h-3 w-3 opacity-30" />
             <Link to={`/category/${post.category}`} className="hover:text-secondary transition-colors text-secondary">
-              {post.category}
+              {categories.find(c => c.slug === post.category)?.name_en || post.category}
             </Link>
             <ChevronRight className="h-3 w-3 opacity-30" />
             <span className="text-foreground/60 line-clamp-1">{post.title}</span>

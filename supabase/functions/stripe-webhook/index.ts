@@ -53,6 +53,7 @@ serve(async (req) => {
             stripe_customer_id: customerId,
             premium_until: defaultPremiumUntil.toISOString(),
             subscribed_at: new Date().toISOString(),
+            payment_platform: "stripe",
           })
           .eq("id", userId);
 
@@ -88,6 +89,7 @@ serve(async (req) => {
           .update({
             is_premium: true,
             premium_until: premiumUntil,
+            payment_platform: "stripe",
           })
           .eq("stripe_customer_id", customerId);
 

@@ -33,7 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import PremiumGate from "@/components/PremiumGate";
 import { useLatestResult, useProgressOverTime, usePremiumResults } from "@/hooks/useDashboard";
-import { useDeleteQuizResult, useResetQuizMap } from "@/hooks/useQuiz";
+import { useDeleteQuizResult, useResetQuizMap, useQuizzes } from "@/hooks/useQuiz";
 import { usePosts } from "@/hooks/usePosts";
 import { useDimensions } from "@/hooks/useDimensions";
 import { getTopDimensions, generateInterpretation } from "@/lib/quizInsights";
@@ -46,6 +46,7 @@ const DashboardPage = () => {
   const evolutionData = useProgressOverTime();
   const { data: allPosts = [] } = usePosts();
   const { data: dimensions = [], isLoading: loadingDims } = useDimensions();
+  const { data: quizzes = [] } = useQuizzes();
   const { isPremium, user } = useAuth();
 
   const isLoading = (isPremium && loadingResults) || loadingDims || loadingPremium;
@@ -379,7 +380,9 @@ const DashboardPage = () => {
                                   {(r.quiz_slug || 'J').charAt(0).toUpperCase()}
                                 </div>
                                 <span className="text-md font-bold text-title">
-                                  {r.quiz_slug === "general" ? "Your Core Journey" : r.quiz_slug.replace(/-/g, ' ')}
+                                  {r.quiz_slug === "general" 
+                                    ? "Your Core Journey" 
+                                    : (quizzes.find(q => q.slug === r.quiz_slug)?.title || r.quiz_slug.replace(/-/g, ' '))}
                                 </span>
                               </div>
                             </td>

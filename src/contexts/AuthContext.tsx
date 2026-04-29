@@ -214,7 +214,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { data: profile } = await supabase.from("user_profiles").select("posts_viewed_count").eq("id", user.id).single();
       const currentCount = (profile as any)?.posts_viewed_count || 0;
       
-      if (currentCount >= 5) return false;
+      if (currentCount >= 1) return false;
 
       const { error } = await supabase
         .from("user_profiles")
@@ -239,7 +239,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { data: profile } = await supabase.from("user_profiles").select("quizzes_completed_count").eq("id", user.id).single();
       const currentCount = (profile as any)?.quizzes_completed_count || 0;
       
-      if (currentCount >= 3) return false;
+      if (currentCount >= 1) return false;
 
       const { error } = await supabase
         .from("user_profiles")

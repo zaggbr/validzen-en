@@ -67,6 +67,32 @@ const LoginPage = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please share your email address so we can send you a reset link.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login`,
+    });
+    setLoading(false);
+    
+    if (error) {
+      toast({ title: "Reset Failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ 
+        title: "Reset link sent!", 
+        description: "Check your email for the link to share your new password." 
+      });
+    }
+  };
+
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -123,7 +149,16 @@ const LoginPage = () => {
                   <Input id="login-email" type="email" placeholder="Please share your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password" title="Your private key" className="text-xs font-bold uppercase tracking-widest opacity-70">Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="login-password" title="Your private key" className="text-xs font-bold uppercase tracking-widest opacity-70">Password</Label>
+                    <button 
+                      type="button" 
+                      onClick={handleResetPassword}
+                      className="text-[10px] font-bold uppercase tracking-widest text-secondary hover:underline"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
                   <Input id="login-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl" />
                 </div>
                 <Button type="submit" className="w-full py-7 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>

@@ -1,11 +1,9 @@
 export const STRIPE_PRICES = {
-  monthly: "price_1TIGtiEjsgJYYHf3rdkRCz7I",
-  promo6: "price_1TIAEAEjsgJYYHf3xEorHS2I",
+  promo6: "price_1TRcxnIR5HdBpZxKBTTXbGdF",
 } as const;
 
 export const STRIPE_PRODUCTS = {
-  monthly: "prod_UGhdnrnIAUF9g8", // General Product ID for Validzen Content
-  promo6: "prod_UGhdnrnIAUF9g8",   // Same product, different prices
+  promo6: "prod_UQTvipxpCvq7Qa",
 } as const;
 
 /** Check how many specific quizzes a free user took today */

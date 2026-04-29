@@ -23,22 +23,20 @@ const ProPage = () => {
   const location = useLocation();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleCheckout = async (plan: "monthly" | "promo6") => {
+  const handleCheckout = async () => {
     if (!user) {
       navigate("/login", { state: { from: location.pathname } });
       return;
     }
-    setLoading(plan);
+    setLoading("promo6");
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: STRIPE_PRICES[plan] }
+        body: { priceId: STRIPE_PRICES.promo6 }
       });
       if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      }
+      if (data?.url) window.location.href = data.url;
     } catch (err: any) {
-      toast.error(err.message || "We couldn't initialize your checkout. Please share your attempt again.");
+      toast.error(err.message || "We couldn't initialize your checkout. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -165,11 +163,13 @@ const ProPage = () => {
 
                   <div className="mb-8 space-y-2">
                     <p className="text-5xl font-bold text-foreground">
-                      $2.99<span className="text-sm font-bold uppercase tracking-widest text-muted-foreground not-italic"> / month</span>
+                      $14.99
+                      <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground not-italic">
+                        {" "}/ 6 months
+                      </span>
                     </p>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                      or $14.99 for 6 months{" "}
-                      <span className="text-secondary opacity-80">(Best Value)</span>
+                    <p className="text-xs font-bold text-secondary opacity-80 uppercase tracking-widest">
+                      Best Value — Less than $2.50/month
                     </p>
                   </div>
 
@@ -189,20 +189,12 @@ const ProPage = () => {
                   ) : (
                     <div className="space-y-4">
                       <Button
-                        onClick={() => handleCheckout("promo6")}
+                        onClick={handleCheckout}
                         variant="hero"
                         className="w-full py-8 rounded-full font-bold uppercase tracking-widest text-md shadow-2xl shadow-secondary/30 transition-transform hover:scale-105 active:scale-95"
                         disabled={!!loading}
                       >
-                        {loading === "promo6" ? "Initializing Discovery..." : "Unlock 6-Month Mastery"}
-                      </Button>
-                      <Button
-                        onClick={() => handleCheckout("monthly")}
-                        variant="outline"
-                        className="w-full py-7 rounded-full font-bold uppercase text-[10px] tracking-widest border-secondary/20 hover:bg-secondary/10 text-secondary"
-                        disabled={!!loading}
-                      >
-                        {loading === "monthly" ? "Gathering Insights..." : "Begin Monthly Journey"}
+                        {loading === "promo6" ? "Initializing Discovery..." : "Unlock 6-Month Mastery — $14.99"}
                       </Button>
                       <p className="text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">
                         7-day self-mastery guarantee

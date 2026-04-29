@@ -100,6 +100,26 @@ export function useQuizQuestions(quizSlug: string | undefined) {
   });
 }
 
+export function useQuizzes() {
+  const { toast } = useToast();
+
+  return useQuery({
+    queryKey: ["quizzes"],
+    queryFn: async (): Promise<Quiz[]> => {
+      const { data, error, status } = await supabase
+        .from("quizzes")
+        .select("*")
+        .eq("is_active", true);
+
+      if (error) {
+        console.error("[useQuizzes] error:", error);
+        throw error;
+      }
+      return (data || []).map(mapQuizRow);
+    },
+  });
+}
+
 // ─── Score Calculation ────────────────────────────────────────────────────────
 
 export function calculateScores(
@@ -147,7 +167,7 @@ export function useSubmitQuizResult() {
       const overall = values.length > 0
         ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
         : 0;
-      const severity = overall <= 33 ? "mild" : overall <= 66 ? "moderate" : "intense";
+      const severity = overall <= 33 ? "leve" : overall <= 66 ? "moderado" : "severo";
 
       const topDimensions = Object.entries(scores)
         .sort(([, a], [, b]) => b - a)
