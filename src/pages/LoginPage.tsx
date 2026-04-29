@@ -17,6 +17,21 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isRecovery, setIsRecovery] = useState(false);
+
+  useEffect(() => {
+    // Detect if we are in a recovery flow
+    supabase.auth.onAuthStateChange(async (event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setIsRecovery(true);
+      }
+    });
+
+    // Check URL fragment for recovery type
+    if (window.location.hash.includes("type=recovery") || window.location.href.includes("type=recovery")) {
+      setIsRecovery(true);
+    }
+  }, []);
 
   const benefits = [
     "Preserve and monitor your Discovery History",
@@ -93,6 +108,24 @@ const LoginPage = () => {
     }
   };
 
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password.length < 6) {
+      toast({ title: "Weak password", description: "Must be at least 6 characters.", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password });
+    setLoading(false);
+    if (error) {
+      toast({ title: "Update Failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Success!", description: "Your password has been updated. You can now continue your journey." });
+      setIsRecovery(false);
+      navigate("/dashboard");
+    }
+  };
+
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -136,57 +169,78 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="mb-6 w-full p-1 bg-muted/30 rounded-xl">
-              <TabsTrigger value="login" className="flex-1 rounded-lg font-bold uppercase text-[10px] tracking-widest py-3">Login</TabsTrigger>
-              <TabsTrigger value="signup" className="flex-1 rounded-lg font-bold uppercase text-[10px] tracking-widest py-3">Sign Up</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-5">
+          {isRecovery ? (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-title">New Password</h2>
+                <p className="text-sm text-muted-foreground mt-2">Share your new private key to regain access.</p>
+              </div>
+              <form onSubmit={handleUpdatePassword} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-xs font-bold uppercase tracking-widest opacity-70">Email Address</Label>
-                  <Input id="login-email" type="email" placeholder="Please share your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl" />
+                  <Label htmlFor="new-password" title="Must be at least 6 characters" className="text-xs font-bold uppercase tracking-widest opacity-70">New Password</Label>
+                  <Input id="new-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl" />
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="login-password" title="Your private key" className="text-xs font-bold uppercase tracking-widest opacity-70">Password</Label>
-                    <button 
-                      type="button" 
-                      onClick={handleResetPassword}
-                      className="text-[10px] font-bold uppercase tracking-widest text-secondary hover:underline"
-                    >
-                      Forgot password?
-                    </button>
+                <Button type="submit" className="w-full py-7 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
+                  {loading ? "Updating..." : "Update Password & Continue"}
+                </Button>
+                <button type="button" onClick={() => setIsRecovery(false)} className="w-full text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-secondary">
+                  Cancel
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="mb-6 w-full p-1 bg-muted/30 rounded-xl">
+                <TabsTrigger value="login" className="flex-1 rounded-lg font-bold uppercase text-[10px] tracking-widest py-3">Login</TabsTrigger>
+                <TabsTrigger value="signup" className="flex-1 rounded-lg font-bold uppercase text-[10px] tracking-widest py-3">Sign Up</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="login">
+                <form onSubmit={handleLogin} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="login-email" className="text-xs font-bold uppercase tracking-widest opacity-70">Email Address</Label>
+                    <Input id="login-email" type="email" placeholder="Please share your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl" />
                   </div>
-                  <Input id="login-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl" />
-                </div>
-                <Button type="submit" className="w-full py-7 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
-                  {loading ? "Gathering Insights..." : "Continue My Journey"}
-                </Button>
-              </form>
-            </TabsContent>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="login-password" title="Your private key" className="text-xs font-bold uppercase tracking-widest opacity-70">Password</Label>
+                      <button 
+                        type="button" 
+                        onClick={handleResetPassword}
+                        className="text-[10px] font-bold uppercase tracking-widest text-secondary hover:underline"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+                    <Input id="login-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl" />
+                  </div>
+                  <Button type="submit" className="w-full py-7 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
+                    {loading ? "Gathering Insights..." : "Continue My Journey"}
+                  </Button>
+                </form>
+              </TabsContent>
 
-            <TabsContent value="signup">
-              <form onSubmit={handleSignup} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name" className="text-xs font-bold uppercase tracking-widest opacity-70">Full Name</Label>
-                  <Input id="signup-name" type="text" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} required className="h-12 rounded-xl" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-xs font-bold uppercase tracking-widest opacity-70">Email Address</Label>
-                  <Input id="signup-email" type="email" placeholder="Please share your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password" title="Must be at least 6 characters" className="text-xs font-bold uppercase tracking-widest opacity-70">Password</Label>
-                  <Input id="signup-password" type="password" placeholder="Choose a strong password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl" />
-                </div>
-                <Button type="submit" className="w-full py-7 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
-                  {loading ? "Initializing..." : "Begin My Discovery Journey"}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="signup">
+                <form onSubmit={handleSignup} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-name" className="text-xs font-bold uppercase tracking-widest opacity-70">Full Name</Label>
+                    <Input id="signup-name" type="text" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} required className="h-12 rounded-xl" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email" className="text-xs font-bold uppercase tracking-widest opacity-70">Email Address</Label>
+                    <Input id="signup-email" type="email" placeholder="Please share your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password" title="Must be at least 6 characters" className="text-xs font-bold uppercase tracking-widest opacity-70">Password</Label>
+                    <Input id="signup-password" type="password" placeholder="Choose a strong password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl" />
+                  </div>
+                  <Button type="submit" className="w-full py-7 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-primary/20" disabled={loading}>
+                    {loading ? "Initializing..." : "Begin My Discovery Journey"}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          )}
         </div>
       </div>
 
