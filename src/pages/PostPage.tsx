@@ -14,7 +14,7 @@ import Disclaimer from "@/components/Disclaimer";
 import PostCard from "@/components/PostCard";
 import AdBanner from "@/components/AdBanner";
 import SEOHead from "@/components/SEOHead";
-import { usePostBySlug, useRelatedPosts } from "@/hooks/usePosts";
+import { usePostBySlug, useRelatedPosts, useCategories } from "@/hooks/usePosts";
 import { parseContentSections } from "@/types/database";
 import { ChevronRight, Clock, Calendar, ArrowLeft, Lock, Crown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
