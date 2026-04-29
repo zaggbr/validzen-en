@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 // featured_image, video_url, quiz_slug, related_post_slugs, author_name,
 // author_avatar, author_bio, author_credentials, meta_title, meta_description,
 // published_at, updated_at, created_at, alternate_slug
-// ✅ All 42 posts are now locale='en' — no fallback needed.
+// ✅ Filtering for locale='en' to ensure only English content is displayed.
 
 function mapRow(row: any): Post {
   return {
@@ -32,6 +32,7 @@ export function usePosts(categorySlug?: string, layer?: number) {
       let query = supabase
         .from("posts")
         .select("*")
+        .eq("locale", "en")
         .order("published_at", { ascending: false });
 
       if (categorySlug) query = query.eq("category", categorySlug);
@@ -66,6 +67,7 @@ export function usePostBySlug(slug: string | undefined) {
         .from("posts")
         .select("*")
         .eq("slug", slug)
+        .eq("locale", "en")
         .maybeSingle();
 
       if (error) {
@@ -88,6 +90,7 @@ export function useRelatedPosts(slugs: string[]) {
       const { data, error, status } = await supabase
         .from("posts")
         .select("*")
+        .eq("locale", "en")
         .in("slug", slugs);
 
       if (error) {
@@ -127,7 +130,8 @@ export function useCategoryPostCounts() {
     queryFn: async (): Promise<Record<string, number>> => {
       const { data, error, status } = await supabase
         .from("posts")
-        .select("category");
+        .select("category")
+        .eq("locale", "en");
 
       if (error) {
         console.error("[useCategoryPostCounts] error:", { message: error.message, httpStatus: status });
