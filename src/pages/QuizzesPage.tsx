@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface UnifiedQuiz {
   id: string;
@@ -162,7 +163,6 @@ const QuizzesPage = () => {
             unified.push({
               id: q.id,
               slug: q.slug,
-              // quizzes table: only title_en / title_pt (no plain title)
               title: REFINED_TITLES[q.slug] || q.title_en || q.title_pt || "",
               description: q.description_en || q.description_pt || "",
               estimated_time: q.estimated_time || 1,
@@ -175,7 +175,6 @@ const QuizzesPage = () => {
 
         if (deepData) {
           deepData.forEach((q: any) => {
-            // premium_assessments.theme is in Portuguese — map to EN theme slug
             const enTheme = PT_THEME_TO_EN[q.theme] || "emotions";
             unified.push({
               id: q.id,
@@ -313,7 +312,10 @@ const QuizzesPage = () => {
                   <Skeleton className="h-32 w-full rounded-2xl" />
                 </div>
               ))}
-                      {(!loadingQuizzes && quizzes.length === 0) ? (
+            </div>
+          ) : (
+            <div className={cn("space-y-24 transition-all duration-700", isLocked && "pointer-events-none select-none blur-sm grayscale opacity-30")}>
+              {(!loadingQuizzes && quizzes.length === 0) ? (
                 <div className="py-20 text-center">
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-muted">
                     <Search className="h-10 w-10 text-muted-foreground" />
@@ -457,7 +459,6 @@ const QuizzesPage = () => {
                   <Button variant="link" onClick={() => setSearch("")} className="mt-4 text-secondary font-bold uppercase text-[10px] tracking-widest">
                     Clear Search
                   </Button>
-                </div>
                 </div>
               )}
             </div>
